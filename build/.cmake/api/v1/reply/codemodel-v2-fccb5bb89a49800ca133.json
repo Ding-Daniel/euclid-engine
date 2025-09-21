@@ -1,0 +1,78 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.20"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "euclid_engine",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "euclid_cli::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-euclid_cli-Debug-16f16cc6dd295be09144.json",
+					"name" : "euclid_cli",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "euclid_engine::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-euclid_engine-Debug-d91070d824f1d2ec840d.json",
+					"name" : "euclid_engine",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "smoketest::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-smoketest-Debug-be6bc9e352dd6e50f6b6.json",
+					"name" : "smoketest",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/Users/danielding/euclid-engine/build",
+		"source" : "/Users/danielding/euclid-engine"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 8
+	}
+}

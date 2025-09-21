@@ -38,6 +38,15 @@ Square ep_square() const { return ep_square_; }
 
 U64 hash() const { return hash_; }
 
+Piece piece_at(Square s, Color* c_out = nullptr) const;
+
+void set_halfmove_clock(int h) { halfmove_clock_ = h; }
+int  halfmove_clock() const { return halfmove_clock_; }
+
+void set_fullmove_number(int n) { fullmove_number_ = n; }
+int  fullmove_number() const { return fullmove_number_; }
+
+
 
 private:
 // bitboards[color][piece]
@@ -46,6 +55,8 @@ Color stm_ = Color::White;
 Castling castling_{};
 Square ep_square_ = -1; // -1 = none
 U64 hash_ = 0ULL;
+int halfmove_clock_ = 0;
+int fullmove_number_ = 1;
 
 
 void recompute_hash_();

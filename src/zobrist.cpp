@@ -20,7 +20,9 @@ auto next = [&]() -> std::uint64_t { return splitmix64(x); };
 for (int c = 0; c < COLOR_N; ++c)
 for (int p = 0; p < PIECE_N; ++p)
 for (int s = 0; s < 64; ++s)
-piece_on[c][p][s] = next();
+piece_on[static_cast<std::size_t>(c)]
+[static_cast<std::size_t>(p)]
+[static_cast<std::size_t>(s)] = next();
 
 
 for (auto& k : castling) k = next();

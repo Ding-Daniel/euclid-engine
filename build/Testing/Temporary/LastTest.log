@@ -1,0 +1,18 @@
+Start testing: Sep 20 20:03 PDT
+----------------------------------------------------------
+1/1 Testing: smoke
+1/1 Test: smoke
+Command: "/Users/danielding/euclid-engine/build/smoketest"
+Directory: /Users/danielding/euclid-engine/build
+"smoke" start time: Sep 20 20:03 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.28 sec
+----------------------------------------------------------
+Test Passed.
+"smoke" end time: Sep 20 20:03 PDT
+"smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 20 20:03 PDT
