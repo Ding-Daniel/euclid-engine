@@ -23,9 +23,3 @@ jobs:
 
       - name: Test
         run: ctest --test-dir build --output-on-failure
-
-      - name: Install Ninja
-        run: brew install ninja
-
-      - name: Configure (Release)
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
