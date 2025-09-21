@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/danielding/euclid-engine/src/board.cpp" "CMakeFiles/euclid_engine.dir/src/board.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/board.cpp.o.d"
+  "/Users/danielding/euclid-engine/src/fen.cpp" "CMakeFiles/euclid_engine.dir/src/fen.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/fen.cpp.o.d"
   "/Users/danielding/euclid-engine/src/zobrist.cpp" "CMakeFiles/euclid_engine.dir/src/zobrist.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/zobrist.cpp.o.d"
   )
 

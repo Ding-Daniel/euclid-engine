@@ -14,6 +14,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library(euclid_engine STATIC
   src/board.cpp
   src/zobrist.cpp
+  src/fen.cpp
 )
 
 target_include_directories(euclid_engine PUBLIC include)
@@ -33,3 +34,4 @@ enable_testing()
 add_executable(smoketest tests/smoke.cpp)
 target_link_libraries(smoketest PRIVATE euclid_engine)
 add_test(NAME smoke COMMAND smoketest)
+add_test(NAME fen COMMAND fen_test)

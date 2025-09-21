@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/euclid_engine.dir/src/board.cpp.o"
   "CMakeFiles/euclid_engine.dir/src/board.cpp.o.d"
+  "CMakeFiles/euclid_engine.dir/src/fen.cpp.o"
+  "CMakeFiles/euclid_engine.dir/src/fen.cpp.o.d"
   "CMakeFiles/euclid_engine.dir/src/zobrist.cpp.o"
   "CMakeFiles/euclid_engine.dir/src/zobrist.cpp.o.d"
   "libeuclid_engine.a"

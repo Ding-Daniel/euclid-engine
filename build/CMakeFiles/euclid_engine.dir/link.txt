@@ -1,2 +1,2 @@
-/usr/bin/ar qc libeuclid_engine.a CMakeFiles/euclid_engine.dir/src/board.cpp.o CMakeFiles/euclid_engine.dir/src/zobrist.cpp.o
+/usr/bin/ar qc libeuclid_engine.a CMakeFiles/euclid_engine.dir/src/board.cpp.o CMakeFiles/euclid_engine.dir/src/zobrist.cpp.o CMakeFiles/euclid_engine.dir/src/fen.cpp.o
 /usr/bin/ranlib libeuclid_engine.a

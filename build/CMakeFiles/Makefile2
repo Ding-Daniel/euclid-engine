@@ -91,12 +91,12 @@ clean: CMakeFiles/smoketest.dir/clean
 CMakeFiles/euclid_engine.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=3,4,5 "Built target euclid_engine"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=3,4,5,6 "Built target euclid_engine"
 .PHONY : CMakeFiles/euclid_engine.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/euclid_engine.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build/CMakeFiles 4
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/euclid_engine.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build/CMakeFiles 0
 .PHONY : CMakeFiles/euclid_engine.dir/rule
@@ -108,7 +108,7 @@ euclid_engine: CMakeFiles/euclid_engine.dir/rule
 # codegen rule for target.
 CMakeFiles/euclid_engine.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=3,4,5 "Finished codegen for target euclid_engine"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=3,4,5,6 "Finished codegen for target euclid_engine"
 .PHONY : CMakeFiles/euclid_engine.dir/codegen
 
 # clean rule for target.
@@ -128,7 +128,7 @@ CMakeFiles/euclid_cli.dir/all: CMakeFiles/euclid_engine.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/euclid_cli.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build/CMakeFiles 5
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build/CMakeFiles 6
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/euclid_cli.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build/CMakeFiles 0
 .PHONY : CMakeFiles/euclid_cli.dir/rule
@@ -155,12 +155,12 @@ CMakeFiles/euclid_cli.dir/clean:
 CMakeFiles/smoketest.dir/all: CMakeFiles/euclid_engine.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/smoketest.dir/build.make CMakeFiles/smoketest.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/smoketest.dir/build.make CMakeFiles/smoketest.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=6,7 "Built target smoketest"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=7,8 "Built target smoketest"
 .PHONY : CMakeFiles/smoketest.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/smoketest.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build/CMakeFiles 5
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build/CMakeFiles 6
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/smoketest.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build/CMakeFiles 0
 .PHONY : CMakeFiles/smoketest.dir/rule
@@ -172,7 +172,7 @@ smoketest: CMakeFiles/smoketest.dir/rule
 # codegen rule for target.
 CMakeFiles/smoketest.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/smoketest.dir/build.make CMakeFiles/smoketest.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=6,7 "Finished codegen for target smoketest"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=7,8 "Finished codegen for target smoketest"
 .PHONY : CMakeFiles/smoketest.dir/codegen
 
 # clean rule for target.

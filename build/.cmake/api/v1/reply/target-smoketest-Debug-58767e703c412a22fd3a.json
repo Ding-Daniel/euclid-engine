@@ -1,9 +1,8 @@
 {
-	"archive" : {},
 	"artifacts" : 
 	[
 		{
-			"path" : "libeuclid_engine.a"
+			"path" : "smoketest"
 		}
 	],
 	"backtrace" : 1,
@@ -11,9 +10,8 @@
 	{
 		"commands" : 
 		[
-			"add_library",
-			"target_compile_options",
-			"target_include_directories"
+			"add_executable",
+			"target_link_libraries"
 		],
 		"files" : 
 		[
@@ -27,19 +25,13 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 14,
+				"line" : 34,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 25,
-				"parent" : 0
-			},
-			{
-				"command" : 2,
-				"file" : 0,
-				"line" : 19,
+				"line" : 35,
 				"parent" : 0
 			}
 		]
@@ -51,28 +43,12 @@
 			[
 				{
 					"fragment" : "-g -std=c++20 -arch arm64"
-				},
-				{
-					"backtrace" : 2,
-					"fragment" : "-Wall"
-				},
-				{
-					"backtrace" : 2,
-					"fragment" : "-Wextra"
-				},
-				{
-					"backtrace" : 2,
-					"fragment" : "-Wpedantic"
-				},
-				{
-					"backtrace" : 2,
-					"fragment" : "-Wconversion"
 				}
 			],
 			"includes" : 
 			[
 				{
-					"backtrace" : 3,
+					"backtrace" : 2,
 					"path" : "/Users/danielding/euclid-engine/include"
 				}
 			],
@@ -87,14 +63,40 @@
 			},
 			"sourceIndexes" : 
 			[
-				0,
-				1
+				0
 			]
 		}
 	],
-	"id" : "euclid_engine::@6890427a1f51a3e7e1df",
-	"name" : "euclid_engine",
-	"nameOnDisk" : "libeuclid_engine.a",
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "euclid_engine::@6890427a1f51a3e7e1df"
+		}
+	],
+	"id" : "smoketest::@6890427a1f51a3e7e1df",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-g",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "-Wl,-search_paths_first -Wl,-headerpad_max_install_names",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "libeuclid_engine.a",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "smoketest",
+	"nameOnDisk" : "smoketest",
 	"paths" : 
 	{
 		"build" : ".",
@@ -106,8 +108,7 @@
 			"name" : "Source Files",
 			"sourceIndexes" : 
 			[
-				0,
-				1
+				0
 			]
 		}
 	],
@@ -116,15 +117,9 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "src/board.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "src/zobrist.cpp",
+			"path" : "tests/smoke.cpp",
 			"sourceGroupIndex" : 0
 		}
 	],
-	"type" : "STATIC_LIBRARY"
+	"type" : "EXECUTABLE"
 }

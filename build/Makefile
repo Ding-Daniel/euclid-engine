@@ -189,6 +189,30 @@ src/board.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/board.cpp.s
 .PHONY : src/board.cpp.s
 
+src/fen.o: src/fen.cpp.o
+.PHONY : src/fen.o
+
+# target to build an object file
+src/fen.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/fen.cpp.o
+.PHONY : src/fen.cpp.o
+
+src/fen.i: src/fen.cpp.i
+.PHONY : src/fen.i
+
+# target to preprocess a source file
+src/fen.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/fen.cpp.i
+.PHONY : src/fen.cpp.i
+
+src/fen.s: src/fen.cpp.s
+.PHONY : src/fen.s
+
+# target to generate assembly for a file
+src/fen.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/fen.cpp.s
+.PHONY : src/fen.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -276,6 +300,9 @@ help:
 	@echo "... src/board.o"
 	@echo "... src/board.i"
 	@echo "... src/board.s"
+	@echo "... src/fen.o"
+	@echo "... src/fen.i"
+	@echo "... src/fen.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
