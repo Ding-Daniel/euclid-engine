@@ -1,0 +1,11 @@
+/build/
+/build-*/
+CMakeCache.txt
+CMakeFiles/
+*.o
+*.a
+*.dylib
+*.so
+*.exe
+.vscode/
+compile_commands.json
