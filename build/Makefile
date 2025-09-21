@@ -165,6 +165,19 @@ smoketest/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/smoketest.dir/build.make CMakeFiles/smoketest.dir/build
 .PHONY : smoketest/fast
 
+#=============================================================================
+# Target rules for targets named fen_test
+
+# Build rule for target.
+fen_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 fen_test
+.PHONY : fen_test
+
+# fast build rule for target.
+fen_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fen_test.dir/build.make CMakeFiles/fen_test.dir/build
+.PHONY : fen_test/fast
+
 src/board.o: src/board.cpp.o
 .PHONY : src/board.o
 
@@ -261,6 +274,30 @@ src/zobrist.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/zobrist.cpp.s
 .PHONY : src/zobrist.cpp.s
 
+tests/fen.o: tests/fen.cpp.o
+.PHONY : tests/fen.o
+
+# target to build an object file
+tests/fen.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fen_test.dir/build.make CMakeFiles/fen_test.dir/tests/fen.cpp.o
+.PHONY : tests/fen.cpp.o
+
+tests/fen.i: tests/fen.cpp.i
+.PHONY : tests/fen.i
+
+# target to preprocess a source file
+tests/fen.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fen_test.dir/build.make CMakeFiles/fen_test.dir/tests/fen.cpp.i
+.PHONY : tests/fen.cpp.i
+
+tests/fen.s: tests/fen.cpp.s
+.PHONY : tests/fen.s
+
+# target to generate assembly for a file
+tests/fen.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fen_test.dir/build.make CMakeFiles/fen_test.dir/tests/fen.cpp.s
+.PHONY : tests/fen.cpp.s
+
 tests/smoke.o: tests/smoke.cpp.o
 .PHONY : tests/smoke.o
 
@@ -296,6 +333,7 @@ help:
 	@echo "... test"
 	@echo "... euclid_cli"
 	@echo "... euclid_engine"
+	@echo "... fen_test"
 	@echo "... smoketest"
 	@echo "... src/board.o"
 	@echo "... src/board.i"
@@ -309,6 +347,9 @@ help:
 	@echo "... src/zobrist.o"
 	@echo "... src/zobrist.i"
 	@echo "... src/zobrist.s"
+	@echo "... tests/fen.o"
+	@echo "... tests/fen.i"
+	@echo "... tests/fen.s"
 	@echo "... tests/smoke.o"
 	@echo "... tests/smoke.i"
 	@echo "... tests/smoke.s"

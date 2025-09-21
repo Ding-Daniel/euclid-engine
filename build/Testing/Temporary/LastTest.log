@@ -1,18 +1,33 @@
-Start testing: Sep 20 20:03 PDT
+Start testing: Sep 20 21:10 PDT
 ----------------------------------------------------------
-1/1 Testing: smoke
-1/1 Test: smoke
+1/2 Testing: smoke
+1/2 Test: smoke
 Command: "/Users/danielding/euclid-engine/build/smoketest"
 Directory: /Users/danielding/euclid-engine/build
-"smoke" start time: Sep 20 20:03 PDT
+"smoke" start time: Sep 20 21:10 PDT
 Output:
 ----------------------------------------------------------
 <end of output>
-Test time =   0.28 sec
+Test time =   0.35 sec
 ----------------------------------------------------------
 Test Passed.
-"smoke" end time: Sep 20 20:03 PDT
+"smoke" end time: Sep 20 21:10 PDT
 "smoke" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Sep 20 20:03 PDT
+2/2 Testing: fen
+2/2 Test: fen
+Command: "/Users/danielding/euclid-engine/build/fen_test"
+Directory: /Users/danielding/euclid-engine/build
+"fen" start time: Sep 20 21:10 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.18 sec
+----------------------------------------------------------
+Test Passed.
+"fen" end time: Sep 20 21:10 PDT
+"fen" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 20 21:10 PDT

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(euclid_engine VERSION 0.1.0 LANGUAGES CXX)
 
-# Default to Release if nothing is specified
+# Default to Release if nothing is specified (for single-config generators)
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "No build type selected, defaulting to Release")
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
@@ -16,7 +16,6 @@ add_library(euclid_engine STATIC
   src/zobrist.cpp
   src/fen.cpp
 )
-
 target_include_directories(euclid_engine PUBLIC include)
 
 # Warnings
@@ -29,9 +28,13 @@ endif()
 add_executable(euclid_cli src/main.cpp)
 target_link_libraries(euclid_cli PRIVATE euclid_engine)
 
-# Tiny smoke test target (ctest integration is optional for now)
+# Tests
 enable_testing()
+
 add_executable(smoketest tests/smoke.cpp)
 target_link_libraries(smoketest PRIVATE euclid_engine)
-add_test(NAME smoke COMMAND smoketest)
-add_test(NAME fen COMMAND fen_test)
+add_test(NAME smoke COMMAND $<TARGET_FILE:smoketest>)   # use full path
+
+add_executable(fen_test tests/fen.cpp)
+target_link_libraries(fen_test PRIVATE euclid_engine)
+add_test(NAME fen COMMAND $<TARGET_FILE:fen_test>)      # use full path

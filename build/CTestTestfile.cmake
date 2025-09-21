@@ -6,5 +6,5 @@
 # testing this directory and lists subdirectories to be tested as well.
 add_test([=[smoke]=] "/Users/danielding/euclid-engine/build/smoketest")
 set_tests_properties([=[smoke]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/danielding/euclid-engine/CMakeLists.txt;36;add_test;/Users/danielding/euclid-engine/CMakeLists.txt;0;")
-add_test([=[fen]=] "fen_test")
-set_tests_properties([=[fen]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/danielding/euclid-engine/CMakeLists.txt;37;add_test;/Users/danielding/euclid-engine/CMakeLists.txt;0;")
+add_test([=[fen]=] "/Users/danielding/euclid-engine/build/fen_test")
+set_tests_properties([=[fen]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/danielding/euclid-engine/CMakeLists.txt;40;add_test;/Users/danielding/euclid-engine/CMakeLists.txt;0;")
