@@ -10,6 +10,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/danielding/euclid-engine/src/board.cpp" "CMakeFiles/euclid_engine.dir/src/board.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/board.cpp.o.d"
   "/Users/danielding/euclid-engine/src/fen.cpp" "CMakeFiles/euclid_engine.dir/src/fen.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/fen.cpp.o.d"
+  "/Users/danielding/euclid-engine/src/movegen.cpp" "CMakeFiles/euclid_engine.dir/src/movegen.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/movegen.cpp.o.d"
+  "/Users/danielding/euclid-engine/src/perft.cpp" "CMakeFiles/euclid_engine.dir/src/perft.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/perft.cpp.o.d"
   "/Users/danielding/euclid-engine/src/zobrist.cpp" "CMakeFiles/euclid_engine.dir/src/zobrist.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/zobrist.cpp.o.d"
   )
 

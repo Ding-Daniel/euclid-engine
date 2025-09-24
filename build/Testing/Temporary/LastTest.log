@@ -1,33 +1,48 @@
-Start testing: Sep 20 21:10 PDT
+Start testing: Sep 23 19:15 PDT
 ----------------------------------------------------------
-1/2 Testing: smoke
-1/2 Test: smoke
+1/3 Testing: smoke
+1/3 Test: smoke
 Command: "/Users/danielding/euclid-engine/build/smoketest"
 Directory: /Users/danielding/euclid-engine/build
-"smoke" start time: Sep 20 21:10 PDT
+"smoke" start time: Sep 23 19:15 PDT
 Output:
 ----------------------------------------------------------
 <end of output>
-Test time =   0.35 sec
+Test time =   0.38 sec
 ----------------------------------------------------------
 Test Passed.
-"smoke" end time: Sep 20 21:10 PDT
+"smoke" end time: Sep 23 19:15 PDT
 "smoke" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-2/2 Testing: fen
-2/2 Test: fen
+2/3 Testing: fen
+2/3 Test: fen
 Command: "/Users/danielding/euclid-engine/build/fen_test"
 Directory: /Users/danielding/euclid-engine/build
-"fen" start time: Sep 20 21:10 PDT
+"fen" start time: Sep 23 19:15 PDT
 Output:
 ----------------------------------------------------------
 <end of output>
-Test time =   0.18 sec
+Test time =   0.19 sec
 ----------------------------------------------------------
 Test Passed.
-"fen" end time: Sep 20 21:10 PDT
+"fen" end time: Sep 23 19:15 PDT
 "fen" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Sep 20 21:10 PDT
+3/3 Testing: perft_smoke
+3/3 Test: perft_smoke
+Command: "/Users/danielding/euclid-engine/build/perft_smoke"
+Directory: /Users/danielding/euclid-engine/build
+"perft_smoke" start time: Sep 23 19:15 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.19 sec
+----------------------------------------------------------
+Test Passed.
+"perft_smoke" end time: Sep 23 19:15 PDT
+"perft_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 23 19:15 PDT

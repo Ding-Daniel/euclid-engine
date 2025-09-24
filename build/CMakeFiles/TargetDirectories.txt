@@ -2,6 +2,7 @@
 /Users/danielding/euclid-engine/build/CMakeFiles/euclid_cli.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/smoketest.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/fen_test.dir
+/Users/danielding/euclid-engine/build/CMakeFiles/perft_smoke.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/test.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/edit_cache.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/rebuild_cache.dir

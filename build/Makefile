@@ -178,6 +178,19 @@ fen_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fen_test.dir/build.make CMakeFiles/fen_test.dir/build
 .PHONY : fen_test/fast
 
+#=============================================================================
+# Target rules for targets named perft_smoke
+
+# Build rule for target.
+perft_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 perft_smoke
+.PHONY : perft_smoke
+
+# fast build rule for target.
+perft_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/perft_smoke.dir/build.make CMakeFiles/perft_smoke.dir/build
+.PHONY : perft_smoke/fast
+
 src/board.o: src/board.cpp.o
 .PHONY : src/board.o
 
@@ -250,6 +263,54 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_cli.dir/build.make CMakeFiles/euclid_cli.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/movegen.o: src/movegen.cpp.o
+.PHONY : src/movegen.o
+
+# target to build an object file
+src/movegen.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/movegen.cpp.o
+.PHONY : src/movegen.cpp.o
+
+src/movegen.i: src/movegen.cpp.i
+.PHONY : src/movegen.i
+
+# target to preprocess a source file
+src/movegen.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/movegen.cpp.i
+.PHONY : src/movegen.cpp.i
+
+src/movegen.s: src/movegen.cpp.s
+.PHONY : src/movegen.s
+
+# target to generate assembly for a file
+src/movegen.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/movegen.cpp.s
+.PHONY : src/movegen.cpp.s
+
+src/perft.o: src/perft.cpp.o
+.PHONY : src/perft.o
+
+# target to build an object file
+src/perft.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/perft.cpp.o
+.PHONY : src/perft.cpp.o
+
+src/perft.i: src/perft.cpp.i
+.PHONY : src/perft.i
+
+# target to preprocess a source file
+src/perft.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/perft.cpp.i
+.PHONY : src/perft.cpp.i
+
+src/perft.s: src/perft.cpp.s
+.PHONY : src/perft.s
+
+# target to generate assembly for a file
+src/perft.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/perft.cpp.s
+.PHONY : src/perft.cpp.s
+
 src/zobrist.o: src/zobrist.cpp.o
 .PHONY : src/zobrist.o
 
@@ -298,6 +359,30 @@ tests/fen.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fen_test.dir/build.make CMakeFiles/fen_test.dir/tests/fen.cpp.s
 .PHONY : tests/fen.cpp.s
 
+tests/perft_smoke.o: tests/perft_smoke.cpp.o
+.PHONY : tests/perft_smoke.o
+
+# target to build an object file
+tests/perft_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/perft_smoke.dir/build.make CMakeFiles/perft_smoke.dir/tests/perft_smoke.cpp.o
+.PHONY : tests/perft_smoke.cpp.o
+
+tests/perft_smoke.i: tests/perft_smoke.cpp.i
+.PHONY : tests/perft_smoke.i
+
+# target to preprocess a source file
+tests/perft_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/perft_smoke.dir/build.make CMakeFiles/perft_smoke.dir/tests/perft_smoke.cpp.i
+.PHONY : tests/perft_smoke.cpp.i
+
+tests/perft_smoke.s: tests/perft_smoke.cpp.s
+.PHONY : tests/perft_smoke.s
+
+# target to generate assembly for a file
+tests/perft_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/perft_smoke.dir/build.make CMakeFiles/perft_smoke.dir/tests/perft_smoke.cpp.s
+.PHONY : tests/perft_smoke.cpp.s
+
 tests/smoke.o: tests/smoke.cpp.o
 .PHONY : tests/smoke.o
 
@@ -334,6 +419,7 @@ help:
 	@echo "... euclid_cli"
 	@echo "... euclid_engine"
 	@echo "... fen_test"
+	@echo "... perft_smoke"
 	@echo "... smoketest"
 	@echo "... src/board.o"
 	@echo "... src/board.i"
@@ -344,12 +430,21 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/movegen.o"
+	@echo "... src/movegen.i"
+	@echo "... src/movegen.s"
+	@echo "... src/perft.o"
+	@echo "... src/perft.i"
+	@echo "... src/perft.s"
 	@echo "... src/zobrist.o"
 	@echo "... src/zobrist.i"
 	@echo "... src/zobrist.s"
 	@echo "... tests/fen.o"
 	@echo "... tests/fen.i"
 	@echo "... tests/fen.s"
+	@echo "... tests/perft_smoke.o"
+	@echo "... tests/perft_smoke.i"
+	@echo "... tests/perft_smoke.s"
 	@echo "... tests/smoke.o"
 	@echo "... tests/smoke.i"
 	@echo "... tests/smoke.s"
