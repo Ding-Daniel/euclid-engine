@@ -191,6 +191,19 @@ perft_smoke/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/perft_smoke.dir/build.make CMakeFiles/perft_smoke.dir/build
 .PHONY : perft_smoke/fast
 
+#=============================================================================
+# Target rules for targets named king_smoke
+
+# Build rule for target.
+king_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 king_smoke
+.PHONY : king_smoke
+
+# fast build rule for target.
+king_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/king_smoke.dir/build.make CMakeFiles/king_smoke.dir/build
+.PHONY : king_smoke/fast
+
 src/board.o: src/board.cpp.o
 .PHONY : src/board.o
 
@@ -359,6 +372,30 @@ tests/fen.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fen_test.dir/build.make CMakeFiles/fen_test.dir/tests/fen.cpp.s
 .PHONY : tests/fen.cpp.s
 
+tests/king_smoke.o: tests/king_smoke.cpp.o
+.PHONY : tests/king_smoke.o
+
+# target to build an object file
+tests/king_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/king_smoke.dir/build.make CMakeFiles/king_smoke.dir/tests/king_smoke.cpp.o
+.PHONY : tests/king_smoke.cpp.o
+
+tests/king_smoke.i: tests/king_smoke.cpp.i
+.PHONY : tests/king_smoke.i
+
+# target to preprocess a source file
+tests/king_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/king_smoke.dir/build.make CMakeFiles/king_smoke.dir/tests/king_smoke.cpp.i
+.PHONY : tests/king_smoke.cpp.i
+
+tests/king_smoke.s: tests/king_smoke.cpp.s
+.PHONY : tests/king_smoke.s
+
+# target to generate assembly for a file
+tests/king_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/king_smoke.dir/build.make CMakeFiles/king_smoke.dir/tests/king_smoke.cpp.s
+.PHONY : tests/king_smoke.cpp.s
+
 tests/perft_smoke.o: tests/perft_smoke.cpp.o
 .PHONY : tests/perft_smoke.o
 
@@ -419,6 +456,7 @@ help:
 	@echo "... euclid_cli"
 	@echo "... euclid_engine"
 	@echo "... fen_test"
+	@echo "... king_smoke"
 	@echo "... perft_smoke"
 	@echo "... smoketest"
 	@echo "... src/board.o"
@@ -442,6 +480,9 @@ help:
 	@echo "... tests/fen.o"
 	@echo "... tests/fen.i"
 	@echo "... tests/fen.s"
+	@echo "... tests/king_smoke.o"
+	@echo "... tests/king_smoke.i"
+	@echo "... tests/king_smoke.s"
 	@echo "... tests/perft_smoke.o"
 	@echo "... tests/perft_smoke.i"
 	@echo "... tests/perft_smoke.s"

@@ -1,4 +1,4 @@
-smoke 3 0.102034
-fen 3 0.0634263
-perft_smoke 2 0.0950813
+smoke 4 0.0813788
+fen 4 0.0468844
+perft_smoke 3 0.0761111
 ---

@@ -55,3 +55,7 @@ add_test(NAME fen COMMAND $<TARGET_FILE:fen_test>)
 add_executable(perft_smoke tests/perft_smoke.cpp)
 target_link_libraries(perft_smoke PRIVATE euclid_engine)
 add_test(NAME perft_smoke COMMAND $<TARGET_FILE:perft_smoke>)
+
+add_executable(king_smoke tests/king_smoke.cpp)
+target_link_libraries(king_smoke PRIVATE euclid_engine)
+add_test(NAME king_smoke COMMAND $<TARGET_FILE:king_smoke>)
