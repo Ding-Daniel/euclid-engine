@@ -295,6 +295,19 @@ do_undo_smoke/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/do_undo_smoke.dir/build.make CMakeFiles/do_undo_smoke.dir/build
 .PHONY : do_undo_smoke/fast
 
+#=============================================================================
+# Target rules for targets named castle_smoke
+
+# Build rule for target.
+castle_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 castle_smoke
+.PHONY : castle_smoke
+
+# fast build rule for target.
+castle_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/castle_smoke.dir/build.make CMakeFiles/castle_smoke.dir/build
+.PHONY : castle_smoke/fast
+
 src/attack.o: src/attack.cpp.o
 .PHONY : src/attack.o
 
@@ -510,6 +523,30 @@ tests/bishop_smoke.s: tests/bishop_smoke.cpp.s
 tests/bishop_smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/bishop_smoke.dir/build.make CMakeFiles/bishop_smoke.dir/tests/bishop_smoke.cpp.s
 .PHONY : tests/bishop_smoke.cpp.s
+
+tests/castle_smoke.o: tests/castle_smoke.cpp.o
+.PHONY : tests/castle_smoke.o
+
+# target to build an object file
+tests/castle_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/castle_smoke.dir/build.make CMakeFiles/castle_smoke.dir/tests/castle_smoke.cpp.o
+.PHONY : tests/castle_smoke.cpp.o
+
+tests/castle_smoke.i: tests/castle_smoke.cpp.i
+.PHONY : tests/castle_smoke.i
+
+# target to preprocess a source file
+tests/castle_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/castle_smoke.dir/build.make CMakeFiles/castle_smoke.dir/tests/castle_smoke.cpp.i
+.PHONY : tests/castle_smoke.cpp.i
+
+tests/castle_smoke.s: tests/castle_smoke.cpp.s
+.PHONY : tests/castle_smoke.s
+
+# target to generate assembly for a file
+tests/castle_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/castle_smoke.dir/build.make CMakeFiles/castle_smoke.dir/tests/castle_smoke.cpp.s
+.PHONY : tests/castle_smoke.cpp.s
 
 tests/do_undo_smoke.o: tests/do_undo_smoke.cpp.o
 .PHONY : tests/do_undo_smoke.o
@@ -761,6 +798,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... bishop_smoke"
+	@echo "... castle_smoke"
 	@echo "... do_undo_smoke"
 	@echo "... euclid_cli"
 	@echo "... euclid_engine"
@@ -800,6 +838,9 @@ help:
 	@echo "... tests/bishop_smoke.o"
 	@echo "... tests/bishop_smoke.i"
 	@echo "... tests/bishop_smoke.s"
+	@echo "... tests/castle_smoke.o"
+	@echo "... tests/castle_smoke.i"
+	@echo "... tests/castle_smoke.s"
 	@echo "... tests/do_undo_smoke.o"
 	@echo "... tests/do_undo_smoke.i"
 	@echo "... tests/do_undo_smoke.s"

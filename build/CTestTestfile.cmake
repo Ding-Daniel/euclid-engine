@@ -26,3 +26,5 @@ add_test([=[incheck_smoke]=] "/Users/danielding/euclid-engine/build/incheck_smok
 set_tests_properties([=[incheck_smoke]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/danielding/euclid-engine/CMakeLists.txt;76;add_test;/Users/danielding/euclid-engine/CMakeLists.txt;0;")
 add_test([=[do_undo_smoke]=] "/Users/danielding/euclid-engine/build/do_undo_smoke")
 set_tests_properties([=[do_undo_smoke]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/danielding/euclid-engine/CMakeLists.txt;80;add_test;/Users/danielding/euclid-engine/CMakeLists.txt;0;")
+add_test([=[castle_smoke]=] "/Users/danielding/euclid-engine/build/castle_smoke")
+set_tests_properties([=[castle_smoke]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/danielding/euclid-engine/CMakeLists.txt;84;add_test;/Users/danielding/euclid-engine/CMakeLists.txt;0;")

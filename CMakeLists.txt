@@ -78,3 +78,7 @@ add_test(NAME incheck_smoke COMMAND $<TARGET_FILE:incheck_smoke>)
 add_executable(do_undo_smoke tests/do_undo_smoke.cpp)
 target_link_libraries(do_undo_smoke PRIVATE euclid_engine)
 add_test(NAME do_undo_smoke COMMAND $<TARGET_FILE:do_undo_smoke>)
+
+add_executable(castle_smoke tests/castle_smoke.cpp)
+target_link_libraries(castle_smoke PRIVATE euclid_engine)
+add_test(NAME castle_smoke COMMAND $<TARGET_FILE:castle_smoke>)

@@ -1,4 +1,5 @@
 #include "euclid/movegen.hpp"
+#include "euclid/attack.hpp" 
 #include <cstdlib> // std::abs
 
 namespace euclid {
@@ -24,7 +25,7 @@ void generate_pseudo_legal(const Board& b, MoveList& out) {
   out.sz = 0;
 
   const Color us  = b.side_to_move();
-  const Color opp = them(us);
+  const Color opp = (us == Color::White ? Color::Black : Color::White);
   const Square oppK = find_king(b, opp);
 
   // -----------------
@@ -288,6 +289,81 @@ void generate_pseudo_legal(const Board& b, MoveList& out) {
 
       const bool isCap = (op != Piece::None && oc == opp);
       out.push(Move{ s, t, isCap ? MoveFlag::Capture : MoveFlag::Quiet, Piece::None });
+    }
+  }
+  // -----------------
+  // Castling (new)
+  // -----------------
+  const unsigned cr = b.castling().rights;
+  if (us == Color::White) {
+    // king must be on e1
+    Color kc; if (b.piece_at(4, &kc) == Piece::King && kc == Color::White) {
+      // O-O: rights K, squares f1(5), g1(6) empty, e1/f1/g1 not attacked, rook h1(7)
+      if (cr & 0x1) {
+        Color rc; Piece r = b.piece_at(7, &rc);
+        if (r == Piece::Rook && rc == Color::White) {
+          Color c1; Piece p1 = b.piece_at(5, &c1);
+          Color c2; Piece p2 = b.piece_at(6, &c2);
+          if (p1 == Piece::None && p2 == Piece::None) {
+            if (!in_check(b, Color::White) &&
+                !square_attacked(b, 5, Color::Black) &&
+                !square_attacked(b, 6, Color::Black)) {
+              out.push(Move{ 4, 6, MoveFlag::Castle, Piece::None });
+            }
+          }
+        }
+      }
+      // O-O-O: rights Q, squares d1(3), c1(2), b1(1) empty, e1/d1/c1 not attacked, rook a1(0)
+      if (cr & 0x2) {
+        Color rc; Piece r = b.piece_at(0, &rc);
+        if (r == Piece::Rook && rc == Color::White) {
+          Color c1; Piece p1 = b.piece_at(3, &c1);
+          Color c2; Piece p2 = b.piece_at(2, &c2);
+          Color c3; Piece p3 = b.piece_at(1, &c3);
+          if (p1 == Piece::None && p2 == Piece::None && p3 == Piece::None) {
+            if (!in_check(b, Color::White) &&
+                !square_attacked(b, 3, Color::Black) &&
+                !square_attacked(b, 2, Color::Black)) {
+              out.push(Move{ 4, 2, MoveFlag::Castle, Piece::None });
+            }
+          }
+        }
+      }
+    }
+  } else {
+    // Black: king on e8 (60)
+    Color kc; if (b.piece_at(60, &kc) == Piece::King && kc == Color::Black) {
+      // O-O: rights k, squares f8(61), g8(62)
+      if (cr & 0x4) {
+        Color rc; Piece r = b.piece_at(63, &rc);
+        if (r == Piece::Rook && rc == Color::Black) {
+          Color c1; Piece p1 = b.piece_at(61, &c1);
+          Color c2; Piece p2 = b.piece_at(62, &c2);
+          if (p1 == Piece::None && p2 == Piece::None) {
+            if (!in_check(b, Color::Black) &&
+                !square_attacked(b, 61, Color::White) &&
+                !square_attacked(b, 62, Color::White)) {
+              out.push(Move{ 60, 62, MoveFlag::Castle, Piece::None });
+            }
+          }
+        }
+      }
+      // O-O-O: rights q, squares d8(59), c8(58), b8(57)
+      if (cr & 0x8) {
+        Color rc; Piece r = b.piece_at(56, &rc);
+        if (r == Piece::Rook && rc == Color::Black) {
+          Color c1; Piece p1 = b.piece_at(59, &c1);
+          Color c2; Piece p2 = b.piece_at(58, &c2);
+          Color c3; Piece p3 = b.piece_at(57, &c3);
+          if (p1 == Piece::None && p2 == Piece::None && p3 == Piece::None) {
+            if (!in_check(b, Color::Black) &&
+                !square_attacked(b, 59, Color::White) &&
+                !square_attacked(b, 58, Color::White)) {
+              out.push(Move{ 60, 58, MoveFlag::Castle, Piece::None });
+            }
+          }
+        }
+      }
     }
   }
 }
