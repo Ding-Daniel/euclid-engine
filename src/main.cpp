@@ -7,6 +7,8 @@
 #include "euclid/perft.hpp"
 #include "euclid/movegen.hpp"
 #include "euclid/move_do.hpp"
+#include "euclid/attack.hpp"
+
 
 using namespace euclid;
 
@@ -61,7 +63,7 @@ int main(int argc, char** argv) {
     State st{};
     do_move(b, m, st);
     // legality filter (same rule as perft)
-    extern bool in_check(const Board&, Color);
+    //extern bool in_check(const Board&, Color); //we dont want a global extern 
     if (!in_check(b, us)) {
       std::uint64_t n = perft(b, depth - 1);
       std::cout << sqstr(m.from) << sqstr(m.to);

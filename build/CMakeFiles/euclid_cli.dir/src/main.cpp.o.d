@@ -931,6 +931,7 @@ CMakeFiles/euclid_cli.dir/src/main.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/stack \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/print \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/sstream \
   /Users/danielding/euclid-engine/include/euclid/board.hpp \
   /Users/danielding/euclid-engine/include/euclid/types.hpp \
   /Users/danielding/euclid-engine/include/euclid/zobrist.hpp \
@@ -986,4 +987,10 @@ CMakeFiles/euclid_cli.dir/src/main.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/seed_seq.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/student_t_distribution.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/weibull_distribution.h \
-  /Users/danielding/euclid-engine/include/euclid/fen.hpp
+  /Users/danielding/euclid-engine/include/euclid/fen.hpp \
+  /Users/danielding/euclid-engine/include/euclid/perft.hpp \
+  /Users/danielding/euclid-engine/include/euclid/move.hpp \
+  /Users/danielding/euclid-engine/include/euclid/movegen.hpp \
+  /Users/danielding/euclid-engine/include/euclid/movelist.hpp \
+  /Users/danielding/euclid-engine/include/euclid/move_do.hpp \
+  /Users/danielding/euclid-engine/include/euclid/attack.hpp
