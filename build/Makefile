@@ -243,6 +243,19 @@ queen_smoke/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/queen_smoke.dir/build.make CMakeFiles/queen_smoke.dir/build
 .PHONY : queen_smoke/fast
 
+#=============================================================================
+# Target rules for targets named pawn_smoke
+
+# Build rule for target.
+pawn_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 pawn_smoke
+.PHONY : pawn_smoke
+
+# fast build rule for target.
+pawn_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pawn_smoke.dir/build.make CMakeFiles/pawn_smoke.dir/build
+.PHONY : pawn_smoke/fast
+
 src/board.o: src/board.cpp.o
 .PHONY : src/board.o
 
@@ -459,6 +472,30 @@ tests/king_smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/king_smoke.dir/build.make CMakeFiles/king_smoke.dir/tests/king_smoke.cpp.s
 .PHONY : tests/king_smoke.cpp.s
 
+tests/pawn_smoke.o: tests/pawn_smoke.cpp.o
+.PHONY : tests/pawn_smoke.o
+
+# target to build an object file
+tests/pawn_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pawn_smoke.dir/build.make CMakeFiles/pawn_smoke.dir/tests/pawn_smoke.cpp.o
+.PHONY : tests/pawn_smoke.cpp.o
+
+tests/pawn_smoke.i: tests/pawn_smoke.cpp.i
+.PHONY : tests/pawn_smoke.i
+
+# target to preprocess a source file
+tests/pawn_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pawn_smoke.dir/build.make CMakeFiles/pawn_smoke.dir/tests/pawn_smoke.cpp.i
+.PHONY : tests/pawn_smoke.cpp.i
+
+tests/pawn_smoke.s: tests/pawn_smoke.cpp.s
+.PHONY : tests/pawn_smoke.s
+
+# target to generate assembly for a file
+tests/pawn_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pawn_smoke.dir/build.make CMakeFiles/pawn_smoke.dir/tests/pawn_smoke.cpp.s
+.PHONY : tests/pawn_smoke.cpp.s
+
 tests/perft_smoke.o: tests/perft_smoke.cpp.o
 .PHONY : tests/perft_smoke.o
 
@@ -569,6 +606,7 @@ help:
 	@echo "... euclid_engine"
 	@echo "... fen_test"
 	@echo "... king_smoke"
+	@echo "... pawn_smoke"
 	@echo "... perft_smoke"
 	@echo "... queen_smoke"
 	@echo "... rook_smoke"
@@ -600,6 +638,9 @@ help:
 	@echo "... tests/king_smoke.o"
 	@echo "... tests/king_smoke.i"
 	@echo "... tests/king_smoke.s"
+	@echo "... tests/pawn_smoke.o"
+	@echo "... tests/pawn_smoke.i"
+	@echo "... tests/pawn_smoke.s"
 	@echo "... tests/perft_smoke.o"
 	@echo "... tests/perft_smoke.i"
 	@echo "... tests/perft_smoke.s"

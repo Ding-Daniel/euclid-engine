@@ -72,6 +72,7 @@ all: CMakeFiles/king_smoke.dir/all
 all: CMakeFiles/bishop_smoke.dir/all
 all: CMakeFiles/rook_smoke.dir/all
 all: CMakeFiles/queen_smoke.dir/all
+all: CMakeFiles/pawn_smoke.dir/all
 .PHONY : all
 
 # The main recursive "codegen" target.
@@ -84,6 +85,7 @@ codegen: CMakeFiles/king_smoke.dir/codegen
 codegen: CMakeFiles/bishop_smoke.dir/codegen
 codegen: CMakeFiles/rook_smoke.dir/codegen
 codegen: CMakeFiles/queen_smoke.dir/codegen
+codegen: CMakeFiles/pawn_smoke.dir/codegen
 .PHONY : codegen
 
 # The main recursive "preinstall" target.
@@ -100,6 +102,7 @@ clean: CMakeFiles/king_smoke.dir/clean
 clean: CMakeFiles/bishop_smoke.dir/clean
 clean: CMakeFiles/rook_smoke.dir/clean
 clean: CMakeFiles/queen_smoke.dir/clean
+clean: CMakeFiles/pawn_smoke.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -173,7 +176,7 @@ CMakeFiles/euclid_cli.dir/clean:
 CMakeFiles/smoketest.dir/all: CMakeFiles/euclid_engine.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/smoketest.dir/build.make CMakeFiles/smoketest.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/smoketest.dir/build.make CMakeFiles/smoketest.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=21,22 "Built target smoketest"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=23,24 "Built target smoketest"
 .PHONY : CMakeFiles/smoketest.dir/all
 
 # Build rule for subdir invocation for target.
@@ -190,7 +193,7 @@ smoketest: CMakeFiles/smoketest.dir/rule
 # codegen rule for target.
 CMakeFiles/smoketest.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/smoketest.dir/build.make CMakeFiles/smoketest.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=21,22 "Finished codegen for target smoketest"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=23,24 "Finished codegen for target smoketest"
 .PHONY : CMakeFiles/smoketest.dir/codegen
 
 # clean rule for target.
@@ -237,7 +240,7 @@ CMakeFiles/fen_test.dir/clean:
 CMakeFiles/perft_smoke.dir/all: CMakeFiles/euclid_engine.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/perft_smoke.dir/build.make CMakeFiles/perft_smoke.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/perft_smoke.dir/build.make CMakeFiles/perft_smoke.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=15,16 "Built target perft_smoke"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=17,18 "Built target perft_smoke"
 .PHONY : CMakeFiles/perft_smoke.dir/all
 
 # Build rule for subdir invocation for target.
@@ -254,7 +257,7 @@ perft_smoke: CMakeFiles/perft_smoke.dir/rule
 # codegen rule for target.
 CMakeFiles/perft_smoke.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/perft_smoke.dir/build.make CMakeFiles/perft_smoke.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=15,16 "Finished codegen for target perft_smoke"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=17,18 "Finished codegen for target perft_smoke"
 .PHONY : CMakeFiles/perft_smoke.dir/codegen
 
 # clean rule for target.
@@ -333,7 +336,7 @@ CMakeFiles/bishop_smoke.dir/clean:
 CMakeFiles/rook_smoke.dir/all: CMakeFiles/euclid_engine.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rook_smoke.dir/build.make CMakeFiles/rook_smoke.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rook_smoke.dir/build.make CMakeFiles/rook_smoke.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=19,20 "Built target rook_smoke"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=21,22 "Built target rook_smoke"
 .PHONY : CMakeFiles/rook_smoke.dir/all
 
 # Build rule for subdir invocation for target.
@@ -350,7 +353,7 @@ rook_smoke: CMakeFiles/rook_smoke.dir/rule
 # codegen rule for target.
 CMakeFiles/rook_smoke.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rook_smoke.dir/build.make CMakeFiles/rook_smoke.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=19,20 "Finished codegen for target rook_smoke"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=21,22 "Finished codegen for target rook_smoke"
 .PHONY : CMakeFiles/rook_smoke.dir/codegen
 
 # clean rule for target.
@@ -365,7 +368,7 @@ CMakeFiles/rook_smoke.dir/clean:
 CMakeFiles/queen_smoke.dir/all: CMakeFiles/euclid_engine.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/queen_smoke.dir/build.make CMakeFiles/queen_smoke.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/queen_smoke.dir/build.make CMakeFiles/queen_smoke.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=17,18 "Built target queen_smoke"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=19,20 "Built target queen_smoke"
 .PHONY : CMakeFiles/queen_smoke.dir/all
 
 # Build rule for subdir invocation for target.
@@ -382,13 +385,45 @@ queen_smoke: CMakeFiles/queen_smoke.dir/rule
 # codegen rule for target.
 CMakeFiles/queen_smoke.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/queen_smoke.dir/build.make CMakeFiles/queen_smoke.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=17,18 "Finished codegen for target queen_smoke"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=19,20 "Finished codegen for target queen_smoke"
 .PHONY : CMakeFiles/queen_smoke.dir/codegen
 
 # clean rule for target.
 CMakeFiles/queen_smoke.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/queen_smoke.dir/build.make CMakeFiles/queen_smoke.dir/clean
 .PHONY : CMakeFiles/queen_smoke.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/pawn_smoke.dir
+
+# All Build rule for target.
+CMakeFiles/pawn_smoke.dir/all: CMakeFiles/euclid_engine.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pawn_smoke.dir/build.make CMakeFiles/pawn_smoke.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pawn_smoke.dir/build.make CMakeFiles/pawn_smoke.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=15,16 "Built target pawn_smoke"
+.PHONY : CMakeFiles/pawn_smoke.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/pawn_smoke.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build/CMakeFiles 8
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/pawn_smoke.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build/CMakeFiles 0
+.PHONY : CMakeFiles/pawn_smoke.dir/rule
+
+# Convenience name for target.
+pawn_smoke: CMakeFiles/pawn_smoke.dir/rule
+.PHONY : pawn_smoke
+
+# codegen rule for target.
+CMakeFiles/pawn_smoke.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pawn_smoke.dir/build.make CMakeFiles/pawn_smoke.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=15,16 "Finished codegen for target pawn_smoke"
+.PHONY : CMakeFiles/pawn_smoke.dir/codegen
+
+# clean rule for target.
+CMakeFiles/pawn_smoke.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pawn_smoke.dir/build.make CMakeFiles/pawn_smoke.dir/clean
+.PHONY : CMakeFiles/pawn_smoke.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

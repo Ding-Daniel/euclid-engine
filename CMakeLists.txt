@@ -71,3 +71,7 @@ add_test(NAME rook_smoke COMMAND $<TARGET_FILE:rook_smoke>)
 add_executable(queen_smoke tests/queen_smoke.cpp)
 target_link_libraries(queen_smoke PRIVATE euclid_engine)
 add_test(NAME queen_smoke COMMAND $<TARGET_FILE:queen_smoke>)
+
+add_executable(pawn_smoke tests/pawn_smoke.cpp)
+target_link_libraries(pawn_smoke PRIVATE euclid_engine)
+add_test(NAME pawn_smoke COMMAND $<TARGET_FILE:pawn_smoke>)

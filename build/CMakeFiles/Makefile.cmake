@@ -57,4 +57,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/bishop_smoke.dir/DependInfo.cmake"
   "CMakeFiles/rook_smoke.dir/DependInfo.cmake"
   "CMakeFiles/queen_smoke.dir/DependInfo.cmake"
+  "CMakeFiles/pawn_smoke.dir/DependInfo.cmake"
   )

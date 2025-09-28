@@ -84,8 +84,8 @@ void generate_pseudo_legal(const Board& b, MoveList& out) {
   // -----------------
   // Rooks (orthogonals)
   // -----------------
-  static constexpr int DFr[4] = {+1, -1,  0,  0}; // E, W, -,  -
-  static constexpr int DRr[4] = { 0,  0, +1, -1}; // -,  -, N,  S
+  static constexpr int DFr[4] = {+1, -1,  0,  0};
+  static constexpr int DRr[4] = { 0,  0, +1, -1};
   for (int s = 0; s < 64; ++s) {
     Color pcColor; Piece pc = b.piece_at(s, &pcColor);
     if (pc != Piece::Rook || pcColor != us) continue;
@@ -158,6 +158,114 @@ void generate_pseudo_legal(const Board& b, MoveList& out) {
   }
 
   // -----------------
+  // Pawns (push, double, captures, promotions, EP gen)
+  // -----------------
+  const int ep = b.ep_square();
+  for (int s = 0; s < 64; ++s) {
+    Color pcColor; Piece pc = b.piece_at(s, &pcColor);
+    if (pc != Piece::Pawn || pcColor != us) continue;
+
+    const int f0 = file_of(s), r0 = rank_of(s);
+
+    if (us == Color::White) {
+      // forward
+      int one = s + 8;
+      if (r0 < 7 && on_board(one)) {
+        Color oc; Piece op = b.piece_at(one, &oc);
+        if (op == Piece::None) {
+          if (r0 == 6) {
+            // promotions (to rank 8)
+            out.push(Move{ s, one, MoveFlag::Quiet, Piece::Queen });
+            out.push(Move{ s, one, MoveFlag::Quiet, Piece::Rook  });
+            out.push(Move{ s, one, MoveFlag::Quiet, Piece::Bishop});
+            out.push(Move{ s, one, MoveFlag::Quiet, Piece::Knight});
+          } else {
+            out.push(Move{ s, one, MoveFlag::Quiet, Piece::None });
+            // double
+            if (r0 == 1) {
+              int two = s + 16;
+              Color oc2; Piece op2 = b.piece_at(two, &oc2);
+              if (op2 == Piece::None) {
+                out.push(Move{ s, two, MoveFlag::DoublePush, Piece::None });
+              }
+            }
+          }
+        }
+      }
+      // captures (including promo)
+      for (int df : {-1, +1}) {
+        int nf = f0 + df;
+        if (nf < 0 || nf > 7) continue;
+        int t = s + (df == -1 ? 7 : 9);
+        if (!on_board(t)) continue;
+        Color oc; Piece op = b.piece_at(t, &oc);
+        if (op != Piece::None && oc == opp) {
+          if (r0 == 6) {
+            out.push(Move{ s, t, MoveFlag::Capture, Piece::Queen });
+            out.push(Move{ s, t, MoveFlag::Capture, Piece::Rook  });
+            out.push(Move{ s, t, MoveFlag::Capture, Piece::Bishop});
+            out.push(Move{ s, t, MoveFlag::Capture, Piece::Knight});
+          } else {
+            out.push(Move{ s, t, MoveFlag::Capture, Piece::None });
+          }
+        }
+      }
+      // en-passant gen (FEN guarantees validity if ep >= 0)
+      if (ep >= 0) {
+        if (s + 7 == ep && f0 > 0)  out.push(Move{ s, ep, MoveFlag::EnPassant, Piece::None });
+        if (s + 9 == ep && f0 < 7)  out.push(Move{ s, ep, MoveFlag::EnPassant, Piece::None });
+      }
+    } else {
+      // Black
+      int one = s - 8;
+      if (r0 > 0 && on_board(one)) {
+        Color oc; Piece op = b.piece_at(one, &oc);
+        if (op == Piece::None) {
+          if (r0 == 1) {
+            // promotions (to rank 1)
+            out.push(Move{ s, one, MoveFlag::Quiet, Piece::Queen });
+            out.push(Move{ s, one, MoveFlag::Quiet, Piece::Rook  });
+            out.push(Move{ s, one, MoveFlag::Quiet, Piece::Bishop});
+            out.push(Move{ s, one, MoveFlag::Quiet, Piece::Knight});
+          } else {
+            out.push(Move{ s, one, MoveFlag::Quiet, Piece::None });
+            if (r0 == 6) {
+              int two = s - 16;
+              Color oc2; Piece op2 = b.piece_at(two, &oc2);
+              if (op2 == Piece::None) {
+                out.push(Move{ s, two, MoveFlag::DoublePush, Piece::None });
+              }
+            }
+          }
+        }
+      }
+      // captures (including promo)
+      for (int df : {-1, +1}) {
+        int nf = f0 + df;
+        if (nf < 0 || nf > 7) continue;
+        int t = s + (df == -1 ? -9 : -7);
+        if (!on_board(t)) continue;
+        Color oc; Piece op = b.piece_at(t, &oc);
+        if (op != Piece::None && oc == opp) {
+          if (r0 == 1) {
+            out.push(Move{ s, t, MoveFlag::Capture, Piece::Queen });
+            out.push(Move{ s, t, MoveFlag::Capture, Piece::Rook  });
+            out.push(Move{ s, t, MoveFlag::Capture, Piece::Bishop});
+            out.push(Move{ s, t, MoveFlag::Capture, Piece::Knight});
+          } else {
+            out.push(Move{ s, t, MoveFlag::Capture, Piece::None });
+          }
+        }
+      }
+      // en-passant gen
+      if (ep >= 0) {
+        if (s - 9 == ep && f0 > 0)  out.push(Move{ s, ep, MoveFlag::EnPassant, Piece::None });
+        if (s - 7 == ep && f0 < 7)  out.push(Move{ s, ep, MoveFlag::EnPassant, Piece::None });
+      }
+    }
+  }
+
+  // -----------------
   // Kings (no adjacency to enemy king)
   // -----------------
   static constexpr int K_OFF[8] = {+8, -8, +1, -1, +9, +7, -7, -9};
@@ -182,8 +290,6 @@ void generate_pseudo_legal(const Board& b, MoveList& out) {
       out.push(Move{ s, t, isCap ? MoveFlag::Capture : MoveFlag::Quiet, Piece::None });
     }
   }
-
-  // (Pawns next.)
 }
 
 } // namespace euclid
