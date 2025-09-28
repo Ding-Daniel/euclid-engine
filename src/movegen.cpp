@@ -111,6 +111,53 @@ void generate_pseudo_legal(const Board& b, MoveList& out) {
   }
 
   // -----------------
+  // Queens (diagonals + orthogonals)
+  // -----------------
+  for (int s = 0; s < 64; ++s) {
+    Color pcColor; Piece pc = b.piece_at(s, &pcColor);
+    if (pc != Piece::Queen || pcColor != us) continue;
+
+    const int f0 = file_of(s), r0 = rank_of(s);
+
+    // Diagonals
+    for (int dir = 0; dir < 4; ++dir) {
+      int f = f0 + DFb[dir], r = r0 + DRb[dir];
+      while (f >= 0 && f < 8 && r >= 0 && r < 8) {
+        const int t = r * 8 + f;
+        Color oc; Piece op = b.piece_at(t, &oc);
+        if (op == Piece::None) {
+          out.push(Move{ s, t, MoveFlag::Quiet, Piece::None });
+        } else {
+          if (oc != us && op != Piece::King) {
+            out.push(Move{ s, t, MoveFlag::Capture, Piece::None });
+          }
+          break;
+        }
+        f += DFb[dir];
+        r += DRb[dir];
+      }
+    }
+    // Orthogonals
+    for (int dir = 0; dir < 4; ++dir) {
+      int f = f0 + DFr[dir], r = r0 + DRr[dir];
+      while (f >= 0 && f < 8 && r >= 0 && r < 8) {
+        const int t = r * 8 + f;
+        Color oc; Piece op = b.piece_at(t, &oc);
+        if (op == Piece::None) {
+          out.push(Move{ s, t, MoveFlag::Quiet, Piece::None });
+        } else {
+          if (oc != us && op != Piece::King) {
+            out.push(Move{ s, t, MoveFlag::Capture, Piece::None });
+          }
+          break;
+        }
+        f += DFr[dir];
+        r += DRr[dir];
+      }
+    }
+  }
+
+  // -----------------
   // Kings (no adjacency to enemy king)
   // -----------------
   static constexpr int K_OFF[8] = {+8, -8, +1, -1, +9, +7, -7, -9};
@@ -136,7 +183,7 @@ void generate_pseudo_legal(const Board& b, MoveList& out) {
     }
   }
 
-  // (Queens & pawns next.)
+  // (Pawns next.)
 }
 
 } // namespace euclid

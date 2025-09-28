@@ -16,3 +16,5 @@ add_test([=[bishop_smoke]=] "/Users/danielding/euclid-engine/build/bishop_smoke"
 set_tests_properties([=[bishop_smoke]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/danielding/euclid-engine/CMakeLists.txt;65;add_test;/Users/danielding/euclid-engine/CMakeLists.txt;0;")
 add_test([=[rook_smoke]=] "/Users/danielding/euclid-engine/build/rook_smoke")
 set_tests_properties([=[rook_smoke]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/danielding/euclid-engine/CMakeLists.txt;69;add_test;/Users/danielding/euclid-engine/CMakeLists.txt;0;")
+add_test([=[queen_smoke]=] "/Users/danielding/euclid-engine/build/queen_smoke")
+set_tests_properties([=[queen_smoke]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/danielding/euclid-engine/CMakeLists.txt;73;add_test;/Users/danielding/euclid-engine/CMakeLists.txt;0;")
