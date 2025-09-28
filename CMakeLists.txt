@@ -18,6 +18,7 @@ add_library(euclid_engine STATIC
   src/movegen.cpp
   src/perft.cpp
   src/attack.cpp
+  src/move_do.cpp
 )
 target_include_directories(euclid_engine PUBLIC include)
 
@@ -73,3 +74,7 @@ add_test(NAME pin_smoke COMMAND $<TARGET_FILE:pin_smoke>)
 add_executable(incheck_smoke tests/incheck_smoke.cpp)
 target_link_libraries(incheck_smoke PRIVATE euclid_engine)
 add_test(NAME incheck_smoke COMMAND $<TARGET_FILE:incheck_smoke>)
+
+add_executable(do_undo_smoke tests/do_undo_smoke.cpp)
+target_link_libraries(do_undo_smoke PRIVATE euclid_engine)
+add_test(NAME do_undo_smoke COMMAND $<TARGET_FILE:do_undo_smoke>)

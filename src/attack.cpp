@@ -5,7 +5,7 @@ namespace euclid {
 
 static inline bool on_board(int s) { return s >= 0 && s < 64; }
 static inline Color them(Color us) { return us == Color::White ? Color::Black : Color::White; }
-static inline int absd(int a, int b) { return std::abs(a - b); }
+//static inline int absd(int a, int b) { return std::abs(a - b); } // shows annoying error when building
 
 bool square_attacked(const Board& b, Square s, Color by) {
   // Knights

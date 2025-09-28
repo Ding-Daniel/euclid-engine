@@ -282,6 +282,19 @@ incheck_smoke/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/incheck_smoke.dir/build.make CMakeFiles/incheck_smoke.dir/build
 .PHONY : incheck_smoke/fast
 
+#=============================================================================
+# Target rules for targets named do_undo_smoke
+
+# Build rule for target.
+do_undo_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 do_undo_smoke
+.PHONY : do_undo_smoke
+
+# fast build rule for target.
+do_undo_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/do_undo_smoke.dir/build.make CMakeFiles/do_undo_smoke.dir/build
+.PHONY : do_undo_smoke/fast
+
 src/attack.o: src/attack.cpp.o
 .PHONY : src/attack.o
 
@@ -378,6 +391,30 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_cli.dir/build.make CMakeFiles/euclid_cli.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/move_do.o: src/move_do.cpp.o
+.PHONY : src/move_do.o
+
+# target to build an object file
+src/move_do.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/move_do.cpp.o
+.PHONY : src/move_do.cpp.o
+
+src/move_do.i: src/move_do.cpp.i
+.PHONY : src/move_do.i
+
+# target to preprocess a source file
+src/move_do.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/move_do.cpp.i
+.PHONY : src/move_do.cpp.i
+
+src/move_do.s: src/move_do.cpp.s
+.PHONY : src/move_do.s
+
+# target to generate assembly for a file
+src/move_do.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/move_do.cpp.s
+.PHONY : src/move_do.cpp.s
+
 src/movegen.o: src/movegen.cpp.o
 .PHONY : src/movegen.o
 
@@ -473,6 +510,30 @@ tests/bishop_smoke.s: tests/bishop_smoke.cpp.s
 tests/bishop_smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/bishop_smoke.dir/build.make CMakeFiles/bishop_smoke.dir/tests/bishop_smoke.cpp.s
 .PHONY : tests/bishop_smoke.cpp.s
+
+tests/do_undo_smoke.o: tests/do_undo_smoke.cpp.o
+.PHONY : tests/do_undo_smoke.o
+
+# target to build an object file
+tests/do_undo_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/do_undo_smoke.dir/build.make CMakeFiles/do_undo_smoke.dir/tests/do_undo_smoke.cpp.o
+.PHONY : tests/do_undo_smoke.cpp.o
+
+tests/do_undo_smoke.i: tests/do_undo_smoke.cpp.i
+.PHONY : tests/do_undo_smoke.i
+
+# target to preprocess a source file
+tests/do_undo_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/do_undo_smoke.dir/build.make CMakeFiles/do_undo_smoke.dir/tests/do_undo_smoke.cpp.i
+.PHONY : tests/do_undo_smoke.cpp.i
+
+tests/do_undo_smoke.s: tests/do_undo_smoke.cpp.s
+.PHONY : tests/do_undo_smoke.s
+
+# target to generate assembly for a file
+tests/do_undo_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/do_undo_smoke.dir/build.make CMakeFiles/do_undo_smoke.dir/tests/do_undo_smoke.cpp.s
+.PHONY : tests/do_undo_smoke.cpp.s
 
 tests/fen.o: tests/fen.cpp.o
 .PHONY : tests/fen.o
@@ -700,6 +761,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... bishop_smoke"
+	@echo "... do_undo_smoke"
 	@echo "... euclid_cli"
 	@echo "... euclid_engine"
 	@echo "... fen_test"
@@ -723,6 +785,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/move_do.o"
+	@echo "... src/move_do.i"
+	@echo "... src/move_do.s"
 	@echo "... src/movegen.o"
 	@echo "... src/movegen.i"
 	@echo "... src/movegen.s"
@@ -735,6 +800,9 @@ help:
 	@echo "... tests/bishop_smoke.o"
 	@echo "... tests/bishop_smoke.i"
 	@echo "... tests/bishop_smoke.s"
+	@echo "... tests/do_undo_smoke.o"
+	@echo "... tests/do_undo_smoke.i"
+	@echo "... tests/do_undo_smoke.s"
 	@echo "... tests/fen.o"
 	@echo "... tests/fen.i"
 	@echo "... tests/fen.s"

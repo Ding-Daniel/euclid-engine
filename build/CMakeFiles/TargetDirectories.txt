@@ -10,6 +10,7 @@
 /Users/danielding/euclid-engine/build/CMakeFiles/pawn_smoke.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/pin_smoke.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/incheck_smoke.dir
+/Users/danielding/euclid-engine/build/CMakeFiles/do_undo_smoke.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/test.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/edit_cache.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/rebuild_cache.dir

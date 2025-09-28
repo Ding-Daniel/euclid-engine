@@ -1,61 +1,11 @@
 #include "euclid/perft.hpp"
 #include "euclid/movegen.hpp"
 #include "euclid/attack.hpp"
-#include <cassert>
-#include <cstdlib>
+#include "euclid/move_do.hpp"
 
 namespace euclid {
 
-static Board apply_unchecked(const Board& b, const Move& m) {
-  Board nb = b;
-
-  const Color us = b.side_to_move();
-
-  // Clear EP by default; set only on double push
-  nb.set_ep_square(-1);
-
-  // Identify moving piece
-  Color sc; Piece srcP = nb.piece_at(m.from, &sc);
-  assert(srcP != Piece::None && sc == us);
-
-  // Destination occupancy
-  Color dc; Piece dstP = nb.piece_at(m.to, &dc);
-
-  // En passant capture?
-  bool is_ep = (srcP == Piece::Pawn && dstP == Piece::None && m.to == b.ep_square());
-  if (is_ep) {
-    int dir = (us == Color::White ? -8 : +8);   // captured pawn sits behind target square
-    Square cap_sq = m.to + dir;
-    // remove the pawn directly; we don't depend on assert in Release
-    nb.remove_piece(us == Color::White ? Color::Black : Color::White, Piece::Pawn, cap_sq);
-  } else if (dstP != Piece::None && dc != us) {
-    // Normal capture
-    nb.remove_piece(dc, dstP, m.to);
-  }
-
-  // Move the piece (with promotion if any)
-  nb.remove_piece(us, srcP, m.from);
-  nb.set_piece(us, (m.promo != Piece::None ? m.promo : srcP), m.to);
-
-  // Halfmove clock
-  if (dstP != Piece::None || is_ep || srcP == Piece::Pawn) nb.set_halfmove_clock(0);
-  else nb.set_halfmove_clock(nb.halfmove_clock() + 1);
-
-  // EP square after a double pawn push
-  if (srcP == Piece::Pawn && std::abs(m.to - m.from) == 16 && file_of(m.to) == file_of(m.from)) {
-    nb.set_ep_square((m.from + m.to) / 2);
-  }
-
-  // Fullmove number increments after Black's move
-  if (us == Color::Black) nb.set_fullmove_number(nb.fullmove_number() + 1);
-
-  // Flip side to move
-  nb.set_side_to_move(us == Color::White ? Color::Black : Color::White);
-
-  return nb;
-}
-
-std::uint64_t perft(const Board& b, int depth) {
+static std::uint64_t perft_mut(Board& b, int depth) {
   if (depth == 0) return 1ULL;
 
   MoveList ml;
@@ -63,13 +13,21 @@ std::uint64_t perft(const Board& b, int depth) {
 
   const Color us = b.side_to_move();
   std::uint64_t nodes = 0ULL;
+
   for (const auto& m : ml) {
-    Board child = apply_unchecked(b, m);
-    // legality filter: our move must not leave us in check
-    if (in_check(child, us)) continue;
-    nodes += perft(child, depth - 1);
+    State st{};
+    do_move(b, m, st);
+    if (!in_check(b, us)) {               // legal only if our king not in check after move
+      nodes += perft_mut(b, depth - 1);
+    }
+    undo_move(b, m, st);
   }
   return nodes;
+}
+
+std::uint64_t perft(const Board& b, int depth) {
+  Board copy = b;                          // copy once at root
+  return perft_mut(copy, depth);
 }
 
 } // namespace euclid
