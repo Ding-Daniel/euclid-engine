@@ -1,6 +1,8 @@
 #include "euclid/perft.hpp"
 #include "euclid/movegen.hpp"
+#include "euclid/attack.hpp"
 #include <cassert>
+#include <cstdlib>
 
 namespace euclid {
 
@@ -8,28 +10,24 @@ static Board apply_unchecked(const Board& b, const Move& m) {
   Board nb = b;
 
   const Color us = b.side_to_move();
-  const Color op = (us == Color::White ? Color::Black : Color::White);
 
-  // Clear EP by default; set it only on a double push
+  // Clear EP by default; set only on double push
   nb.set_ep_square(-1);
 
   // Identify moving piece
-  Color sc;
-  Piece srcP = nb.piece_at(m.from, &sc);
+  Color sc; Piece srcP = nb.piece_at(m.from, &sc);
   assert(srcP != Piece::None && sc == us);
 
   // Destination occupancy
-  Color dc;
-  Piece dstP = nb.piece_at(m.to, &dc);
+  Color dc; Piece dstP = nb.piece_at(m.to, &dc);
 
   // En passant capture?
   bool is_ep = (srcP == Piece::Pawn && dstP == Piece::None && m.to == b.ep_square());
   if (is_ep) {
-    int dir = (us == Color::White ? -8 : +8); // captured pawn sits behind target square
+    int dir = (us == Color::White ? -8 : +8);   // captured pawn sits behind target square
     Square cap_sq = m.to + dir;
-    Color cc; Piece cp = nb.piece_at(cap_sq, &cc);
-    assert(cp == Piece::Pawn && cc == op);
-    nb.remove_piece(cc, cp, cap_sq);
+    // remove the pawn directly; we don't depend on assert in Release
+    nb.remove_piece(us == Color::White ? Color::Black : Color::White, Piece::Pawn, cap_sq);
   } else if (dstP != Piece::None && dc != us) {
     // Normal capture
     nb.remove_piece(dc, dstP, m.to);
@@ -54,7 +52,6 @@ static Board apply_unchecked(const Board& b, const Move& m) {
   // Flip side to move
   nb.set_side_to_move(us == Color::White ? Color::Black : Color::White);
 
-  // TODO: castling rights adjustments (later) + check-based legality filter (later)
   return nb;
 }
 
@@ -64,9 +61,12 @@ std::uint64_t perft(const Board& b, int depth) {
   MoveList ml;
   generate_pseudo_legal(b, ml);
 
+  const Color us = b.side_to_move();
   std::uint64_t nodes = 0ULL;
   for (const auto& m : ml) {
     Board child = apply_unchecked(b, m);
+    // legality filter: our move must not leave us in check
+    if (in_check(child, us)) continue;
     nodes += perft(child, depth - 1);
   }
   return nodes;

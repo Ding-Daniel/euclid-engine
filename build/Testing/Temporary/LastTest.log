@@ -1,108 +1,153 @@
-Start testing: Sep 27 17:16 PDT
+Start testing: Sep 27 17:31 PDT
 ----------------------------------------------------------
-1/7 Testing: smoke
-1/7 Test: smoke
+1/10 Testing: smoke
+1/10 Test: smoke
 Command: "/Users/danielding/euclid-engine/build/smoketest"
 Directory: /Users/danielding/euclid-engine/build
-"smoke" start time: Sep 27 17:16 PDT
+"smoke" start time: Sep 27 17:31 PDT
 Output:
 ----------------------------------------------------------
 <end of output>
-Test time =   0.31 sec
+Test time =   0.29 sec
 ----------------------------------------------------------
 Test Passed.
-"smoke" end time: Sep 27 17:16 PDT
+"smoke" end time: Sep 27 17:31 PDT
 "smoke" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-2/7 Testing: fen
-2/7 Test: fen
+2/10 Testing: fen
+2/10 Test: fen
 Command: "/Users/danielding/euclid-engine/build/fen_test"
 Directory: /Users/danielding/euclid-engine/build
-"fen" start time: Sep 27 17:16 PDT
+"fen" start time: Sep 27 17:31 PDT
 Output:
 ----------------------------------------------------------
 <end of output>
-Test time =   0.19 sec
+Test time =   0.18 sec
 ----------------------------------------------------------
 Test Passed.
-"fen" end time: Sep 27 17:16 PDT
+"fen" end time: Sep 27 17:31 PDT
 "fen" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-3/7 Testing: perft_smoke
-3/7 Test: perft_smoke
+3/10 Testing: perft_smoke
+3/10 Test: perft_smoke
 Command: "/Users/danielding/euclid-engine/build/perft_smoke"
 Directory: /Users/danielding/euclid-engine/build
-"perft_smoke" start time: Sep 27 17:16 PDT
+"perft_smoke" start time: Sep 27 17:31 PDT
 Output:
 ----------------------------------------------------------
 <end of output>
 Test time =   0.18 sec
 ----------------------------------------------------------
 Test Passed.
-"perft_smoke" end time: Sep 27 17:16 PDT
+"perft_smoke" end time: Sep 27 17:31 PDT
 "perft_smoke" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-4/7 Testing: king_smoke
-4/7 Test: king_smoke
+4/10 Testing: king_smoke
+4/10 Test: king_smoke
 Command: "/Users/danielding/euclid-engine/build/king_smoke"
 Directory: /Users/danielding/euclid-engine/build
-"king_smoke" start time: Sep 27 17:16 PDT
+"king_smoke" start time: Sep 27 17:31 PDT
 Output:
 ----------------------------------------------------------
 <end of output>
 Test time =   0.18 sec
 ----------------------------------------------------------
 Test Passed.
-"king_smoke" end time: Sep 27 17:16 PDT
+"king_smoke" end time: Sep 27 17:31 PDT
 "king_smoke" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-5/7 Testing: bishop_smoke
-5/7 Test: bishop_smoke
+5/10 Testing: bishop_smoke
+5/10 Test: bishop_smoke
 Command: "/Users/danielding/euclid-engine/build/bishop_smoke"
 Directory: /Users/danielding/euclid-engine/build
-"bishop_smoke" start time: Sep 27 17:16 PDT
-Output:
-----------------------------------------------------------
-<end of output>
-Test time =   0.19 sec
-----------------------------------------------------------
-Test Passed.
-"bishop_smoke" end time: Sep 27 17:16 PDT
-"bishop_smoke" time elapsed: 00:00:00
-----------------------------------------------------------
-
-6/7 Testing: rook_smoke
-6/7 Test: rook_smoke
-Command: "/Users/danielding/euclid-engine/build/rook_smoke"
-Directory: /Users/danielding/euclid-engine/build
-"rook_smoke" start time: Sep 27 17:16 PDT
+"bishop_smoke" start time: Sep 27 17:31 PDT
 Output:
 ----------------------------------------------------------
 <end of output>
 Test time =   0.18 sec
 ----------------------------------------------------------
 Test Passed.
-"rook_smoke" end time: Sep 27 17:16 PDT
-"rook_smoke" time elapsed: 00:00:00
+"bishop_smoke" end time: Sep 27 17:31 PDT
+"bishop_smoke" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-7/7 Testing: queen_smoke
-7/7 Test: queen_smoke
-Command: "/Users/danielding/euclid-engine/build/queen_smoke"
+6/10 Testing: rook_smoke
+6/10 Test: rook_smoke
+Command: "/Users/danielding/euclid-engine/build/rook_smoke"
 Directory: /Users/danielding/euclid-engine/build
-"queen_smoke" start time: Sep 27 17:16 PDT
+"rook_smoke" start time: Sep 27 17:31 PDT
 Output:
 ----------------------------------------------------------
 <end of output>
-Test time =   0.22 sec
+Test time =   0.17 sec
 ----------------------------------------------------------
 Test Passed.
-"queen_smoke" end time: Sep 27 17:16 PDT
+"rook_smoke" end time: Sep 27 17:31 PDT
+"rook_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/10 Testing: queen_smoke
+7/10 Test: queen_smoke
+Command: "/Users/danielding/euclid-engine/build/queen_smoke"
+Directory: /Users/danielding/euclid-engine/build
+"queen_smoke" start time: Sep 27 17:31 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.18 sec
+----------------------------------------------------------
+Test Passed.
+"queen_smoke" end time: Sep 27 17:31 PDT
 "queen_smoke" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Sep 27 17:16 PDT
+8/10 Testing: pawn_smoke
+8/10 Test: pawn_smoke
+Command: "/Users/danielding/euclid-engine/build/pawn_smoke"
+Directory: /Users/danielding/euclid-engine/build
+"pawn_smoke" start time: Sep 27 17:31 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.18 sec
+----------------------------------------------------------
+Test Passed.
+"pawn_smoke" end time: Sep 27 17:31 PDT
+"pawn_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/10 Testing: pin_smoke
+9/10 Test: pin_smoke
+Command: "/Users/danielding/euclid-engine/build/pin_smoke"
+Directory: /Users/danielding/euclid-engine/build
+"pin_smoke" start time: Sep 27 17:31 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.18 sec
+----------------------------------------------------------
+Test Passed.
+"pin_smoke" end time: Sep 27 17:31 PDT
+"pin_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/10 Testing: incheck_smoke
+10/10 Test: incheck_smoke
+Command: "/Users/danielding/euclid-engine/build/incheck_smoke"
+Directory: /Users/danielding/euclid-engine/build
+"incheck_smoke" start time: Sep 27 17:31 PDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.18 sec
+----------------------------------------------------------
+Test Passed.
+"incheck_smoke" end time: Sep 27 17:31 PDT
+"incheck_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 27 17:31 PDT

@@ -1,2 +1,2 @@
-/usr/bin/ar qc libeuclid_engine.a CMakeFiles/euclid_engine.dir/src/board.cpp.o CMakeFiles/euclid_engine.dir/src/zobrist.cpp.o CMakeFiles/euclid_engine.dir/src/fen.cpp.o CMakeFiles/euclid_engine.dir/src/movegen.cpp.o CMakeFiles/euclid_engine.dir/src/perft.cpp.o
+/usr/bin/ar qc libeuclid_engine.a CMakeFiles/euclid_engine.dir/src/board.cpp.o CMakeFiles/euclid_engine.dir/src/zobrist.cpp.o CMakeFiles/euclid_engine.dir/src/fen.cpp.o CMakeFiles/euclid_engine.dir/src/movegen.cpp.o CMakeFiles/euclid_engine.dir/src/perft.cpp.o CMakeFiles/euclid_engine.dir/src/attack.cpp.o
 /usr/bin/ranlib libeuclid_engine.a

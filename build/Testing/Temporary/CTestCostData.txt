@@ -1,8 +1,11 @@
-smoke 10 0.031429
-fen 10 0.0189449
-perft_smoke 9 0.0204057
-king_smoke 4 0.0445739
-bishop_smoke 3 0.0637526
-rook_smoke 4 0.0455334
-queen_smoke 1 0.222016
+smoke 1 0.287361
+fen 1 0.177318
+perft_smoke 1 0.181178
+king_smoke 1 0.175145
+bishop_smoke 1 0.176733
+rook_smoke 1 0.171548
+queen_smoke 1 0.176306
+pawn_smoke 1 0.181279
+pin_smoke 1 0.181199
+incheck_smoke 1 0.175122
 ---

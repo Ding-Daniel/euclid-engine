@@ -256,6 +256,56 @@ pawn_smoke/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pawn_smoke.dir/build.make CMakeFiles/pawn_smoke.dir/build
 .PHONY : pawn_smoke/fast
 
+#=============================================================================
+# Target rules for targets named pin_smoke
+
+# Build rule for target.
+pin_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 pin_smoke
+.PHONY : pin_smoke
+
+# fast build rule for target.
+pin_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pin_smoke.dir/build.make CMakeFiles/pin_smoke.dir/build
+.PHONY : pin_smoke/fast
+
+#=============================================================================
+# Target rules for targets named incheck_smoke
+
+# Build rule for target.
+incheck_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 incheck_smoke
+.PHONY : incheck_smoke
+
+# fast build rule for target.
+incheck_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/incheck_smoke.dir/build.make CMakeFiles/incheck_smoke.dir/build
+.PHONY : incheck_smoke/fast
+
+src/attack.o: src/attack.cpp.o
+.PHONY : src/attack.o
+
+# target to build an object file
+src/attack.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/attack.cpp.o
+.PHONY : src/attack.cpp.o
+
+src/attack.i: src/attack.cpp.i
+.PHONY : src/attack.i
+
+# target to preprocess a source file
+src/attack.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/attack.cpp.i
+.PHONY : src/attack.cpp.i
+
+src/attack.s: src/attack.cpp.s
+.PHONY : src/attack.s
+
+# target to generate assembly for a file
+src/attack.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/attack.cpp.s
+.PHONY : src/attack.cpp.s
+
 src/board.o: src/board.cpp.o
 .PHONY : src/board.o
 
@@ -448,6 +498,30 @@ tests/fen.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fen_test.dir/build.make CMakeFiles/fen_test.dir/tests/fen.cpp.s
 .PHONY : tests/fen.cpp.s
 
+tests/incheck_smoke.o: tests/incheck_smoke.cpp.o
+.PHONY : tests/incheck_smoke.o
+
+# target to build an object file
+tests/incheck_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/incheck_smoke.dir/build.make CMakeFiles/incheck_smoke.dir/tests/incheck_smoke.cpp.o
+.PHONY : tests/incheck_smoke.cpp.o
+
+tests/incheck_smoke.i: tests/incheck_smoke.cpp.i
+.PHONY : tests/incheck_smoke.i
+
+# target to preprocess a source file
+tests/incheck_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/incheck_smoke.dir/build.make CMakeFiles/incheck_smoke.dir/tests/incheck_smoke.cpp.i
+.PHONY : tests/incheck_smoke.cpp.i
+
+tests/incheck_smoke.s: tests/incheck_smoke.cpp.s
+.PHONY : tests/incheck_smoke.s
+
+# target to generate assembly for a file
+tests/incheck_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/incheck_smoke.dir/build.make CMakeFiles/incheck_smoke.dir/tests/incheck_smoke.cpp.s
+.PHONY : tests/incheck_smoke.cpp.s
+
 tests/king_smoke.o: tests/king_smoke.cpp.o
 .PHONY : tests/king_smoke.o
 
@@ -519,6 +593,30 @@ tests/perft_smoke.s: tests/perft_smoke.cpp.s
 tests/perft_smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/perft_smoke.dir/build.make CMakeFiles/perft_smoke.dir/tests/perft_smoke.cpp.s
 .PHONY : tests/perft_smoke.cpp.s
+
+tests/pin_smoke.o: tests/pin_smoke.cpp.o
+.PHONY : tests/pin_smoke.o
+
+# target to build an object file
+tests/pin_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pin_smoke.dir/build.make CMakeFiles/pin_smoke.dir/tests/pin_smoke.cpp.o
+.PHONY : tests/pin_smoke.cpp.o
+
+tests/pin_smoke.i: tests/pin_smoke.cpp.i
+.PHONY : tests/pin_smoke.i
+
+# target to preprocess a source file
+tests/pin_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pin_smoke.dir/build.make CMakeFiles/pin_smoke.dir/tests/pin_smoke.cpp.i
+.PHONY : tests/pin_smoke.cpp.i
+
+tests/pin_smoke.s: tests/pin_smoke.cpp.s
+.PHONY : tests/pin_smoke.s
+
+# target to generate assembly for a file
+tests/pin_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pin_smoke.dir/build.make CMakeFiles/pin_smoke.dir/tests/pin_smoke.cpp.s
+.PHONY : tests/pin_smoke.cpp.s
 
 tests/queen_smoke.o: tests/queen_smoke.cpp.o
 .PHONY : tests/queen_smoke.o
@@ -605,12 +703,17 @@ help:
 	@echo "... euclid_cli"
 	@echo "... euclid_engine"
 	@echo "... fen_test"
+	@echo "... incheck_smoke"
 	@echo "... king_smoke"
 	@echo "... pawn_smoke"
 	@echo "... perft_smoke"
+	@echo "... pin_smoke"
 	@echo "... queen_smoke"
 	@echo "... rook_smoke"
 	@echo "... smoketest"
+	@echo "... src/attack.o"
+	@echo "... src/attack.i"
+	@echo "... src/attack.s"
 	@echo "... src/board.o"
 	@echo "... src/board.i"
 	@echo "... src/board.s"
@@ -635,6 +738,9 @@ help:
 	@echo "... tests/fen.o"
 	@echo "... tests/fen.i"
 	@echo "... tests/fen.s"
+	@echo "... tests/incheck_smoke.o"
+	@echo "... tests/incheck_smoke.i"
+	@echo "... tests/incheck_smoke.s"
 	@echo "... tests/king_smoke.o"
 	@echo "... tests/king_smoke.i"
 	@echo "... tests/king_smoke.s"
@@ -644,6 +750,9 @@ help:
 	@echo "... tests/perft_smoke.o"
 	@echo "... tests/perft_smoke.i"
 	@echo "... tests/perft_smoke.s"
+	@echo "... tests/pin_smoke.o"
+	@echo "... tests/pin_smoke.i"
+	@echo "... tests/pin_smoke.s"
 	@echo "... tests/queen_smoke.o"
 	@echo "... tests/queen_smoke.i"
 	@echo "... tests/queen_smoke.s"
