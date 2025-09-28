@@ -1,6 +1,7 @@
-smoke 6 0.0373935
-fen 6 0.0169627
-perft_smoke 5 0.0218609
-king_smoke 2 0.0479174
-bishop_smoke 1 0.18225
+smoke 9 0.000198593
+fen 9 0.000184301
+perft_smoke 8 0.00017612
+king_smoke 3 0.104989
+bishop_smoke 2 0.0943041
+rook_smoke 3 0.00199494
 ---
