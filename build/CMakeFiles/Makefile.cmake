@@ -54,4 +54,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/fen_test.dir/DependInfo.cmake"
   "CMakeFiles/perft_smoke.dir/DependInfo.cmake"
   "CMakeFiles/king_smoke.dir/DependInfo.cmake"
+  "CMakeFiles/bishop_smoke.dir/DependInfo.cmake"
   )

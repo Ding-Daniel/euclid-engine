@@ -204,6 +204,19 @@ king_smoke/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/king_smoke.dir/build.make CMakeFiles/king_smoke.dir/build
 .PHONY : king_smoke/fast
 
+#=============================================================================
+# Target rules for targets named bishop_smoke
+
+# Build rule for target.
+bishop_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 bishop_smoke
+.PHONY : bishop_smoke
+
+# fast build rule for target.
+bishop_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bishop_smoke.dir/build.make CMakeFiles/bishop_smoke.dir/build
+.PHONY : bishop_smoke/fast
+
 src/board.o: src/board.cpp.o
 .PHONY : src/board.o
 
@@ -348,6 +361,30 @@ src/zobrist.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/zobrist.cpp.s
 .PHONY : src/zobrist.cpp.s
 
+tests/bishop_smoke.o: tests/bishop_smoke.cpp.o
+.PHONY : tests/bishop_smoke.o
+
+# target to build an object file
+tests/bishop_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bishop_smoke.dir/build.make CMakeFiles/bishop_smoke.dir/tests/bishop_smoke.cpp.o
+.PHONY : tests/bishop_smoke.cpp.o
+
+tests/bishop_smoke.i: tests/bishop_smoke.cpp.i
+.PHONY : tests/bishop_smoke.i
+
+# target to preprocess a source file
+tests/bishop_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bishop_smoke.dir/build.make CMakeFiles/bishop_smoke.dir/tests/bishop_smoke.cpp.i
+.PHONY : tests/bishop_smoke.cpp.i
+
+tests/bishop_smoke.s: tests/bishop_smoke.cpp.s
+.PHONY : tests/bishop_smoke.s
+
+# target to generate assembly for a file
+tests/bishop_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bishop_smoke.dir/build.make CMakeFiles/bishop_smoke.dir/tests/bishop_smoke.cpp.s
+.PHONY : tests/bishop_smoke.cpp.s
+
 tests/fen.o: tests/fen.cpp.o
 .PHONY : tests/fen.o
 
@@ -453,6 +490,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
+	@echo "... bishop_smoke"
 	@echo "... euclid_cli"
 	@echo "... euclid_engine"
 	@echo "... fen_test"
@@ -477,6 +515,9 @@ help:
 	@echo "... src/zobrist.o"
 	@echo "... src/zobrist.i"
 	@echo "... src/zobrist.s"
+	@echo "... tests/bishop_smoke.o"
+	@echo "... tests/bishop_smoke.i"
+	@echo "... tests/bishop_smoke.s"
 	@echo "... tests/fen.o"
 	@echo "... tests/fen.i"
 	@echo "... tests/fen.s"
