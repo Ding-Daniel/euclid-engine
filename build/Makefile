@@ -217,6 +217,19 @@ bishop_smoke/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/bishop_smoke.dir/build.make CMakeFiles/bishop_smoke.dir/build
 .PHONY : bishop_smoke/fast
 
+#=============================================================================
+# Target rules for targets named rook_smoke
+
+# Build rule for target.
+rook_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rook_smoke
+.PHONY : rook_smoke
+
+# fast build rule for target.
+rook_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rook_smoke.dir/build.make CMakeFiles/rook_smoke.dir/build
+.PHONY : rook_smoke/fast
+
 src/board.o: src/board.cpp.o
 .PHONY : src/board.o
 
@@ -457,6 +470,30 @@ tests/perft_smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/perft_smoke.dir/build.make CMakeFiles/perft_smoke.dir/tests/perft_smoke.cpp.s
 .PHONY : tests/perft_smoke.cpp.s
 
+tests/rook_smoke.o: tests/rook_smoke.cpp.o
+.PHONY : tests/rook_smoke.o
+
+# target to build an object file
+tests/rook_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rook_smoke.dir/build.make CMakeFiles/rook_smoke.dir/tests/rook_smoke.cpp.o
+.PHONY : tests/rook_smoke.cpp.o
+
+tests/rook_smoke.i: tests/rook_smoke.cpp.i
+.PHONY : tests/rook_smoke.i
+
+# target to preprocess a source file
+tests/rook_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rook_smoke.dir/build.make CMakeFiles/rook_smoke.dir/tests/rook_smoke.cpp.i
+.PHONY : tests/rook_smoke.cpp.i
+
+tests/rook_smoke.s: tests/rook_smoke.cpp.s
+.PHONY : tests/rook_smoke.s
+
+# target to generate assembly for a file
+tests/rook_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rook_smoke.dir/build.make CMakeFiles/rook_smoke.dir/tests/rook_smoke.cpp.s
+.PHONY : tests/rook_smoke.cpp.s
+
 tests/smoke.o: tests/smoke.cpp.o
 .PHONY : tests/smoke.o
 
@@ -496,6 +533,7 @@ help:
 	@echo "... fen_test"
 	@echo "... king_smoke"
 	@echo "... perft_smoke"
+	@echo "... rook_smoke"
 	@echo "... smoketest"
 	@echo "... src/board.o"
 	@echo "... src/board.i"
@@ -527,6 +565,9 @@ help:
 	@echo "... tests/perft_smoke.o"
 	@echo "... tests/perft_smoke.i"
 	@echo "... tests/perft_smoke.s"
+	@echo "... tests/rook_smoke.o"
+	@echo "... tests/rook_smoke.i"
+	@echo "... tests/rook_smoke.s"
 	@echo "... tests/smoke.o"
 	@echo "... tests/smoke.i"
 	@echo "... tests/smoke.s"

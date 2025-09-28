@@ -63,3 +63,7 @@ add_test(NAME king_smoke COMMAND $<TARGET_FILE:king_smoke>)
 add_executable(bishop_smoke tests/bishop_smoke.cpp)
 target_link_libraries(bishop_smoke PRIVATE euclid_engine)
 add_test(NAME bishop_smoke COMMAND $<TARGET_FILE:bishop_smoke>)
+
+add_executable(rook_smoke tests/rook_smoke.cpp)
+target_link_libraries(rook_smoke PRIVATE euclid_engine)
+add_test(NAME rook_smoke COMMAND $<TARGET_FILE:rook_smoke>)

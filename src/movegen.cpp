@@ -23,7 +23,7 @@ static inline Square find_king(const Board& b, Color who) {
 void generate_pseudo_legal(const Board& b, MoveList& out) {
   out.sz = 0;
 
-  const Color us = b.side_to_move();
+  const Color us  = b.side_to_move();
   const Color opp = them(us);
   const Square oppK = find_king(b, opp);
 
@@ -32,8 +32,7 @@ void generate_pseudo_legal(const Board& b, MoveList& out) {
   // -----------------
   static constexpr int KN_OFF[8] = {+17, +15, +10, +6, -6, -10, -15, -17};
   for (int s = 0; s < 64; ++s) {
-    Color pcColor;
-    Piece pc = b.piece_at(s, &pcColor);
+    Color pcColor; Piece pc = b.piece_at(s, &pcColor);
     if (pc != Piece::Knight || pcColor != us) continue;
 
     const int f0 = file_of(s), r0 = rank_of(s);
@@ -46,7 +45,7 @@ void generate_pseudo_legal(const Board& b, MoveList& out) {
 
       Color oc; Piece op = b.piece_at(t, &oc);
       if (op == Piece::None) {
-        out.push(Move{ s, t, MoveFlag::Quiet, Piece::None });
+        out.push(Move{ s, t, MoveFlag::Quiet,  Piece::None });
       } else if (oc != us && op != Piece::King) {
         out.push(Move{ s, t, MoveFlag::Capture, Piece::None });
       }
@@ -54,19 +53,17 @@ void generate_pseudo_legal(const Board& b, MoveList& out) {
   }
 
   // -----------------
-  // Bishops (new)
+  // Bishops (diagonals)
   // -----------------
-  static constexpr int DF[4] = {+1, +1, -1, -1};
-  static constexpr int DR[4] = {+1, -1, +1, -1};
+  static constexpr int DFb[4] = {+1, +1, -1, -1};
+  static constexpr int DRb[4] = {+1, -1, +1, -1};
   for (int s = 0; s < 64; ++s) {
-    Color pcColor;
-    Piece pc = b.piece_at(s, &pcColor);
+    Color pcColor; Piece pc = b.piece_at(s, &pcColor);
     if (pc != Piece::Bishop || pcColor != us) continue;
 
     const int f0 = file_of(s), r0 = rank_of(s);
     for (int dir = 0; dir < 4; ++dir) {
-      int f = f0 + DF[dir];
-      int r = r0 + DR[dir];
+      int f = f0 + DFb[dir], r = r0 + DRb[dir];
       while (f >= 0 && f < 8 && r >= 0 && r < 8) {
         const int t = r * 8 + f;
         Color oc; Piece op = b.piece_at(t, &oc);
@@ -76,21 +73,49 @@ void generate_pseudo_legal(const Board& b, MoveList& out) {
           if (oc != us && op != Piece::King) {
             out.push(Move{ s, t, MoveFlag::Capture, Piece::None });
           }
-          break; // blocked by any piece
+          break; // blocked
         }
-        f += DF[dir];
-        r += DR[dir];
+        f += DFb[dir];
+        r += DRb[dir];
       }
     }
   }
 
   // -----------------
-  // Kings
+  // Rooks (orthogonals)
+  // -----------------
+  static constexpr int DFr[4] = {+1, -1,  0,  0}; // E, W, -,  -
+  static constexpr int DRr[4] = { 0,  0, +1, -1}; // -,  -, N,  S
+  for (int s = 0; s < 64; ++s) {
+    Color pcColor; Piece pc = b.piece_at(s, &pcColor);
+    if (pc != Piece::Rook || pcColor != us) continue;
+
+    const int f0 = file_of(s), r0 = rank_of(s);
+    for (int dir = 0; dir < 4; ++dir) {
+      int f = f0 + DFr[dir], r = r0 + DRr[dir];
+      while (f >= 0 && f < 8 && r >= 0 && r < 8) {
+        const int t = r * 8 + f;
+        Color oc; Piece op = b.piece_at(t, &oc);
+        if (op == Piece::None) {
+          out.push(Move{ s, t, MoveFlag::Quiet, Piece::None });
+        } else {
+          if (oc != us && op != Piece::King) {
+            out.push(Move{ s, t, MoveFlag::Capture, Piece::None });
+          }
+          break; // blocked
+        }
+        f += DFr[dir];
+        r += DRr[dir];
+      }
+    }
+  }
+
+  // -----------------
+  // Kings (no adjacency to enemy king)
   // -----------------
   static constexpr int K_OFF[8] = {+8, -8, +1, -1, +9, +7, -7, -9};
   for (int s = 0; s < 64; ++s) {
-    Color pcColor;
-    Piece pc = b.piece_at(s, &pcColor);
+    Color pcColor; Piece pc = b.piece_at(s, &pcColor);
     if (pc != Piece::King || pcColor != us) continue;
 
     const int f0 = file_of(s), r0 = rank_of(s);
@@ -99,21 +124,19 @@ void generate_pseudo_legal(const Board& b, MoveList& out) {
       if (!on_board(t)) continue;
       const int f1 = file_of(t), r1 = rank_of(t);
       const int df = absd(f1, f0), dr = absd(r1, r0);
-      if (df > 1 || dr > 1) continue; // guard wrap-around
+      if (df > 1 || dr > 1) continue; // wrap guard
 
       Color oc; Piece op = b.piece_at(t, &oc);
-      if (oc == us) continue;           // own piece
-      if (op == Piece::King) continue;  // never capture king
-
-      // simple legality: moving king cannot end adjacent to enemy king
-      if (kings_adjacent(t, oppK)) continue;
+      if (oc == us) continue;
+      if (op == Piece::King) continue;           // never capture king
+      if (kings_adjacent(t, oppK)) continue;     // simple legality
 
       const bool isCap = (op != Piece::None && oc == opp);
       out.push(Move{ s, t, isCap ? MoveFlag::Capture : MoveFlag::Quiet, Piece::None });
     }
   }
 
-  // (Rooks/Queens/Pawns come in later steps.)
+  // (Queens & pawns next.)
 }
 
 } // namespace euclid
