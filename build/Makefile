@@ -308,6 +308,19 @@ castle_smoke/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/castle_smoke.dir/build.make CMakeFiles/castle_smoke.dir/build
 .PHONY : castle_smoke/fast
 
+#=============================================================================
+# Target rules for targets named perft_refs
+
+# Build rule for target.
+perft_refs: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 perft_refs
+.PHONY : perft_refs
+
+# fast build rule for target.
+perft_refs/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/perft_refs.dir/build.make CMakeFiles/perft_refs.dir/build
+.PHONY : perft_refs/fast
+
 src/attack.o: src/attack.cpp.o
 .PHONY : src/attack.o
 
@@ -668,6 +681,30 @@ tests/pawn_smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pawn_smoke.dir/build.make CMakeFiles/pawn_smoke.dir/tests/pawn_smoke.cpp.s
 .PHONY : tests/pawn_smoke.cpp.s
 
+tests/perft_refs.o: tests/perft_refs.cpp.o
+.PHONY : tests/perft_refs.o
+
+# target to build an object file
+tests/perft_refs.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/perft_refs.dir/build.make CMakeFiles/perft_refs.dir/tests/perft_refs.cpp.o
+.PHONY : tests/perft_refs.cpp.o
+
+tests/perft_refs.i: tests/perft_refs.cpp.i
+.PHONY : tests/perft_refs.i
+
+# target to preprocess a source file
+tests/perft_refs.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/perft_refs.dir/build.make CMakeFiles/perft_refs.dir/tests/perft_refs.cpp.i
+.PHONY : tests/perft_refs.cpp.i
+
+tests/perft_refs.s: tests/perft_refs.cpp.s
+.PHONY : tests/perft_refs.s
+
+# target to generate assembly for a file
+tests/perft_refs.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/perft_refs.dir/build.make CMakeFiles/perft_refs.dir/tests/perft_refs.cpp.s
+.PHONY : tests/perft_refs.cpp.s
+
 tests/perft_smoke.o: tests/perft_smoke.cpp.o
 .PHONY : tests/perft_smoke.o
 
@@ -806,6 +843,7 @@ help:
 	@echo "... incheck_smoke"
 	@echo "... king_smoke"
 	@echo "... pawn_smoke"
+	@echo "... perft_refs"
 	@echo "... perft_smoke"
 	@echo "... pin_smoke"
 	@echo "... queen_smoke"
@@ -856,6 +894,9 @@ help:
 	@echo "... tests/pawn_smoke.o"
 	@echo "... tests/pawn_smoke.i"
 	@echo "... tests/pawn_smoke.s"
+	@echo "... tests/perft_refs.o"
+	@echo "... tests/perft_refs.i"
+	@echo "... tests/perft_refs.s"
 	@echo "... tests/perft_smoke.o"
 	@echo "... tests/perft_smoke.i"
 	@echo "... tests/perft_smoke.s"

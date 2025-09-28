@@ -82,3 +82,7 @@ add_test(NAME do_undo_smoke COMMAND $<TARGET_FILE:do_undo_smoke>)
 add_executable(castle_smoke tests/castle_smoke.cpp)
 target_link_libraries(castle_smoke PRIVATE euclid_engine)
 add_test(NAME castle_smoke COMMAND $<TARGET_FILE:castle_smoke>)
+
+add_executable(perft_refs tests/perft_refs.cpp)
+target_link_libraries(perft_refs PRIVATE euclid_engine)
+add_test(NAME perft_refs COMMAND $<TARGET_FILE:perft_refs>)

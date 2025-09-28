@@ -62,4 +62,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/incheck_smoke.dir/DependInfo.cmake"
   "CMakeFiles/do_undo_smoke.dir/DependInfo.cmake"
   "CMakeFiles/castle_smoke.dir/DependInfo.cmake"
+  "CMakeFiles/perft_refs.dir/DependInfo.cmake"
   )
