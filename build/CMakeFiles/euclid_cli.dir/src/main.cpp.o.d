@@ -993,4 +993,6 @@ CMakeFiles/euclid_cli.dir/src/main.cpp.o: \
   /Users/danielding/euclid-engine/include/euclid/movelist.hpp \
   /Users/danielding/euclid-engine/include/euclid/move.hpp \
   /Users/danielding/euclid-engine/include/euclid/move_do.hpp \
-  /Users/danielding/euclid-engine/include/euclid/attack.hpp
+  /Users/danielding/euclid-engine/include/euclid/attack.hpp \
+  /Users/danielding/euclid-engine/include/euclid/search.hpp \
+  /Users/danielding/euclid-engine/include/euclid/uci.hpp

@@ -16,6 +16,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/danielding/euclid-engine/src/move_do.cpp" "CMakeFiles/euclid_engine.dir/src/move_do.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/move_do.cpp.o.d"
   "/Users/danielding/euclid-engine/src/movegen.cpp" "CMakeFiles/euclid_engine.dir/src/movegen.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/movegen.cpp.o.d"
   "/Users/danielding/euclid-engine/src/perft.cpp" "CMakeFiles/euclid_engine.dir/src/perft.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/perft.cpp.o.d"
+  "/Users/danielding/euclid-engine/src/search.cpp" "CMakeFiles/euclid_engine.dir/src/search.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/search.cpp.o.d"
   "/Users/danielding/euclid-engine/src/uci.cpp" "CMakeFiles/euclid_engine.dir/src/uci.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/uci.cpp.o.d"
   "/Users/danielding/euclid-engine/src/zobrist.cpp" "CMakeFiles/euclid_engine.dir/src/zobrist.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/zobrist.cpp.o.d"
   )

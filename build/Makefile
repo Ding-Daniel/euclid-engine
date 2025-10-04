@@ -347,6 +347,19 @@ uci_smoke/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uci_smoke.dir/build.make CMakeFiles/uci_smoke.dir/build
 .PHONY : uci_smoke/fast
 
+#=============================================================================
+# Target rules for targets named search_smoke
+
+# Build rule for target.
+search_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 search_smoke
+.PHONY : search_smoke
+
+# fast build rule for target.
+search_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/search_smoke.dir/build.make CMakeFiles/search_smoke.dir/build
+.PHONY : search_smoke/fast
+
 src/attack.o: src/attack.cpp.o
 .PHONY : src/attack.o
 
@@ -562,6 +575,30 @@ src/perft.s: src/perft.cpp.s
 src/perft.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/perft.cpp.s
 .PHONY : src/perft.cpp.s
+
+src/search.o: src/search.cpp.o
+.PHONY : src/search.o
+
+# target to build an object file
+src/search.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/search.cpp.o
+.PHONY : src/search.cpp.o
+
+src/search.i: src/search.cpp.i
+.PHONY : src/search.i
+
+# target to preprocess a source file
+src/search.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/search.cpp.i
+.PHONY : src/search.cpp.i
+
+src/search.s: src/search.cpp.s
+.PHONY : src/search.s
+
+# target to generate assembly for a file
+src/search.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/search.cpp.s
+.PHONY : src/search.cpp.s
 
 src/uci.o: src/uci.cpp.o
 .PHONY : src/uci.o
@@ -923,6 +960,30 @@ tests/rook_smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rook_smoke.dir/build.make CMakeFiles/rook_smoke.dir/tests/rook_smoke.cpp.s
 .PHONY : tests/rook_smoke.cpp.s
 
+tests/search_smoke.o: tests/search_smoke.cpp.o
+.PHONY : tests/search_smoke.o
+
+# target to build an object file
+tests/search_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/search_smoke.dir/build.make CMakeFiles/search_smoke.dir/tests/search_smoke.cpp.o
+.PHONY : tests/search_smoke.cpp.o
+
+tests/search_smoke.i: tests/search_smoke.cpp.i
+.PHONY : tests/search_smoke.i
+
+# target to preprocess a source file
+tests/search_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/search_smoke.dir/build.make CMakeFiles/search_smoke.dir/tests/search_smoke.cpp.i
+.PHONY : tests/search_smoke.cpp.i
+
+tests/search_smoke.s: tests/search_smoke.cpp.s
+.PHONY : tests/search_smoke.s
+
+# target to generate assembly for a file
+tests/search_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/search_smoke.dir/build.make CMakeFiles/search_smoke.dir/tests/search_smoke.cpp.s
+.PHONY : tests/search_smoke.cpp.s
+
 tests/smoke.o: tests/smoke.cpp.o
 .PHONY : tests/smoke.o
 
@@ -995,6 +1056,7 @@ help:
 	@echo "... pin_smoke"
 	@echo "... queen_smoke"
 	@echo "... rook_smoke"
+	@echo "... search_smoke"
 	@echo "... smoketest"
 	@echo "... uci_smoke"
 	@echo "... src/attack.o"
@@ -1024,6 +1086,9 @@ help:
 	@echo "... src/perft.o"
 	@echo "... src/perft.i"
 	@echo "... src/perft.s"
+	@echo "... src/search.o"
+	@echo "... src/search.i"
+	@echo "... src/search.s"
 	@echo "... src/uci.o"
 	@echo "... src/uci.i"
 	@echo "... src/uci.s"
@@ -1069,6 +1134,9 @@ help:
 	@echo "... tests/rook_smoke.o"
 	@echo "... tests/rook_smoke.i"
 	@echo "... tests/rook_smoke.s"
+	@echo "... tests/search_smoke.o"
+	@echo "... tests/search_smoke.i"
+	@echo "... tests/search_smoke.s"
 	@echo "... tests/smoke.o"
 	@echo "... tests/smoke.i"
 	@echo "... tests/smoke.s"

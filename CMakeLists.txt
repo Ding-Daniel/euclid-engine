@@ -22,6 +22,7 @@ add_library(euclid_engine STATIC
   src/attacks_tbl.cpp
   src/eval.cpp
   src/uci.cpp
+  src/search.cpp
 )
 target_include_directories(euclid_engine PUBLIC include)
 
@@ -97,3 +98,7 @@ add_test(NAME eval_smoke COMMAND $<TARGET_FILE:eval_smoke>)
 add_executable(uci_smoke tests/uci_smoke.cpp)
 target_link_libraries(uci_smoke PRIVATE euclid_engine)
 add_test(NAME uci_smoke COMMAND $<TARGET_FILE:uci_smoke>)
+
+add_executable(search_smoke tests/search_smoke.cpp)
+target_link_libraries(search_smoke PRIVATE euclid_engine)
+add_test(NAME search_smoke COMMAND $<TARGET_FILE:search_smoke>)

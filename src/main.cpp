@@ -8,6 +8,8 @@
 #include "euclid/movegen.hpp"
 #include "euclid/move_do.hpp"
 #include "euclid/attack.hpp"
+#include "euclid/search.hpp"
+#include "euclid/uci.hpp"
 
 
 using namespace euclid;
@@ -78,4 +80,30 @@ int main(int argc, char** argv) {
   }
   std::cout << "total " << total << "\n";
   return 0;
+}
+
+static void cmd_search(const std::vector<std::string>& args) {
+  // usage: search depth N [fen <FEN...>]
+  int depth = 2;
+  std::string fen = std::string(STARTPOS_FEN);
+  for (size_t i = 0; i + 1 < args.size(); ++i) {
+    if (args[i] == "depth") depth = std::stoi(args[i+1]);
+    if (args[i] == "fen") {
+      std::ostringstream oss;
+      for (size_t j = i+1; j < args.size(); ++j) {
+        if (j > i+1) oss << ' ';
+        oss << args[j];
+      }
+      fen = oss.str();
+      break;
+    }
+  }
+  Board b; set_from_fen(b, fen);
+  auto r = search(b, depth);
+  std::cout << "best " << move_to_uci(r.best)
+            << " score " << r.score
+            << " nodes " << r.nodes
+            << " pv ";
+  for (auto& m : r.pv) std::cout << move_to_uci(m) << ' ';
+  std::cout << "\n";
 }
