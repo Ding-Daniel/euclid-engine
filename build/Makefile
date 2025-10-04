@@ -563,6 +563,30 @@ src/perft.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/perft.cpp.s
 .PHONY : src/perft.cpp.s
 
+src/uci.o: src/uci.cpp.o
+.PHONY : src/uci.o
+
+# target to build an object file
+src/uci.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/uci.cpp.o
+.PHONY : src/uci.cpp.o
+
+src/uci.i: src/uci.cpp.i
+.PHONY : src/uci.i
+
+# target to preprocess a source file
+src/uci.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/uci.cpp.i
+.PHONY : src/uci.cpp.i
+
+src/uci.s: src/uci.cpp.s
+.PHONY : src/uci.s
+
+# target to generate assembly for a file
+src/uci.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/uci.cpp.s
+.PHONY : src/uci.cpp.s
+
 src/zobrist.o: src/zobrist.cpp.o
 .PHONY : src/zobrist.o
 
@@ -1000,6 +1024,9 @@ help:
 	@echo "... src/perft.o"
 	@echo "... src/perft.i"
 	@echo "... src/perft.s"
+	@echo "... src/uci.o"
+	@echo "... src/uci.i"
+	@echo "... src/uci.s"
 	@echo "... src/zobrist.o"
 	@echo "... src/zobrist.i"
 	@echo "... src/zobrist.s"
