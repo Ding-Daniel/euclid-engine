@@ -1,22 +1,18 @@
 #include <iostream>
-#include <string>
 #include <sstream>
+#include <string>
 #include <vector>
+#include <numeric>
+
+#include "euclid/types.hpp"
 #include "euclid/board.hpp"
 #include "euclid/fen.hpp"
 #include "euclid/perft.hpp"
-#include "euclid/movegen.hpp"
-#include "euclid/move_do.hpp"
-#include "euclid/attack.hpp"
-#include "euclid/search.hpp"
+#include "euclid/eval.hpp"
 #include "euclid/uci.hpp"
-
+#include "euclid/search.hpp"
 
 using namespace euclid;
-
-static std::string sqstr(int s){
-  std::string out; out += char('a' + file_of(s)); out += char('1' + rank_of(s)); return out;
-}
 
 static void usage() {
   std::cout <<
@@ -24,86 +20,96 @@ static void usage() {
     "Usage:\n"
     "  euclid_cli perft <depth> [fen...]\n"
     "  euclid_cli divide <depth> [fen...]\n"
+    "  euclid_cli eval [fen...]\n"
+    "  euclid_cli search depth <N> [fen...]\n"
     "If FEN omitted, uses startpos.\n";
 }
 
-int main(int argc, char** argv) {
-  if (argc < 2) { usage(); return 0; }
-
-  std::string cmd = argv[1];
-  if (cmd != "perft" && cmd != "divide") { usage(); return 1; }
-  if (argc < 3) { usage(); return 1; }
-
-  int depth = std::stoi(argv[2]);
-
-  std::string fen;
-  if (argc >= 4) {
-    std::ostringstream os;
-    for (int i = 3; i < argc; ++i) {
-      if (i > 3) os << ' ';
-      os << argv[i];
-    }
-    fen = os.str();
-  } else {
-    fen = std::string(STARTPOS_FEN);
+static std::string join_from(const std::vector<std::string>& a, size_t i) {
+  if (i >= a.size()) return "";
+  std::ostringstream oss;
+  for (size_t k = i; k < a.size(); ++k) {
+    if (k > i) oss << ' ';
+    oss << a[k];
   }
+  return oss.str();
+}
 
-  Board b; set_from_fen(b, fen);
+static Board board_from_args(const std::vector<std::string>& a, size_t fenStart) {
+  Board b;
+  if (fenStart < a.size()) {
+    const std::string fen = join_from(a, fenStart);
+    set_from_fen(b, fen);
+  } else {
+    set_from_fen(b, STARTPOS_FEN);
+  }
+  return b;
+}
 
+static int to_int(const std::string& s) {
+  return std::stoi(s);
+}
+
+int main(int argc, char** argv) {
+  std::vector<std::string> args(argv + 1, argv + argc);
+  if (args.empty()) { usage(); return 0; }
+
+  const std::string cmd = args[0];
+
+  // perft <depth> [fen...]
   if (cmd == "perft") {
-    std::uint64_t nodes = perft(b, depth);
-    std::cout << "nodes " << nodes << "\n";
+    if (args.size() < 2) { usage(); return 1; }
+    const int depth = to_int(args[1]);
+    Board b = board_from_args(args, 2);
+    const auto nodes = perft(b, depth);
+    std::cout << nodes << "\n";
     return 0;
   }
 
-  // divide
-  MoveList ml; generate_pseudo_legal(b, ml);
-  const Color us = b.side_to_move();
-
-  std::uint64_t total = 0ULL;
-  for (const auto& m : ml) {
-    State st{};
-    do_move(b, m, st);
-    // legality filter (same rule as perft)
-    //extern bool in_check(const Board&, Color); //we dont want a global extern 
-    if (!in_check(b, us)) {
-      std::uint64_t n = perft(b, depth - 1);
-      std::cout << sqstr(m.from) << sqstr(m.to);
-      if (m.promo != Piece::None) {
-        const char promoChars[] = {' ', 'P','N','B','R','Q','K'};
-        std::cout << promoChars[static_cast<int>(m.promo)];
-      }
-      std::cout << ": " << n << "\n";
+  // divide <depth> [fen...]
+  if (cmd == "divide") {
+    if (args.size() < 2) { usage(); return 1; }
+    const int depth = to_int(args[1]);
+    Board b = board_from_args(args, 2);
+    std::vector<std::pair<Move, std::uint64_t>> parts;
+    perft_divide(b, depth, parts);
+    std::uint64_t total = 0;
+    for (auto& [m, n] : parts) {
+      std::cout << move_to_uci(m) << " " << n << "\n";
       total += n;
     }
-    undo_move(b, m, st);
+    std::cout << "total " << total << "\n";
+    return 0;
   }
-  std::cout << "total " << total << "\n";
-  return 0;
-}
 
-static void cmd_search(const std::vector<std::string>& args) {
-  // usage: search depth N [fen <FEN...>]
-  int depth = 2;
-  std::string fen = std::string(STARTPOS_FEN);
-  for (size_t i = 0; i + 1 < args.size(); ++i) {
-    if (args[i] == "depth") depth = std::stoi(args[i+1]);
-    if (args[i] == "fen") {
-      std::ostringstream oss;
-      for (size_t j = i+1; j < args.size(); ++j) {
-        if (j > i+1) oss << ' ';
-        oss << args[j];
-      }
-      fen = oss.str();
-      break;
-    }
+  // eval [fen...]
+  if (cmd == "eval") {
+    Board b = board_from_args(args, 1);
+    const int score = evaluate(b);
+    std::cout << "eval " << score
+              << " (" << (b.side_to_move() == Color::White ? "white" : "black") << " to move)\n";
+    return 0;
   }
-  Board b; set_from_fen(b, fen);
-  auto r = search(b, depth);
-  std::cout << "best " << move_to_uci(r.best)
-            << " score " << r.score
-            << " nodes " << r.nodes
-            << " pv ";
-  for (auto& m : r.pv) std::cout << move_to_uci(m) << ' ';
-  std::cout << "\n";
+
+  // search depth <N> [fen...]
+  if (cmd == "search") {
+    int depth = 2;
+    size_t fenStart = args.size();
+    for (size_t i = 1; i + 1 < args.size(); ++i) {
+      if (args[i] == "depth") depth = to_int(args[i + 1]);
+      if (args[i] == "fen") { fenStart = i + 1; break; } // everything after 'fen' is the FEN
+    }
+    Board b = board_from_args(args, fenStart);
+    auto r = search(b, depth);
+    std::cout << "best " << move_to_uci(r.best)
+              << " score " << r.score
+              << " nodes " << r.nodes
+              << " pv ";
+    for (auto& m : r.pv) std::cout << move_to_uci(m) << ' ';
+    std::cout << "\n";
+    return 0;
+  }
+
+  usage();
+  return 0;
 }

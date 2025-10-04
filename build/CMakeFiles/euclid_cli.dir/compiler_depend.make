@@ -994,11 +994,15 @@ CMakeFiles/euclid_cli.dir/src/main.cpp.o: /Users/danielding/euclid-engine/src/ma
   /Users/danielding/euclid-engine/include/euclid/movegen.hpp \
   /Users/danielding/euclid-engine/include/euclid/movelist.hpp \
   /Users/danielding/euclid-engine/include/euclid/perft.hpp \
+  /Users/danielding/euclid-engine/include/euclid/search.hpp \
   /Users/danielding/euclid-engine/include/euclid/types.hpp \
+  /Users/danielding/euclid-engine/include/euclid/uci.hpp \
   /Users/danielding/euclid-engine/include/euclid/zobrist.hpp
 
 
 /Users/danielding/euclid-engine/include/euclid/zobrist.hpp:
+
+/Users/danielding/euclid-engine/include/euclid/uci.hpp:
 
 /Users/danielding/euclid-engine/include/euclid/perft.hpp:
 
@@ -1593,6 +1597,8 @@ CMakeFiles/euclid_cli.dir/src/main.cpp.o: /Users/danielding/euclid-engine/src/ma
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/log2.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/linear_congruential_engine.h:
+
+/Users/danielding/euclid-engine/include/euclid/search.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/generate_canonical.h:
 
