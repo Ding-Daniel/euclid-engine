@@ -73,8 +73,8 @@ void generate_pseudo_legal(const Board& b, MoveList& out) {
   }
 
   // Rooks (orthogonals)
-  static constexpr int DFr[4] = {+1, -1,  0,  0}; // E, W,  -,  -
-  static constexpr int DRr[4] = { 0,  0, +1, -1}; // -,  -,  N,  S
+  static constexpr int DFr[4] = {+1, -1,  0,  0}; // E, W, -, -
+  static constexpr int DRr[4] = { 0,  0, +1, -1}; // -, -, N, S
   for (int s = 0; s < 64; ++s) {
     Color pcColor; Piece pc = b.piece_at(s, &pcColor);
     if (pc != Piece::Rook || pcColor != us) continue;
@@ -222,11 +222,11 @@ void generate_pseudo_legal(const Board& b, MoveList& out) {
     Color pcColor; Piece pc = b.piece_at(s, &pcColor);
     if (pc != Piece::King || pcColor != us) continue;
     const int f0 = file_of(s), r0 = rank_of(s);
-    for (int df=-1; df<=1; ++df) for (int dr=-1; dr<=1; ++dr) {
+    for (int df = -1; df <= 1; ++df) for (int dr = -1; dr <= 1; ++dr) {
       if (!df && !dr) continue;
       int f = f0 + df, r = r0 + dr;
       if (f < 0 || f > 7 || r < 0 || r > 7) continue;
-      int t = r*8 + f;
+      int t = r * 8 + f;
       Color oc; Piece op = b.piece_at(t, &oc);
       if (oc == us) continue;
       if (op == Piece::King) continue;
@@ -236,11 +236,10 @@ void generate_pseudo_legal(const Board& b, MoveList& out) {
     }
   }
 
-  // Castling (same as before)
+  // Castling (exactly as before)
   const unsigned cr = b.castling().rights;
   if (us == Color::White) {
     Color kc; if (b.piece_at(4, &kc) == Piece::King && kc == Color::White) {
-      // O-O
       if (cr & 0x1) {
         Color rc; if (b.piece_at(7, &rc) == Piece::Rook && rc == Color::White) {
           Color c1; Piece p1 = b.piece_at(5, &c1);
@@ -251,7 +250,6 @@ void generate_pseudo_legal(const Board& b, MoveList& out) {
           }
         }
       }
-      // O-O-O
       if (cr & 0x2) {
         Color rc; if (b.piece_at(0, &rc) == Piece::Rook && rc == Color::White) {
           Color c1; Piece p1 = b.piece_at(3, &c1);
@@ -266,7 +264,6 @@ void generate_pseudo_legal(const Board& b, MoveList& out) {
     }
   } else {
     Color kc; if (b.piece_at(60, &kc) == Piece::King && kc == Color::Black) {
-      // O-O
       if (cr & 0x4) {
         Color rc; if (b.piece_at(63, &rc) == Piece::Rook && rc == Color::Black) {
           Color c1; Piece p1 = b.piece_at(61, &c1);
@@ -277,7 +274,6 @@ void generate_pseudo_legal(const Board& b, MoveList& out) {
           }
         }
       }
-      // O-O-O
       if (cr & 0x8) {
         Color rc; if (b.piece_at(56, &rc) == Piece::Rook && rc == Color::Black) {
           Color c1; Piece p1 = b.piece_at(59, &c1);

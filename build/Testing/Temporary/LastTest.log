@@ -1,17 +1,17 @@
-Start testing: Sep 27 18:52 PDT
+Start testing: Oct 04 14:34 PDT
 ----------------------------------------------------------
 1/13 Testing: smoke
 1/13 Test: smoke
 Command: "/Users/danielding/euclid-engine/build/smoketest"
 Directory: /Users/danielding/euclid-engine/build
-"smoke" start time: Sep 27 18:52 PDT
+"smoke" start time: Oct 04 14:34 PDT
 Output:
 ----------------------------------------------------------
 <end of output>
 Test time =   0.32 sec
 ----------------------------------------------------------
 Test Passed.
-"smoke" end time: Sep 27 18:52 PDT
+"smoke" end time: Oct 04 14:34 PDT
 "smoke" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -19,14 +19,14 @@ Test Passed.
 2/13 Test: fen
 Command: "/Users/danielding/euclid-engine/build/fen_test"
 Directory: /Users/danielding/euclid-engine/build
-"fen" start time: Sep 27 18:52 PDT
+"fen" start time: Oct 04 14:34 PDT
 Output:
 ----------------------------------------------------------
 <end of output>
-Test time =   0.19 sec
+Test time =   0.18 sec
 ----------------------------------------------------------
 Test Passed.
-"fen" end time: Sep 27 18:52 PDT
+"fen" end time: Oct 04 14:34 PDT
 "fen" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -34,15 +34,15 @@ Test Passed.
 3/13 Test: perft_smoke
 Command: "/Users/danielding/euclid-engine/build/perft_smoke"
 Directory: /Users/danielding/euclid-engine/build
-"perft_smoke" start time: Sep 27 18:52 PDT
+"perft_smoke" start time: Oct 04 14:34 PDT
 Output:
 ----------------------------------------------------------
 Assertion failed: (perft(b, 1) == 4ULL), function main, file perft_smoke.cpp, line 14.
 <end of output>
-Test time =   0.19 sec
+Test time =   0.18 sec
 ----------------------------------------------------------
 Test Failed.
-"perft_smoke" end time: Sep 27 18:52 PDT
+"perft_smoke" end time: Oct 04 14:34 PDT
 "perft_smoke" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -50,15 +50,15 @@ Test Failed.
 4/13 Test: king_smoke
 Command: "/Users/danielding/euclid-engine/build/king_smoke"
 Directory: /Users/danielding/euclid-engine/build
-"king_smoke" start time: Sep 27 18:52 PDT
+"king_smoke" start time: Oct 04 14:34 PDT
 Output:
 ----------------------------------------------------------
 Assertion failed: (perft(b2, 1) == 3ULL), function main, file king_smoke.cpp, line 19.
 <end of output>
-Test time =   0.19 sec
+Test time =   0.29 sec
 ----------------------------------------------------------
 Test Failed.
-"king_smoke" end time: Sep 27 18:52 PDT
+"king_smoke" end time: Oct 04 14:34 PDT
 "king_smoke" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -66,15 +66,15 @@ Test Failed.
 5/13 Test: bishop_smoke
 Command: "/Users/danielding/euclid-engine/build/bishop_smoke"
 Directory: /Users/danielding/euclid-engine/build
-"bishop_smoke" start time: Sep 27 18:52 PDT
+"bishop_smoke" start time: Oct 04 14:34 PDT
 Output:
 ----------------------------------------------------------
 Assertion failed: (perft(b, 1) == 13ULL), function main, file bishop_smoke.cpp, line 13.
 <end of output>
-Test time =   0.19 sec
+Test time =   0.34 sec
 ----------------------------------------------------------
 Test Failed.
-"bishop_smoke" end time: Sep 27 18:52 PDT
+"bishop_smoke" end time: Oct 04 14:34 PDT
 "bishop_smoke" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -82,15 +82,15 @@ Test Failed.
 6/13 Test: rook_smoke
 Command: "/Users/danielding/euclid-engine/build/rook_smoke"
 Directory: /Users/danielding/euclid-engine/build
-"rook_smoke" start time: Sep 27 18:52 PDT
+"rook_smoke" start time: Oct 04 14:34 PDT
 Output:
 ----------------------------------------------------------
 Assertion failed: (perft(b, 1) == 14ULL), function main, file rook_smoke.cpp, line 14.
 <end of output>
-Test time =   0.19 sec
+Test time =   0.21 sec
 ----------------------------------------------------------
 Test Failed.
-"rook_smoke" end time: Sep 27 18:52 PDT
+"rook_smoke" end time: Oct 04 14:34 PDT
 "rook_smoke" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -98,7 +98,7 @@ Test Failed.
 7/13 Test: queen_smoke
 Command: "/Users/danielding/euclid-engine/build/queen_smoke"
 Directory: /Users/danielding/euclid-engine/build
-"queen_smoke" start time: Sep 27 18:52 PDT
+"queen_smoke" start time: Oct 04 14:34 PDT
 Output:
 ----------------------------------------------------------
 Assertion failed: (perft(b, 1) == 27ULL), function main, file queen_smoke.cpp, line 14.
@@ -106,7 +106,7 @@ Assertion failed: (perft(b, 1) == 27ULL), function main, file queen_smoke.cpp, l
 Test time =   0.18 sec
 ----------------------------------------------------------
 Test Failed.
-"queen_smoke" end time: Sep 27 18:52 PDT
+"queen_smoke" end time: Oct 04 14:34 PDT
 "queen_smoke" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -114,15 +114,15 @@ Test Failed.
 8/13 Test: pawn_smoke
 Command: "/Users/danielding/euclid-engine/build/pawn_smoke"
 Directory: /Users/danielding/euclid-engine/build
-"pawn_smoke" start time: Sep 27 18:52 PDT
+"pawn_smoke" start time: Oct 04 14:34 PDT
 Output:
 ----------------------------------------------------------
 Assertion failed: (perft(b, 1) == 2ULL), function main, file pawn_smoke.cpp, line 13.
 <end of output>
-Test time =   0.19 sec
+Test time =   0.33 sec
 ----------------------------------------------------------
 Test Failed.
-"pawn_smoke" end time: Sep 27 18:52 PDT
+"pawn_smoke" end time: Oct 04 14:34 PDT
 "pawn_smoke" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -130,14 +130,14 @@ Test Failed.
 9/13 Test: pin_smoke
 Command: "/Users/danielding/euclid-engine/build/pin_smoke"
 Directory: /Users/danielding/euclid-engine/build
-"pin_smoke" start time: Sep 27 18:52 PDT
+"pin_smoke" start time: Oct 04 14:34 PDT
 Output:
 ----------------------------------------------------------
 <end of output>
-Test time =   0.20 sec
+Test time =   0.18 sec
 ----------------------------------------------------------
 Test Passed.
-"pin_smoke" end time: Sep 27 18:52 PDT
+"pin_smoke" end time: Oct 04 14:34 PDT
 "pin_smoke" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -145,14 +145,14 @@ Test Passed.
 10/13 Test: incheck_smoke
 Command: "/Users/danielding/euclid-engine/build/incheck_smoke"
 Directory: /Users/danielding/euclid-engine/build
-"incheck_smoke" start time: Sep 27 18:52 PDT
+"incheck_smoke" start time: Oct 04 14:34 PDT
 Output:
 ----------------------------------------------------------
 <end of output>
-Test time =   0.20 sec
+Test time =   0.18 sec
 ----------------------------------------------------------
 Test Passed.
-"incheck_smoke" end time: Sep 27 18:52 PDT
+"incheck_smoke" end time: Oct 04 14:34 PDT
 "incheck_smoke" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -160,14 +160,14 @@ Test Passed.
 11/13 Test: do_undo_smoke
 Command: "/Users/danielding/euclid-engine/build/do_undo_smoke"
 Directory: /Users/danielding/euclid-engine/build
-"do_undo_smoke" start time: Sep 27 18:52 PDT
+"do_undo_smoke" start time: Oct 04 14:34 PDT
 Output:
 ----------------------------------------------------------
 <end of output>
 Test time =   0.18 sec
 ----------------------------------------------------------
 Test Passed.
-"do_undo_smoke" end time: Sep 27 18:52 PDT
+"do_undo_smoke" end time: Oct 04 14:34 PDT
 "do_undo_smoke" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -175,14 +175,14 @@ Test Passed.
 12/13 Test: castle_smoke
 Command: "/Users/danielding/euclid-engine/build/castle_smoke"
 Directory: /Users/danielding/euclid-engine/build
-"castle_smoke" start time: Sep 27 18:52 PDT
+"castle_smoke" start time: Oct 04 14:34 PDT
 Output:
 ----------------------------------------------------------
 <end of output>
-Test time =   0.18 sec
+Test time =   0.22 sec
 ----------------------------------------------------------
 Test Passed.
-"castle_smoke" end time: Sep 27 18:52 PDT
+"castle_smoke" end time: Oct 04 14:34 PDT
 "castle_smoke" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -190,7 +190,7 @@ Test Passed.
 13/13 Test: perft_refs
 Command: "/Users/danielding/euclid-engine/build/perft_refs"
 Directory: /Users/danielding/euclid-engine/build
-"perft_refs" start time: Sep 27 18:52 PDT
+"perft_refs" start time: Oct 04 14:34 PDT
 Output:
 ----------------------------------------------------------
 Assertion failed: (got == expect), function check, file perft_refs.cpp, line 12.
@@ -198,8 +198,8 @@ Assertion failed: (got == expect), function check, file perft_refs.cpp, line 12.
 Test time =   0.23 sec
 ----------------------------------------------------------
 Test Failed.
-"perft_refs" end time: Sep 27 18:52 PDT
+"perft_refs" end time: Oct 04 14:34 PDT
 "perft_refs" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Sep 27 18:52 PDT
+End testing: Oct 04 14:34 PDT

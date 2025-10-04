@@ -1,15 +1,15 @@
-smoke 2 0.160336
-fen 2 0.0951112
+smoke 3 0.10705
+fen 3 0.059294
 perft_smoke 1 0
 king_smoke 1 0
 bishop_smoke 1 0
 rook_smoke 1 0
 queen_smoke 1 0
 pawn_smoke 1 0
-pin_smoke 2 0.0992953
-incheck_smoke 2 0.102372
-do_undo_smoke 2 0.0886001
-castle_smoke 2 0.0894655
+pin_smoke 3 0.0589639
+incheck_smoke 3 0.0585233
+do_undo_smoke 3 0.0599727
+castle_smoke 3 0.074527
 perft_refs 1 0
 ---
 perft_smoke
