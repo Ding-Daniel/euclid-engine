@@ -79,6 +79,7 @@ all: CMakeFiles/do_undo_smoke.dir/all
 all: CMakeFiles/castle_smoke.dir/all
 all: CMakeFiles/perft_refs.dir/all
 all: CMakeFiles/eval_smoke.dir/all
+all: CMakeFiles/uci_smoke.dir/all
 .PHONY : all
 
 # The main recursive "codegen" target.
@@ -98,6 +99,7 @@ codegen: CMakeFiles/do_undo_smoke.dir/codegen
 codegen: CMakeFiles/castle_smoke.dir/codegen
 codegen: CMakeFiles/perft_refs.dir/codegen
 codegen: CMakeFiles/eval_smoke.dir/codegen
+codegen: CMakeFiles/uci_smoke.dir/codegen
 .PHONY : codegen
 
 # The main recursive "preinstall" target.
@@ -121,6 +123,7 @@ clean: CMakeFiles/do_undo_smoke.dir/clean
 clean: CMakeFiles/castle_smoke.dir/clean
 clean: CMakeFiles/perft_refs.dir/clean
 clean: CMakeFiles/eval_smoke.dir/clean
+clean: CMakeFiles/uci_smoke.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -634,6 +637,38 @@ CMakeFiles/eval_smoke.dir/codegen:
 CMakeFiles/eval_smoke.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_smoke.dir/build.make CMakeFiles/eval_smoke.dir/clean
 .PHONY : CMakeFiles/eval_smoke.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/uci_smoke.dir
+
+# All Build rule for target.
+CMakeFiles/uci_smoke.dir/all: CMakeFiles/euclid_engine.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uci_smoke.dir/build.make CMakeFiles/uci_smoke.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uci_smoke.dir/build.make CMakeFiles/uci_smoke.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=41,42 "Built target uci_smoke"
+.PHONY : CMakeFiles/uci_smoke.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/uci_smoke.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build/CMakeFiles 12
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/uci_smoke.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build/CMakeFiles 0
+.PHONY : CMakeFiles/uci_smoke.dir/rule
+
+# Convenience name for target.
+uci_smoke: CMakeFiles/uci_smoke.dir/rule
+.PHONY : uci_smoke
+
+# codegen rule for target.
+CMakeFiles/uci_smoke.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uci_smoke.dir/build.make CMakeFiles/uci_smoke.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=41,42 "Finished codegen for target uci_smoke"
+.PHONY : CMakeFiles/uci_smoke.dir/codegen
+
+# clean rule for target.
+CMakeFiles/uci_smoke.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uci_smoke.dir/build.make CMakeFiles/uci_smoke.dir/clean
+.PHONY : CMakeFiles/uci_smoke.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

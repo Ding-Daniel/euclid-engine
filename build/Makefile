@@ -334,6 +334,19 @@ eval_smoke/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_smoke.dir/build.make CMakeFiles/eval_smoke.dir/build
 .PHONY : eval_smoke/fast
 
+#=============================================================================
+# Target rules for targets named uci_smoke
+
+# Build rule for target.
+uci_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 uci_smoke
+.PHONY : uci_smoke
+
+# fast build rule for target.
+uci_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uci_smoke.dir/build.make CMakeFiles/uci_smoke.dir/build
+.PHONY : uci_smoke/fast
+
 src/attack.o: src/attack.cpp.o
 .PHONY : src/attack.o
 
@@ -910,6 +923,30 @@ tests/smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/smoketest.dir/build.make CMakeFiles/smoketest.dir/tests/smoke.cpp.s
 .PHONY : tests/smoke.cpp.s
 
+tests/uci_smoke.o: tests/uci_smoke.cpp.o
+.PHONY : tests/uci_smoke.o
+
+# target to build an object file
+tests/uci_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uci_smoke.dir/build.make CMakeFiles/uci_smoke.dir/tests/uci_smoke.cpp.o
+.PHONY : tests/uci_smoke.cpp.o
+
+tests/uci_smoke.i: tests/uci_smoke.cpp.i
+.PHONY : tests/uci_smoke.i
+
+# target to preprocess a source file
+tests/uci_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uci_smoke.dir/build.make CMakeFiles/uci_smoke.dir/tests/uci_smoke.cpp.i
+.PHONY : tests/uci_smoke.cpp.i
+
+tests/uci_smoke.s: tests/uci_smoke.cpp.s
+.PHONY : tests/uci_smoke.s
+
+# target to generate assembly for a file
+tests/uci_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uci_smoke.dir/build.make CMakeFiles/uci_smoke.dir/tests/uci_smoke.cpp.s
+.PHONY : tests/uci_smoke.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -935,6 +972,7 @@ help:
 	@echo "... queen_smoke"
 	@echo "... rook_smoke"
 	@echo "... smoketest"
+	@echo "... uci_smoke"
 	@echo "... src/attack.o"
 	@echo "... src/attack.i"
 	@echo "... src/attack.s"
@@ -1007,6 +1045,9 @@ help:
 	@echo "... tests/smoke.o"
 	@echo "... tests/smoke.i"
 	@echo "... tests/smoke.s"
+	@echo "... tests/uci_smoke.o"
+	@echo "... tests/uci_smoke.i"
+	@echo "... tests/uci_smoke.s"
 .PHONY : help
 
 
