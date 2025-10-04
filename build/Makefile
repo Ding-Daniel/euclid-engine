@@ -345,6 +345,30 @@ src/attack.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/attack.cpp.s
 .PHONY : src/attack.cpp.s
 
+src/attacks_tbl.o: src/attacks_tbl.cpp.o
+.PHONY : src/attacks_tbl.o
+
+# target to build an object file
+src/attacks_tbl.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/attacks_tbl.cpp.o
+.PHONY : src/attacks_tbl.cpp.o
+
+src/attacks_tbl.i: src/attacks_tbl.cpp.i
+.PHONY : src/attacks_tbl.i
+
+# target to preprocess a source file
+src/attacks_tbl.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/attacks_tbl.cpp.i
+.PHONY : src/attacks_tbl.cpp.i
+
+src/attacks_tbl.s: src/attacks_tbl.cpp.s
+.PHONY : src/attacks_tbl.s
+
+# target to generate assembly for a file
+src/attacks_tbl.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/attacks_tbl.cpp.s
+.PHONY : src/attacks_tbl.cpp.s
+
 src/board.o: src/board.cpp.o
 .PHONY : src/board.o
 
@@ -852,6 +876,9 @@ help:
 	@echo "... src/attack.o"
 	@echo "... src/attack.i"
 	@echo "... src/attack.s"
+	@echo "... src/attacks_tbl.o"
+	@echo "... src/attacks_tbl.i"
+	@echo "... src/attacks_tbl.s"
 	@echo "... src/board.o"
 	@echo "... src/board.i"
 	@echo "... src/board.s"

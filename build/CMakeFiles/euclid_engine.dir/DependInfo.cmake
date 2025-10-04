@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/danielding/euclid-engine/src/attack.cpp" "CMakeFiles/euclid_engine.dir/src/attack.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/attack.cpp.o.d"
+  "/Users/danielding/euclid-engine/src/attacks_tbl.cpp" "CMakeFiles/euclid_engine.dir/src/attacks_tbl.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/attacks_tbl.cpp.o.d"
   "/Users/danielding/euclid-engine/src/board.cpp" "CMakeFiles/euclid_engine.dir/src/board.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/board.cpp.o.d"
   "/Users/danielding/euclid-engine/src/fen.cpp" "CMakeFiles/euclid_engine.dir/src/fen.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/fen.cpp.o.d"
   "/Users/danielding/euclid-engine/src/move_do.cpp" "CMakeFiles/euclid_engine.dir/src/move_do.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/move_do.cpp.o.d"

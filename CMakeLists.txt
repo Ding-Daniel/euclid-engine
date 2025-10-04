@@ -19,6 +19,7 @@ add_library(euclid_engine STATIC
   src/perft.cpp
   src/attack.cpp
   src/move_do.cpp
+  src/attacks_tbl.cpp
 )
 target_include_directories(euclid_engine PUBLIC include)
 

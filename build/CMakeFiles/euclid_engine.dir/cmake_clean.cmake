@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/euclid_engine.dir/src/attack.cpp.o"
   "CMakeFiles/euclid_engine.dir/src/attack.cpp.o.d"
+  "CMakeFiles/euclid_engine.dir/src/attacks_tbl.cpp.o"
+  "CMakeFiles/euclid_engine.dir/src/attacks_tbl.cpp.o.d"
   "CMakeFiles/euclid_engine.dir/src/board.cpp.o"
   "CMakeFiles/euclid_engine.dir/src/board.cpp.o.d"
   "CMakeFiles/euclid_engine.dir/src/fen.cpp.o"
