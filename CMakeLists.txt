@@ -20,6 +20,7 @@ add_library(euclid_engine STATIC
   src/attack.cpp
   src/move_do.cpp
   src/attacks_tbl.cpp
+  src/eval.cpp
 )
 target_include_directories(euclid_engine PUBLIC include)
 
@@ -87,3 +88,7 @@ add_test(NAME castle_smoke COMMAND $<TARGET_FILE:castle_smoke>)
 add_executable(perft_refs tests/perft_refs.cpp)
 target_link_libraries(perft_refs PRIVATE euclid_engine)
 add_test(NAME perft_refs COMMAND $<TARGET_FILE:perft_refs>)
+
+add_executable(eval_smoke tests/eval_smoke.cpp)
+target_link_libraries(eval_smoke PRIVATE euclid_engine)
+add_test(NAME eval_smoke COMMAND $<TARGET_FILE:eval_smoke>)

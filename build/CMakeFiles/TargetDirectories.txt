@@ -13,6 +13,7 @@
 /Users/danielding/euclid-engine/build/CMakeFiles/do_undo_smoke.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/castle_smoke.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/perft_refs.dir
+/Users/danielding/euclid-engine/build/CMakeFiles/eval_smoke.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/test.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/edit_cache.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/rebuild_cache.dir

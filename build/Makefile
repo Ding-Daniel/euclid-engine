@@ -321,6 +321,19 @@ perft_refs/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/perft_refs.dir/build.make CMakeFiles/perft_refs.dir/build
 .PHONY : perft_refs/fast
 
+#=============================================================================
+# Target rules for targets named eval_smoke
+
+# Build rule for target.
+eval_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 eval_smoke
+.PHONY : eval_smoke
+
+# fast build rule for target.
+eval_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_smoke.dir/build.make CMakeFiles/eval_smoke.dir/build
+.PHONY : eval_smoke/fast
+
 src/attack.o: src/attack.cpp.o
 .PHONY : src/attack.o
 
@@ -392,6 +405,30 @@ src/board.s: src/board.cpp.s
 src/board.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/board.cpp.s
 .PHONY : src/board.cpp.s
+
+src/eval.o: src/eval.cpp.o
+.PHONY : src/eval.o
+
+# target to build an object file
+src/eval.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/eval.cpp.o
+.PHONY : src/eval.cpp.o
+
+src/eval.i: src/eval.cpp.i
+.PHONY : src/eval.i
+
+# target to preprocess a source file
+src/eval.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/eval.cpp.i
+.PHONY : src/eval.cpp.i
+
+src/eval.s: src/eval.cpp.s
+.PHONY : src/eval.s
+
+# target to generate assembly for a file
+src/eval.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/eval.cpp.s
+.PHONY : src/eval.cpp.s
 
 src/fen.o: src/fen.cpp.o
 .PHONY : src/fen.o
@@ -608,6 +645,30 @@ tests/do_undo_smoke.s: tests/do_undo_smoke.cpp.s
 tests/do_undo_smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/do_undo_smoke.dir/build.make CMakeFiles/do_undo_smoke.dir/tests/do_undo_smoke.cpp.s
 .PHONY : tests/do_undo_smoke.cpp.s
+
+tests/eval_smoke.o: tests/eval_smoke.cpp.o
+.PHONY : tests/eval_smoke.o
+
+# target to build an object file
+tests/eval_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_smoke.dir/build.make CMakeFiles/eval_smoke.dir/tests/eval_smoke.cpp.o
+.PHONY : tests/eval_smoke.cpp.o
+
+tests/eval_smoke.i: tests/eval_smoke.cpp.i
+.PHONY : tests/eval_smoke.i
+
+# target to preprocess a source file
+tests/eval_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_smoke.dir/build.make CMakeFiles/eval_smoke.dir/tests/eval_smoke.cpp.i
+.PHONY : tests/eval_smoke.cpp.i
+
+tests/eval_smoke.s: tests/eval_smoke.cpp.s
+.PHONY : tests/eval_smoke.s
+
+# target to generate assembly for a file
+tests/eval_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_smoke.dir/build.make CMakeFiles/eval_smoke.dir/tests/eval_smoke.cpp.s
+.PHONY : tests/eval_smoke.cpp.s
 
 tests/fen.o: tests/fen.cpp.o
 .PHONY : tests/fen.o
@@ -863,6 +924,7 @@ help:
 	@echo "... do_undo_smoke"
 	@echo "... euclid_cli"
 	@echo "... euclid_engine"
+	@echo "... eval_smoke"
 	@echo "... fen_test"
 	@echo "... incheck_smoke"
 	@echo "... king_smoke"
@@ -882,6 +944,9 @@ help:
 	@echo "... src/board.o"
 	@echo "... src/board.i"
 	@echo "... src/board.s"
+	@echo "... src/eval.o"
+	@echo "... src/eval.i"
+	@echo "... src/eval.s"
 	@echo "... src/fen.o"
 	@echo "... src/fen.i"
 	@echo "... src/fen.s"
@@ -909,6 +974,9 @@ help:
 	@echo "... tests/do_undo_smoke.o"
 	@echo "... tests/do_undo_smoke.i"
 	@echo "... tests/do_undo_smoke.s"
+	@echo "... tests/eval_smoke.o"
+	@echo "... tests/eval_smoke.i"
+	@echo "... tests/eval_smoke.s"
 	@echo "... tests/fen.o"
 	@echo "... tests/fen.i"
 	@echo "... tests/fen.s"
