@@ -17,6 +17,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/euclid_engine.dir/src/perft.cpp.o.d"
   "CMakeFiles/euclid_engine.dir/src/search.cpp.o"
   "CMakeFiles/euclid_engine.dir/src/search.cpp.o.d"
+  "CMakeFiles/euclid_engine.dir/src/tt.cpp.o"
+  "CMakeFiles/euclid_engine.dir/src/tt.cpp.o.d"
   "CMakeFiles/euclid_engine.dir/src/uci.cpp.o"
   "CMakeFiles/euclid_engine.dir/src/uci.cpp.o.d"
   "CMakeFiles/euclid_engine.dir/src/zobrist.cpp.o"

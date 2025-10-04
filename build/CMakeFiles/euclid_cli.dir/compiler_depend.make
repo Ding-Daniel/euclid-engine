@@ -986,11 +986,10 @@ CMakeFiles/euclid_cli.dir/src/main.cpp.o: /Users/danielding/euclid-engine/src/ma
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h \
-  /Users/danielding/euclid-engine/include/euclid/attack.hpp \
   /Users/danielding/euclid-engine/include/euclid/board.hpp \
+  /Users/danielding/euclid-engine/include/euclid/eval.hpp \
   /Users/danielding/euclid-engine/include/euclid/fen.hpp \
   /Users/danielding/euclid-engine/include/euclid/move.hpp \
-  /Users/danielding/euclid-engine/include/euclid/move_do.hpp \
   /Users/danielding/euclid-engine/include/euclid/movegen.hpp \
   /Users/danielding/euclid-engine/include/euclid/movelist.hpp \
   /Users/danielding/euclid-engine/include/euclid/perft.hpp \
@@ -1008,7 +1007,7 @@ CMakeFiles/euclid_cli.dir/src/main.cpp.o: /Users/danielding/euclid-engine/src/ma
 
 /Users/danielding/euclid-engine/include/euclid/movelist.hpp:
 
-/Users/danielding/euclid-engine/include/euclid/move_do.hpp:
+/Users/danielding/euclid-engine/include/euclid/eval.hpp:
 
 /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h:
 
@@ -1941,8 +1940,6 @@ CMakeFiles/euclid_cli.dir/src/main.cpp.o: /Users/danielding/euclid-engine/src/ma
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/ranges_replace_copy.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__utility/integer_sequence.h:
-
-/Users/danielding/euclid-engine/include/euclid/attack.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__format/formatter_floating_point.h:
 

@@ -23,6 +23,7 @@ add_library(euclid_engine STATIC
   src/eval.cpp
   src/uci.cpp
   src/search.cpp
+  src/tt.cpp
 )
 target_include_directories(euclid_engine PUBLIC include)
 

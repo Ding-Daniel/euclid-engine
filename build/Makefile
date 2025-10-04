@@ -600,6 +600,30 @@ src/search.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/search.cpp.s
 .PHONY : src/search.cpp.s
 
+src/tt.o: src/tt.cpp.o
+.PHONY : src/tt.o
+
+# target to build an object file
+src/tt.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/tt.cpp.o
+.PHONY : src/tt.cpp.o
+
+src/tt.i: src/tt.cpp.i
+.PHONY : src/tt.i
+
+# target to preprocess a source file
+src/tt.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/tt.cpp.i
+.PHONY : src/tt.cpp.i
+
+src/tt.s: src/tt.cpp.s
+.PHONY : src/tt.s
+
+# target to generate assembly for a file
+src/tt.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/tt.cpp.s
+.PHONY : src/tt.cpp.s
+
 src/uci.o: src/uci.cpp.o
 .PHONY : src/uci.o
 
@@ -1089,6 +1113,9 @@ help:
 	@echo "... src/search.o"
 	@echo "... src/search.i"
 	@echo "... src/search.s"
+	@echo "... src/tt.o"
+	@echo "... src/tt.i"
+	@echo "... src/tt.s"
 	@echo "... src/uci.o"
 	@echo "... src/uci.i"
 	@echo "... src/uci.s"
