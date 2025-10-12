@@ -59,6 +59,81 @@ static int move_score(const Board& b, Color us, const Move& m) {
 // Global-ish TT (simple and effective)
 static TT GTT;
 
+// ---------------------------
+// Quiescence Search
+// ---------------------------
+static int qsearch(Board& b, int alpha, int beta, std::uint64_t& nodes) {
+  nodes++;
+
+  const Color us = b.side_to_move();
+
+  // If we're in check: expand *all* legal evasions (not just captures).
+  if (in_check(b, us)) {
+    MoveList ev;
+    generate_pseudo_legal(b, ev);
+
+    std::vector<Move> moves;
+    moves.reserve(ev.sz);
+    for (const auto& m : ev) moves.push_back(m);
+    std::stable_sort(moves.begin(), moves.end(),
+      [&](const Move& a, const Move& c){ return move_score(b, us, a) > move_score(b, us, c); });
+
+    for (const auto& m : moves) {
+      State st{};
+      do_move(b, m, st);
+      if (!in_check(b, us)) {
+        int score = -qsearch(b, -beta, -alpha, nodes);
+        undo_move(b, m, st);
+        if (score >= beta) return score;
+        if (score > alpha) alpha = score;
+      } else {
+        undo_move(b, m, st);
+      }
+    }
+    return alpha;
+  }
+
+  // Stand pat (static eval)
+  int stand = eval_side_to_move(b);
+  if (stand >= beta) return stand;
+  if (stand > alpha) alpha = stand;
+
+  // Only explore tactical moves: captures, promotions, EP
+  MoveList ml;
+  generate_pseudo_legal(b, ml);
+
+  std::vector<Move> moves;
+  moves.reserve(ml.sz);
+  for (const auto& m : ml) {
+    Color tc; Piece toP = b.piece_at(m.to, &tc);
+    bool isCap = (toP != Piece::None && tc != us);
+    bool isEP  = is_en_passant(b, us, m);
+    bool isPr  = (m.promo != Piece::None);
+    if (isCap || isEP || isPr) moves.push_back(m);
+  }
+
+  std::stable_sort(moves.begin(), moves.end(),
+    [&](const Move& a, const Move& c){ return move_score(b, us, a) > move_score(b, us, c); });
+
+  for (const auto& m : moves) {
+    State st{};
+    do_move(b, m, st);
+    if (!in_check(b, us)) {
+      int score = -qsearch(b, -beta, -alpha, nodes);
+      undo_move(b, m, st);
+      if (score >= beta) return score;
+      if (score > alpha) alpha = score;
+    } else {
+      undo_move(b, m, st);
+    }
+  }
+
+  return alpha;
+}
+
+// ---------------------------
+// Alpha-Beta with TT
+// ---------------------------
 static int negamax(Board& b, int depth, int alpha, int beta,
                    std::uint64_t& nodes, std::vector<Move>& pv) {
   nodes++;
