@@ -235,27 +235,63 @@ static int negamax(Board& b, int depth, int alpha, int beta,
 
 SearchResult search(const Board& root, int maxDepth) {
   SearchResult res;
-  res.depth = maxDepth;
+  res.depth = 0;
   res.nodes = 0;
+  res.score = 0;
+  res.best  = Move{};
+  res.pv.clear();
 
   Board b = root;
-  int alpha = -INF, beta = INF;
 
+  // Helper to clamp alpha/beta to our engine infinities
+  auto clamp = [](int x, int lo, int hi){ return x < lo ? lo : (x > hi ? hi : x); };
+
+  int lastScore = 0;  // previous iteration’s score, seed for aspiration
   for (int d = 1; d <= maxDepth; ++d) {
     std::vector<Move> pv;
-    int score = negamax(b, d, alpha, beta, res.nodes, pv);
 
-    if (!pv.empty()) {
-      res.best  = pv.front();
-      res.pv    = std::move(pv);
-      res.score = score;
-      res.depth = d;
+    // For the first iteration use a full window, afterwards use aspiration
+    int alpha = -INF;
+    int beta  = +INF;
+
+    // Window half-width: start small and grow mildly with depth
+    // (centipawns; tweak if you like)
+    if (d > 1) {
+      int asp = 50 + 10 * d;          // ~0.5 pawn + 0.1 per ply
+      alpha = clamp(lastScore - asp, -MATE, +MATE);
+      beta  = clamp(lastScore + asp, -MATE, +MATE);
+
+      // Re-search loop on fail-low / fail-high
+      while (true) {
+        int score = negamax(b, d, alpha, beta, res.nodes, pv);
+        if (score <= alpha) {
+          // fail-low: widen downward
+          int widen = (beta - alpha) * 2;        // double window
+          alpha = clamp(score - widen, -INF, +INF);
+          continue;
+        } else if (score >= beta) {
+          // fail-high: widen upward
+          int widen = (beta - alpha) * 2;
+          beta = clamp(score + widen, -INF, +INF);
+          continue;
+        } else {
+          // success
+          lastScore   = score;
+          res.best    = pv.empty() ? Move{} : pv.front();
+          res.pv      = std::move(pv);
+          res.score   = score;
+          res.depth   = d;
+          break;
+        }
+      }
     } else {
-      res.best = Move{};
-      res.pv.clear();
-      res.score = score;
-      res.depth = d;
-      break;
+      // d == 1: full window, establish lastScore
+      int score = negamax(b, d, alpha, beta, res.nodes, pv);
+      lastScore   = score;
+      res.best    = pv.empty() ? Move{} : pv.front();
+      res.pv      = std::move(pv);
+      res.score   = score;
+      res.depth   = d;
     }
   }
   return res;
