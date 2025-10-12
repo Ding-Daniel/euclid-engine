@@ -5,11 +5,71 @@
 #include "euclid/eval.hpp"
 #include "euclid/tt.hpp"
 #include "euclid/types.hpp"
+
 #include <algorithm>
+#include <cstdint>
 #include <limits>
 #include <vector>
 
 namespace euclid {
+namespace {
+
+// tune as you like
+constexpr int MAX_PLY = 128;
+
+static Move killer1[MAX_PLY];
+static Move killer2[MAX_PLY];
+static int  historyH[2][64][64];
+static int  g_rootDepth = 0;
+
+inline bool same_move(const Move& a, const Move& b) {
+  return a.from == b.from && a.to == b.to && a.promo == b.promo;
+}
+
+inline bool square_has_opponent(const Board& b, Color us, int sq) {
+  Color oc; Piece op = b.piece_at(sq, &oc);
+  return op != Piece::None && oc != us;
+}
+
+inline bool is_quiet(const Board& b, Color us, const Move& m) {
+  if (m.promo != Piece::None) return false;
+  return !square_has_opponent(b, us, m.to);
+}
+
+inline void store_killer_history(Color us, const Board& b, const Move& m, int ply) {
+  if (ply < 0 || ply >= MAX_PLY) return;
+  if (is_quiet(b, us, m)) {
+    if (!same_move(killer1[ply], m)) { killer2[ply] = killer1[ply]; killer1[ply] = m; }
+    int& h = historyH[(int)us][m.from][m.to];
+    h += (ply + 1) * (ply + 1);
+    if (h > (1 << 20)) { // cheap decay
+      for (int c = 0; c < 2; ++c)
+        for (int f = 0; f < 64; ++f)
+          for (int t = 0; t < 64; ++t)
+            historyH[c][f][t] >>= 1;
+    }
+  }
+}
+
+inline int mvv_lva(const Board& b, const Move& m) {
+  Color oc; Piece victim = b.piece_at(m.to, &oc);
+  if (victim == Piece::None) return 0;
+  Color uc; Piece attacker = b.piece_at(m.from, &uc);
+  static const int val[] = {0,100,320,330,500,900,20000}; // None,P,N,B,R,Q,K
+  return val[(int)victim]*16 - val[(int)attacker];
+}
+
+// Killer/history aware sorting score (captures, promo, TT first; then killers; then history)
+inline int order_score(const Board& b, Color us, const Move& m, int ply, const Move& ttMove) {
+  if (same_move(m, ttMove)) return 3'000'000;
+  if (m.promo != Piece::None) return 2'600'000;                 // non-capture promotions
+  if (square_has_opponent(b, us, m.to)) return 2'000'000 + mvv_lva(b, m);
+  if (same_move(m, killer1[ply])) return 1'500'000;
+  if (same_move(m, killer2[ply])) return 1'400'000;
+  return historyH[(int)us][m.from][m.to];                        // quiets
+}
+
+} // anon
 
 static constexpr int INF  = 30000;
 static constexpr int MATE = 29000;
@@ -35,8 +95,8 @@ static inline bool is_en_passant(const Board& b, Color us, const Move& m) {
   return b.ep_square() == m.to;
 }
 
-// MVV-LVA + promo bonus
-static int move_score(const Board& b, Color us, const Move& m) {
+// Basic MVV-LVA + promo bonus used by qsearch ordering
+static int move_score_basic(const Board& b, Color us, const Move& m) {
   Color fc; Piece fromP = b.piece_at(m.from, &fc);
   Color tc; Piece toP   = b.piece_at(m.to,   &tc);
 
@@ -56,18 +116,18 @@ static int move_score(const Board& b, Color us, const Move& m) {
   return promo_bonus; // quiet
 }
 
-// Global-ish TT (simple and effective)
+// Global-ish TT
 static TT GTT;
 
 // ---------------------------
-// Quiescence Search
+// Quiescence Search (kept conservative; only captures/promo/EP unless in check)
 // ---------------------------
 static int qsearch(Board& b, int alpha, int beta, std::uint64_t& nodes) {
   nodes++;
 
   const Color us = b.side_to_move();
 
-  // If we're in check: expand *all* legal evasions (not just captures).
+  // If in check, allow all legal evasions (ordered)
   if (in_check(b, us)) {
     MoveList ev;
     generate_pseudo_legal(b, ev);
@@ -76,7 +136,7 @@ static int qsearch(Board& b, int alpha, int beta, std::uint64_t& nodes) {
     moves.reserve(ev.sz);
     for (const auto& m : ev) moves.push_back(m);
     std::stable_sort(moves.begin(), moves.end(),
-      [&](const Move& a, const Move& c){ return move_score(b, us, a) > move_score(b, us, c); });
+      [&](const Move& a, const Move& c){ return move_score_basic(b, us, a) > move_score_basic(b, us, c); });
 
     for (const auto& m : moves) {
       State st{};
@@ -93,12 +153,12 @@ static int qsearch(Board& b, int alpha, int beta, std::uint64_t& nodes) {
     return alpha;
   }
 
-  // Stand pat (static eval)
+  // Stand-pat
   int stand = eval_side_to_move(b);
   if (stand >= beta) return stand;
   if (stand > alpha) alpha = stand;
 
-  // Only explore tactical moves: captures, promotions, EP
+  // Only tactical moves
   MoveList ml;
   generate_pseudo_legal(b, ml);
 
@@ -113,7 +173,7 @@ static int qsearch(Board& b, int alpha, int beta, std::uint64_t& nodes) {
   }
 
   std::stable_sort(moves.begin(), moves.end(),
-    [&](const Move& a, const Move& c){ return move_score(b, us, a) > move_score(b, us, c); });
+    [&](const Move& a, const Move& c){ return move_score_basic(b, us, a) > move_score_basic(b, us, c); });
 
   for (const auto& m : moves) {
     State st{};
@@ -132,18 +192,23 @@ static int qsearch(Board& b, int alpha, int beta, std::uint64_t& nodes) {
 }
 
 // ---------------------------
-// Alpha-Beta with TT
+// Alpha-Beta + TT + killers/history
 // ---------------------------
 static int negamax(Board& b, int depth, int alpha, int beta,
-                   std::uint64_t& nodes, std::vector<Move>& pv) {
+                   std::uint64_t& nodes, std::vector<Move>& pv)
+{
   nodes++;
 
   const int alphaOrig = alpha;
   const U64 key = b.hash();
+  const Color us = b.side_to_move();
+  const int ply = std::max(0, g_rootDepth - depth);
 
   // TT probe
   TTEntry hit{};
+  Move ttMove{};
   if (GTT.probe(key, hit) && hit.depth >= depth) {
+    ttMove = hit.best;
     if (hit.bound == TTBound::Exact) {
       pv.clear();
       return hit.score;
@@ -154,68 +219,72 @@ static int negamax(Board& b, int depth, int alpha, int beta,
       pv.clear();
       return hit.score;
     }
+  } else if (GTT.probe(key, hit)) {
+    ttMove = hit.best; // use as ordering hint even if depth too shallow
   }
 
   if (depth == 0) {
     pv.clear();
-    return eval_side_to_move(b);
+    return eval_side_to_move(b); // keep conservative; qsearch available for later
+    // return qsearch(b, alpha, beta, nodes); // enable if you want QS at leaves
   }
 
   MoveList ml;
   generate_pseudo_legal(b, ml);
 
-  const Color us = b.side_to_move();
-
-  // Build & order move list
+  // Order moves
   std::vector<Move> moves;
   moves.reserve(ml.sz);
   for (const auto& m : ml) moves.push_back(m);
-
-  // TT move bonus if we have one
-  Move ttMove{};
-  if (hit.key == key && hit.depth >= 0) ttMove = hit.best;
-
-  std::stable_sort(moves.begin(), moves.end(), [&](const Move& a, const Move& bmv) {
-    int sa = move_score(b, us, a);
-    int sb = move_score(b, us, bmv);
-    if (move_eq(a, ttMove))  sa += 1'000'000;
-    if (move_eq(bmv, ttMove)) sb += 1'000'000;
-    return sa > sb;
-  });
+  
+  std::stable_sort(moves.begin(), moves.end(),
+    [&](const Move& a, const Move& bmv){
+      return order_score(b, us, a, ply, ttMove) >
+             order_score(b, us, bmv, ply, ttMove);
+    });
+  
 
   bool anyLegal = false;
   Move bestMove{};
   std::vector<Move> bestChildPV;
   int bestScore = -INF;
 
-  auto try_move = [&](const Move& m) {
+  for (const auto& m : moves) {
     State st{};
     do_move(b, m, st);
     if (!in_check(b, us)) {
       anyLegal = true;
       std::vector<Move> childPV;
       int score = -negamax(b, depth - 1, -beta, -alpha, nodes, childPV);
+
       if (score > bestScore) {
         bestScore   = score;
         bestMove    = m;
         bestChildPV = std::move(childPV);
       }
-      if (score > alpha) alpha = score;
+
       undo_move(b, m, st);
-      if (alpha >= beta) return true; // cutoff
+
+      if (bestScore >= beta) {
+        // record quiet cutoffs as killers/history
+        store_killer_history(us, b, m, ply);
+
+        // store cutoff in TT
+        GTT.store(key, m, static_cast<std::int16_t>(depth),
+                  static_cast<std::int16_t>(bestScore), TTBound::Lower);
+        pv.clear();
+        return bestScore;
+      }
+
+      if (bestScore > alpha) alpha = bestScore;
     } else {
       undo_move(b, m, st);
     }
-    return false;
-  };
-
-  for (const auto& m : moves) {
-    if (try_move(m)) break;
   }
 
   if (!anyLegal) {
-    if (in_check(b, us)) return -MATE + 1;
-    return 0;
+    if (in_check(b, us)) return -MATE + 1; // checkmated
+    return 0;                               // stalemate
   }
 
   // Store PV
@@ -227,6 +296,7 @@ static int negamax(Board& b, int depth, int alpha, int beta,
   TTBound bound = TTBound::Exact;
   if (bestScore <= alphaOrig) bound = TTBound::Upper;
   else if (bestScore >= beta) bound = TTBound::Lower;
+
   GTT.store(key, bestMove, static_cast<std::int16_t>(depth),
             static_cast<std::int16_t>(bestScore), bound);
 
@@ -243,39 +313,36 @@ SearchResult search(const Board& root, int maxDepth) {
 
   Board b = root;
 
-  // Helper to clamp alpha/beta to our engine infinities
   auto clamp = [](int x, int lo, int hi){ return x < lo ? lo : (x > hi ? hi : x); };
 
   int lastScore = 0;  // previous iteration’s score, seed for aspiration
   for (int d = 1; d <= maxDepth; ++d) {
     std::vector<Move> pv;
 
-    // For the first iteration use a full window, afterwards use aspiration
+    // Optional: clear killers per root iteration (deterministic results)
+    // std::fill(std::begin(killer1), std::end(killer1), Move{});
+    // std::fill(std::begin(killer2), std::end(killer2), Move{});
+
     int alpha = -INF;
     int beta  = +INF;
 
-    // Window half-width: start small and grow mildly with depth
-    // (centipawns; tweak if you like)
     if (d > 1) {
-      int asp = 50 + 10 * d;          // ~0.5 pawn + 0.1 per ply
+      int asp = 50 + 10 * d;   // ~0.5 pawn + 0.1 per ply
       alpha = clamp(lastScore - asp, -MATE, +MATE);
       beta  = clamp(lastScore + asp, -MATE, +MATE);
 
-      // Re-search loop on fail-low / fail-high
       while (true) {
+        g_rootDepth = d;
         int score = negamax(b, d, alpha, beta, res.nodes, pv);
         if (score <= alpha) {
-          // fail-low: widen downward
-          int widen = (beta - alpha) * 2;        // double window
+          int widen = (beta - alpha) * 2;
           alpha = clamp(score - widen, -INF, +INF);
           continue;
         } else if (score >= beta) {
-          // fail-high: widen upward
           int widen = (beta - alpha) * 2;
           beta = clamp(score + widen, -INF, +INF);
           continue;
         } else {
-          // success
           lastScore   = score;
           res.best    = pv.empty() ? Move{} : pv.front();
           res.pv      = std::move(pv);
@@ -285,7 +352,7 @@ SearchResult search(const Board& root, int maxDepth) {
         }
       }
     } else {
-      // d == 1: full window, establish lastScore
+      g_rootDepth = d;
       int score = negamax(b, d, alpha, beta, res.nodes, pv);
       lastScore   = score;
       res.best    = pv.empty() ? Move{} : pv.front();
