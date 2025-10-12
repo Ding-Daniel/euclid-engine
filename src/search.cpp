@@ -82,10 +82,6 @@ static inline int eval_side_to_move(const Board& b) {
   return b.side_to_move() == Color::White ? e : -e;
 }
 
-static inline bool move_eq(const Move& a, const Move& b) {
-  return a.from == b.from && a.to == b.to && a.promo == b.promo;
-}
-
 static inline bool is_en_passant(const Board& b, Color us, const Move& m) {
   Color fc; Piece fromP = b.piece_at(m.from, &fc);
   if (fromP != Piece::Pawn || fc != us) return false;
@@ -120,7 +116,7 @@ static int move_score_basic(const Board& b, Color us, const Move& m) {
 static TT GTT;
 
 // ---------------------------
-// Quiescence Search (kept conservative; only captures/promo/EP unless in check)
+// Quiescence Search (captures/promo/EP; evasions if in check)
 // ---------------------------
 static int qsearch(Board& b, int alpha, int beta, std::uint64_t& nodes) {
   nodes++;
@@ -187,13 +183,11 @@ static int qsearch(Board& b, int alpha, int beta, std::uint64_t& nodes) {
       undo_move(b, m, st);
     }
   }
-
   return alpha;
 }
 
 // ---------------------------
-// Alpha-Beta + TT + killers/history
-// ---------------------------
+/* Alpha-Beta + TT + killers/history */
 static int negamax(Board& b, int depth, int alpha, int beta,
                    std::uint64_t& nodes, std::vector<Move>& pv)
 {
@@ -209,24 +203,17 @@ static int negamax(Board& b, int depth, int alpha, int beta,
   Move ttMove{};
   if (GTT.probe(key, hit) && hit.depth >= depth) {
     ttMove = hit.best;
-    if (hit.bound == TTBound::Exact) {
-      pv.clear();
-      return hit.score;
-    } else if (hit.bound == TTBound::Lower && hit.score >= beta) {
-      pv.clear();
-      return hit.score;
-    } else if (hit.bound == TTBound::Upper && hit.score <= alpha) {
-      pv.clear();
-      return hit.score;
-    }
+    if (hit.bound == TTBound::Exact) { pv.clear(); return hit.score; }
+    if (hit.bound == TTBound::Lower && hit.score >= beta) { pv.clear(); return hit.score; }
+    if (hit.bound == TTBound::Upper && hit.score <= alpha) { pv.clear(); return hit.score; }
   } else if (GTT.probe(key, hit)) {
-    ttMove = hit.best; // use as ordering hint even if depth too shallow
+    ttMove = hit.best; // ordering hint
   }
 
   if (depth == 0) {
     pv.clear();
-    return eval_side_to_move(b); // keep conservative; qsearch available for later
-    // return qsearch(b, alpha, beta, nodes); // enable if you want QS at leaves
+    return eval_side_to_move(b);
+    // return qsearch(b, alpha, beta, nodes); // enable if you prefer QS at leaves
   }
 
   MoveList ml;
@@ -236,13 +223,12 @@ static int negamax(Board& b, int depth, int alpha, int beta,
   std::vector<Move> moves;
   moves.reserve(ml.sz);
   for (const auto& m : ml) moves.push_back(m);
-  
+
   std::stable_sort(moves.begin(), moves.end(),
     [&](const Move& a, const Move& bmv){
       return order_score(b, us, a, ply, ttMove) >
              order_score(b, us, bmv, ply, ttMove);
     });
-  
 
   bool anyLegal = false;
   Move bestMove{};
@@ -304,7 +290,7 @@ static int negamax(Board& b, int depth, int alpha, int beta,
 }
 
 SearchResult search(const Board& root, int maxDepth) {
-  SearchResult res;
+  SearchResult res{};
   res.depth = 0;
   res.nodes = 0;
   res.score = 0;
