@@ -1,17 +1,18 @@
-smoke 11 0.0266974
-fen 11 0.0174574
-perft_smoke 11 0.0151094
-king_smoke 11 0.0167627
-bishop_smoke 11 0.0160161
-rook_smoke 11 0.0159377
-queen_smoke 11 0.0152589
-pawn_smoke 11 0.0147937
-pin_smoke 11 0.0159652
-incheck_smoke 11 0.015267
-do_undo_smoke 11 0.0252433
-castle_smoke 11 0.0149644
-perft_refs 11 0.177843
-eval_smoke 10 0.0206844
-uci_smoke 9 0.018064
-search_smoke 8 0.0221321
+smoke 12 0.0253683
+fen 12 0.0162844
+perft_smoke 12 0.0154373
+king_smoke 12 0.0144581
+bishop_smoke 12 0.0142377
+rook_smoke 12 0.0137045
+queen_smoke 12 0.0140815
+pawn_smoke 12 0.01402
+pin_smoke 12 0.0140187
+incheck_smoke 12 0.0139968
+do_undo_smoke 12 0.0141558
+castle_smoke 12 0.0146948
+perft_refs 12 0.163382
+eval_smoke 11 0.0195215
+uci_smoke 9 0
+search_smoke 9 0.0199066
 ---
+uci_smoke
