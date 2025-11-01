@@ -15,16 +15,16 @@ struct SearchResult {
 };
 // Search limits for UCI/time mgmt
 struct SearchLimits {
-  int depth = 0;               // 0 = use time
-  int movetime_ms = 0;         // exact slice
+  int depth = 0;
+  int movetime_ms = 0;
   int wtime_ms = 0, btime_ms = 0;
-  int winc_ms  = 0, binc_ms  = 0;
-  int movestogo = 0;           // optional for classical
-  std::atomic<bool>* stop = nullptr; // optional external stop
+  int winc_ms = 0, binc_ms = 0;
+  int movestogo = 0;
+  std::atomic<bool>* stop = nullptr;
 };
 
-SearchResult search(const Board& root, int maxDepth);                 // existing
-SearchResult search(const Board& root, const SearchLimits& limits);   // new
+SearchResult search(const Board& root, int maxDepth);
+SearchResult search(const Board& root, const SearchLimits& lim);  // <-- add this
 
 // Depth-limited negamax with alpha-beta. No TT/ID yet.
 SearchResult search(const Board& root, int depth);

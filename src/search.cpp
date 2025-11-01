@@ -6,6 +6,8 @@
 #include "euclid/tt.hpp"
 #include "euclid/types.hpp"
 
+#include <chrono>
+#include <atomic>
 #include <algorithm>
 #include <cstdint>
 #include <limits>
@@ -212,8 +214,7 @@ static int negamax(Board& b, int depth, int alpha, int beta,
 
   if (depth == 0) {
     pv.clear();
-    return eval_side_to_move(b);
-    // return qsearch(b, alpha, beta, nodes); // enable if you prefer QS at leaves
+    return qsearch(b, alpha, beta, nodes);
   }
 
   MoveList ml;
@@ -347,6 +348,80 @@ SearchResult search(const Board& root, int maxDepth) {
       res.depth   = d;
     }
   }
+  return res;
+}
+// ---- limits-based search overload ----
+
+SearchResult search(const Board& root, const SearchLimits& lim) {
+  using clock = std::chrono::steady_clock;
+
+  const int maxDepth = (lim.depth > 0 ? lim.depth : 64);
+  const auto start = clock::now();
+  const auto deadline = [&]{
+    if (lim.movetime_ms > 0) return start + std::chrono::milliseconds(lim.movetime_ms);
+    int mtg = lim.movestogo > 0 ? lim.movestogo : 30;
+    int bank = (root.side_to_move() == Color::White)
+                 ? (lim.wtime_ms + lim.winc_ms)
+                 : (lim.btime_ms + lim.binc_ms);
+    if (bank <= 0) return clock::time_point::max();
+    int budget = std::max(1, bank / std::max(1, mtg) - 10);
+    return start + std::chrono::milliseconds(budget);
+  }();
+
+  auto time_up = [&]{
+    if (lim.stop && lim.stop->load(std::memory_order_relaxed)) return true;
+    if (deadline == clock::time_point::max()) return false;
+    return clock::now() >= deadline;
+  };
+
+  SearchResult res{};
+  Board b = root;
+
+  auto clamp = [](int x, int lo, int hi){ return x < lo ? lo : (x > hi ? hi : x); };
+  int lastScore = 0;
+
+  for (int d = 1; d <= maxDepth; ++d) {
+    std::vector<Move> pv;
+    int alpha = -INF, beta = +INF;
+
+    if (d > 1) {
+      int asp = 50 + 10 * d;
+      alpha = clamp(lastScore - asp, -MATE, +MATE);
+      beta  = clamp(lastScore + asp, -MATE, +MATE);
+
+      while (true) {
+        if (time_up()) break;
+        g_rootDepth = d;
+        int score = negamax(b, d, alpha, beta, res.nodes, pv);
+        if (score <= alpha) {
+          int widen = (beta - alpha) * 2;
+          alpha = clamp(score - widen, -INF, +INF);
+        } else if (score >= beta) {
+          int widen = (beta - alpha) * 2;
+          beta = clamp(score + widen, -INF, +INF);
+        } else {
+          lastScore = score;
+          res.best  = pv.empty() ? Move{} : pv.front();
+          res.pv    = std::move(pv);
+          res.score = score;
+          res.depth = d;
+          break;
+        }
+      }
+    } else {
+      if (time_up()) break;
+      g_rootDepth = d;
+      int score = negamax(b, d, alpha, beta, res.nodes, pv);
+      lastScore = score;
+      res.best  = pv.empty() ? Move{} : pv.front();
+      res.pv    = std::move(pv);
+      res.score = score;
+      res.depth = d;
+    }
+
+    if (time_up()) break;
+  }
+
   return res;
 }
 
