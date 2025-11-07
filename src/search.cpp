@@ -38,6 +38,67 @@ inline bool is_quiet(const Board& b, Color us, const Move& m) {
   return !square_has_opponent(b, us, m.to);
 }
 
+// --- draw detection helpers ---
+static std::vector<U64> REP_PATH;  // hashes along current search line only
+
+struct RepGuard {
+  std::vector<U64>& v;
+  RepGuard(std::vector<U64>& vv, U64 key) : v(vv) { v.push_back(key); }
+  ~RepGuard() { v.pop_back(); }
+};
+
+static inline bool threefold_now() {
+  // If current position (the last in REP_PATH) appears >= 3 times, it's a draw.
+  if (REP_PATH.empty()) return false;
+  const U64 cur = REP_PATH.back();
+  int cnt = 0;
+  for (U64 k : REP_PATH) if (k == cur) ++cnt;
+  return cnt >= 3;
+}
+
+static bool insufficient_material(const Board& b) {
+  int wp=0,bp=0,wn=0,bn=0,wb=0,bb=0,wr=0,br=0,wq=0,bq=0;
+
+  for (int s = 0; s < 64; ++s) {
+    Color c; Piece p = b.piece_at(s, &c);
+    switch (p) {
+      case Piece::Pawn:   (c==Color::White ? wp : bp)++; break;
+      case Piece::Knight: (c==Color::White ? wn : bn)++; break;
+      case Piece::Bishop: (c==Color::White ? wb : bb)++; break;
+      case Piece::Rook:   (c==Color::White ? wr : br)++; break;
+      case Piece::Queen:  (c==Color::White ? wq : bq)++; break;
+      default: break;
+    }
+  }
+
+  // Any pawns/rooks/queens -> not insufficient.
+  if (wp+bp+wr+br+wq+bq > 0) return false;
+
+  // Only kings
+  if (wn+bn+wb+bb == 0) return true;
+
+  // King+minor vs King
+  if ((wn+wb) == 1 && (bn+bb) == 0) return true;
+  if ((bn+bb) == 1 && (wn+wb) == 0) return true;
+
+  // KB vs KB with bishops on same color squares
+  if (wn+bn == 0 && wb == 1 && bb == 1) {
+    int wcol = -1, bcol = -1;
+    for (int s = 0; s < 64; ++s) {
+      Color c; Piece p = b.piece_at(s, &c);
+      if (p == Piece::Bishop) {
+        int col = (file_of(s) + rank_of(s)) & 1; // 0=dark,1=light (or vice versa)
+        if (c == Color::White) wcol = col; else bcol = col;
+      }
+    }
+    if (wcol == bcol && wcol != -1) return true;
+  }
+
+  return false;
+}
+
+
+
 inline void store_killer_history(Color us, const Board& b, const Move& m, int ply) {
   if (ply < 0 || ply >= MAX_PLY) return;
   if (is_quiet(b, us, m)) {
@@ -123,6 +184,14 @@ static TT GTT;
 static int qsearch(Board& b, int alpha, int beta, std::uint64_t& nodes) {
   nodes++;
 
+  const U64 key = b.hash();
+  RepGuard guard(REP_PATH, key);  // push current position on the path
+
+  // Draw checks first
+  if (b.halfmove_clock() >= 100) return 0;       // 50-move rule
+  if (threefold_now()) return 0;                 // threefold on current line
+  if (insufficient_material(b)) return 0;        // cannot mate
+
   const Color us = b.side_to_move();
 
   // If in check, allow all legal evasions (ordered)
@@ -194,6 +263,12 @@ static int negamax(Board& b, int depth, int alpha, int beta,
                    std::uint64_t& nodes, std::vector<Move>& pv)
 {
   nodes++;
+  RepGuard rg(REP_PATH, b.hash());
+
+  if (threefold_now() || insufficient_material(b) || b.halfmove_clock() >= 100) {
+    pv.clear();
+    return 0; // Draw
+  }
 
   const int alphaOrig = alpha;
   const U64 key = b.hash();
@@ -214,8 +289,8 @@ static int negamax(Board& b, int depth, int alpha, int beta,
 
   if (depth == 0) {
     pv.clear();
-    return qsearch(b, alpha, beta, nodes);
-  }
+    return qsearch(b, alpha, beta, nodes); // enable quiescence at leaves
+  }  
 
   MoveList ml;
   generate_pseudo_legal(b, ml);
@@ -299,6 +374,7 @@ SearchResult search(const Board& root, int maxDepth) {
   res.pv.clear();
 
   Board b = root;
+  REP_PATH.clear();
 
   auto clamp = [](int x, int lo, int hi){ return x < lo ? lo : (x > hi ? hi : x); };
 
@@ -376,6 +452,7 @@ SearchResult search(const Board& root, const SearchLimits& lim) {
 
   SearchResult res{};
   Board b = root;
+  REP_PATH.clear();
 
   auto clamp = [](int x, int lo, int hi){ return x < lo ? lo : (x > hi ? hi : x); };
   int lastScore = 0;

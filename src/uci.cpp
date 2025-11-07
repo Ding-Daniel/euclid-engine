@@ -56,13 +56,14 @@ std::string move_to_uci(const Move& m) {
 }
 
 static inline int sq_from_uci(const std::string& u, int idxFile, int idxRank) {
-  if (idxFile < 0 || idxRank < 0
-      || idxFile >= static_cast<int>(u.size())
-      || idxRank >= static_cast<int>(u.size()))
+  if (idxFile < 0 || idxRank < 0 ||
+      idxFile >= static_cast<int>(u.size()) ||
+      idxRank >= static_cast<int>(u.size()))
     throw std::invalid_argument("bad uci length");
 
   const char f = u[static_cast<size_t>(idxFile)];
   const char r = u[static_cast<size_t>(idxRank)];
+
   if (f < 'a' || f > 'h' || r < '1' || r > '8')
     throw std::invalid_argument("bad square");
 
