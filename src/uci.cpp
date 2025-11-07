@@ -1,5 +1,6 @@
 #include "euclid/uci.hpp"
 #include "euclid/types.hpp"
+#include "euclid/board.hpp"
 #include "euclid/movegen.hpp"
 #include "euclid/move_do.hpp"
 #include "euclid/attack.hpp"
@@ -17,7 +18,7 @@ static std::atomic<bool> G_STOP{false};
 
 namespace euclid {
 
-// ------------ small helpers ------------
+// ------------ helpers ------------
 static inline char file_char(int s) { return char('a' + file_of(s)); }
 static inline char rank_char(int s) { return char('1' + rank_of(s)); }
 
@@ -49,22 +50,29 @@ std::string move_to_uci(const Move& m) {
   s.push_back(rank_char(m.from));
   s.push_back(file_char(m.to));
   s.push_back(rank_char(m.to));
-  char pc = promo_to_char(m.promo);   // keep C++14-friendly
+  char pc = promo_to_char(m.promo); // C++14/17 friendly
   if (pc) s.push_back(pc);
   return s;
 }
 
 static inline int sq_from_uci(const std::string& u, int idxFile, int idxRank) {
-  if (idxFile < 0 || idxRank < 0 || idxFile >= (int)u.size() || idxRank >= (int)u.size())
+  if (idxFile < 0 || idxRank < 0
+      || idxFile >= static_cast<int>(u.size())
+      || idxRank >= static_cast<int>(u.size()))
     throw std::invalid_argument("bad uci length");
-    const char f = u[static_cast<size_t>(idxFile)];
-    const char r = u[static_cast<size_t>(idxRank)];
-      if (f < 'a' || f > 'h' || r < '1' || r > '8') throw std::invalid_argument("bad square");
+
+  const char f = u[static_cast<size_t>(idxFile)];
+  const char r = u[static_cast<size_t>(idxRank)];
+  if (f < 'a' || f > 'h' || r < '1' || r > '8')
+    throw std::invalid_argument("bad square");
+
   return (r - '1') * 8 + (f - 'a');
 }
 
 Move uci_to_move(const Board& b, const std::string& uci) {
-  if (uci.size() != 4 && uci.size() != 5) throw std::invalid_argument("bad uci length");
+  if (uci.size() != 4 && uci.size() != 5)
+    throw std::invalid_argument("bad uci length");
+
   const int from = sq_from_uci(uci, 0, 1);
   const int to   = sq_from_uci(uci, 2, 3);
   const Piece wantPromo = (uci.size() == 5 ? promo_from_char(uci[4]) : Piece::None);
@@ -72,7 +80,7 @@ Move uci_to_move(const Board& b, const std::string& uci) {
   MoveList ml;
   generate_pseudo_legal(b, ml);
 
-  for (const auto& m : ml) {
+  for (const auto& m : ml) { // MoveList supports range-for
     if (m.from == from && m.to == to) {
       if ((wantPromo == Piece::None && m.promo == Piece::None) ||
           (wantPromo != Piece::None && m.promo == wantPromo)) {
@@ -92,20 +100,18 @@ static std::vector<std::string> split_ws(const std::string& line) {
   return out;
 }
 
-// apply a sequence of UCI moves to a board (assumes legality filter via in_check)
+// apply a sequence of UCI moves to a board (checks legality via in_check)
 static void apply_moves(Board& b, const std::vector<std::string>& toks, size_t startIdx) {
   for (size_t i = startIdx; i < toks.size(); ++i) {
     const std::string& u = toks[i];
     Move m = uci_to_move(b, u);
 
-    // capture the mover's color before do_move flips side
-    Color us = b.side_to_move();
+    const Color us = b.side_to_move(); // capture mover color before do_move flips
 
     State st{};
     do_move(b, m, st);
 
-    // illegal if the moving side's king is in check after the move
-    if (in_check(b, us)) {
+    if (in_check(b, us)) { // illegal if our king in check after move
       undo_move(b, m, st);
       break;
     }
@@ -114,7 +120,7 @@ static void apply_moves(Board& b, const std::vector<std::string>& toks, size_t s
 
 // ------------ minimal UCI loop ------------
 void uci_loop(std::istream& in, std::ostream& out) {
-  Board b;                    // default-construct to startpos (your Board does this)
+  Board b; // startpos
   G_STOP.store(false, std::memory_order_relaxed);
 
   std::string line;
@@ -135,29 +141,26 @@ void uci_loop(std::istream& in, std::ostream& out) {
     }
     else if (cmd == "ucinewgame") {
       G_STOP.store(false, std::memory_order_relaxed);
-      // If you expose a global TT clearer, call it here.
+      // optional: clear transposition table here
       // e.g. TT::global().clear();
     }
     else if (cmd == "position") {
-      // Supported:
-      //   position startpos [moves m1 m2 ...]
-      //   position fen <FEN...> [moves m1 m2 ...]  (FEN handling left as TODO to avoid build breakage)
+      // position startpos [moves ...]
+      // position fen <FEN...> [moves ...]
       if (tokens.size() >= 2) {
         size_t i = 1;
         if (tokens[i] == "startpos") {
-          b = Board{}; // reset to start position
+          b = Board{}; // reset to start
           ++i;
         } else if (tokens[i] == "fen") {
-          // Collect FEN until "moves" or end.
-          // If you have a helper like set_from_fen(b, fenStr), call it here.
           std::string fen;
           ++i;
           while (i < tokens.size() && tokens[i] != "moves") {
             if (!fen.empty()) fen.push_back(' ');
             fen += tokens[i++];
           }
-          // TODO: set board from FEN if your API exposes it.
-          // set_from_fen(b, fen);  // <-- plug your fen loader here
+          // If you have a FEN loader, call it here.
+          // set_from_fen(b, fen);
         }
         if (i < tokens.size() && tokens[i] == "moves") {
           apply_moves(b, tokens, i + 1);
@@ -170,12 +173,10 @@ void uci_loop(std::istream& in, std::ostream& out) {
     else if (cmd == "go") {
       SearchLimits lim;
       lim.stop = &G_STOP;
-      // defaults: allow pure depth-limited if nothing else is set
+      // parse typical UCI time/depth options
       for (size_t i = 1; i < tokens.size(); ++i) {
         const std::string& t = tokens[i];
-        auto rd = [&](int& dst){
-          if (i + 1 < tokens.size()) dst = std::stoi(tokens[++i]);
-        };
+        auto rd = [&](int& dst){ if (i + 1 < tokens.size()) dst = std::stoi(tokens[++i]); };
         if      (t == "depth")      rd(lim.depth);
         else if (t == "movetime")   rd(lim.movetime_ms);
         else if (t == "wtime")      rd(lim.wtime_ms);
@@ -187,20 +188,16 @@ void uci_loop(std::istream& in, std::ostream& out) {
       }
       G_STOP.store(false, std::memory_order_relaxed);
       auto res = search(b, lim);
-      std::string bm = move_to_uci(res.best);
-      out << "bestmove " << bm << "\n";
+      out << "bestmove " << move_to_uci(res.best) << "\n";
       out.flush();
     }
     else if (cmd == "quit") {
       break;
     }
-    else {
-      // ignore unknown commands per UCI spec
-    }
+    // else: ignore unknown per UCI spec
   }
 }
 
-// convenience overload
 void uci_loop() { uci_loop(std::cin, std::cout); }
 
 } // namespace euclid
