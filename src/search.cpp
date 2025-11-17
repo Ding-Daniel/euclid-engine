@@ -95,6 +95,21 @@ inline int order_score(const Board& b, Color us, const Move& m, int ply, const M
   return historyH[(int)us][m.from][m.to];                        // quiets
 }
 
+// Capture-like test BEFORE making a move (needed for LMR gating)
+inline bool is_en_passant_pre(const Board& b, Color us, const Move& m) {
+  Color fc; Piece fromP = b.piece_at(m.from, &fc);
+  if (fromP != Piece::Pawn || fc != us) return false;
+  if (file_of(m.from) == file_of(m.to)) return false;
+  // target square is empty pre-move for EP
+  return b.ep_square() == m.to;
+}
+
+inline bool is_capture_like_pre(const Board& b, Color us, const Move& m) {
+  Color tc; Piece toP = b.piece_at(m.to, &tc);
+  const bool isDirectCap = (toP != Piece::None && tc != us);
+  return isDirectCap || is_en_passant_pre(b, us, m);
+}
+
 // --- Minimal helpers for QS ordering (kept conservative) ---
 static inline bool is_en_passant(const Board& b, Color us, const Move& m) {
   Color fc; Piece fromP = b.piece_at(m.from, &fc);
@@ -269,30 +284,37 @@ static int negamax(Board& b,
 
   int moveIndex = 0;
   for (const auto& m : moves) {
+
+    // Pre-move characteristics (for LMR gating)
+    const bool isCapLike = is_capture_like_pre(b, us, m);
+    const bool isPromo   = (m.promo != Piece::None);
+    const bool isTT      = same_move(m, ttMove);
+
     State st{};
     do_move(b, m, st);
+
     if (!in_check(b, us)) {
       anyLegal = true;
       std::vector<Move> childPV;
 
-      // --- Safe check extension ---
+      // --- Safe check extension (AFTER the move) ---
       const Color them = (us == Color::White ? Color::Black : Color::White);
-      int ext = (in_check(b, them) && depth >= 2) ? 1 : 0;
+      const int ext    = (in_check(b, them) && depth >= 2) ? 1 : 0;
 
-      int newDepth = depth - 1 + ext;
-      if (newDepth >= depth) newDepth = depth - 1; // guarantee progress
-      newDepth = std::max(1, newDepth);
-
-      // --- Simple LMR for late quiets (conservative) ---
-      bool isCapture = square_has_opponent(b, them, m.to);
-      bool isPromo   = (m.promo != Piece::None);
-      bool isTT      = same_move(m, ttMove);
-
+      // Ensure progress: allow depth to hit 0
+      int newDepth = depth - 1 + ext;        // ext is 0 or 1
+      if (newDepth >= depth) newDepth = depth - 1;
+      // Late Move Reduction for late *quiet* moves
       int R = 0;
-      if (depth >= 3 && !isCapture && !isPromo && !isTT && moveIndex >= 4) {
+      if (depth >= 3 && !isCapLike && !isPromo && !isTT && moveIndex >= 4) {
         R = 1;
       }
-      int searchDepth = std::max(1, newDepth - R);
+      int searchDepth = std::max(0, newDepth - R);
+
+      // Final safety in debug builds
+#ifndef NDEBUG
+      if (searchDepth >= depth) searchDepth = depth - 1;
+#endif
 
       int score = -negamax(b, searchDepth, -beta, -alpha, nodes, childPV, stopFlag);
 
@@ -318,7 +340,7 @@ static int negamax(Board& b,
       if (bestScore > alpha) alpha = bestScore;
       ++moveIndex;
 
-      // Check stop between moves too
+      // Cooperative stop between moves
       if (stopFlag && stopFlag->load(std::memory_order_relaxed)) {
         pv.clear();
         return alpha;
