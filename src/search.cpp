@@ -6,17 +6,24 @@
 #include "euclid/tt.hpp"
 #include "euclid/types.hpp"
 
-#include <chrono>
-#include <atomic>
 #include <algorithm>
+#include <atomic>
 #include <cstdint>
 #include <limits>
 #include <vector>
 
 namespace euclid {
+
+// Forward declaration of the internal driver so IDEs don’t complain.
+static SearchResult search_with_limits(const Board& root,
+                                       int maxDepth,
+                                       std::atomic<bool>* stopFlag);
+
 namespace {
 
-// tune as you like
+// ------------------------------------------------------------------
+// Tunables and shared state
+// ------------------------------------------------------------------
 constexpr int MAX_PLY = 128;
 
 static Move killer1[MAX_PLY];
@@ -24,8 +31,25 @@ static Move killer2[MAX_PLY];
 static int  historyH[2][64][64];
 static int  g_rootDepth = 0;
 
+static constexpr int INF  = 30000;
+static constexpr int MATE = 29000;
+
+// Piece values for ordering (None,P,N,B,R,Q,K)
+static constexpr int PVAL[7] = { 0, 100, 320, 330, 500, 900, 20000 };
+
+// Global TT
+static TT GTT;
+
+// ------------------------------------------------------------------
+// Helpers
+// ------------------------------------------------------------------
 inline bool same_move(const Move& a, const Move& b) {
   return a.from == b.from && a.to == b.to && a.promo == b.promo;
+}
+
+inline int eval_side_to_move(const Board& b) {
+  const int e = evaluate(b);
+  return b.side_to_move() == Color::White ? e : -e;
 }
 
 inline bool square_has_opponent(const Board& b, Color us, int sq) {
@@ -38,74 +62,13 @@ inline bool is_quiet(const Board& b, Color us, const Move& m) {
   return !square_has_opponent(b, us, m.to);
 }
 
-// --- draw detection helpers ---
-static std::vector<U64> REP_PATH;  // hashes along current search line only
-
-struct RepGuard {
-  std::vector<U64>& v;
-  RepGuard(std::vector<U64>& vv, U64 key) : v(vv) { v.push_back(key); }
-  ~RepGuard() { v.pop_back(); }
-};
-
-static inline bool threefold_now() {
-  // If current position (the last in REP_PATH) appears >= 3 times, it's a draw.
-  if (REP_PATH.empty()) return false;
-  const U64 cur = REP_PATH.back();
-  int cnt = 0;
-  for (U64 k : REP_PATH) if (k == cur) ++cnt;
-  return cnt >= 3;
-}
-
-static bool insufficient_material(const Board& b) {
-  int wp=0,bp=0,wn=0,bn=0,wb=0,bb=0,wr=0,br=0,wq=0,bq=0;
-
-  for (int s = 0; s < 64; ++s) {
-    Color c; Piece p = b.piece_at(s, &c);
-    switch (p) {
-      case Piece::Pawn:   (c==Color::White ? wp : bp)++; break;
-      case Piece::Knight: (c==Color::White ? wn : bn)++; break;
-      case Piece::Bishop: (c==Color::White ? wb : bb)++; break;
-      case Piece::Rook:   (c==Color::White ? wr : br)++; break;
-      case Piece::Queen:  (c==Color::White ? wq : bq)++; break;
-      default: break;
-    }
-  }
-
-  // Any pawns/rooks/queens -> not insufficient.
-  if (wp+bp+wr+br+wq+bq > 0) return false;
-
-  // Only kings
-  if (wn+bn+wb+bb == 0) return true;
-
-  // King+minor vs King
-  if ((wn+wb) == 1 && (bn+bb) == 0) return true;
-  if ((bn+bb) == 1 && (wn+wb) == 0) return true;
-
-  // KB vs KB with bishops on same color squares
-  if (wn+bn == 0 && wb == 1 && bb == 1) {
-    int wcol = -1, bcol = -1;
-    for (int s = 0; s < 64; ++s) {
-      Color c; Piece p = b.piece_at(s, &c);
-      if (p == Piece::Bishop) {
-        int col = (file_of(s) + rank_of(s)) & 1; // 0=dark,1=light (or vice versa)
-        if (c == Color::White) wcol = col; else bcol = col;
-      }
-    }
-    if (wcol == bcol && wcol != -1) return true;
-  }
-
-  return false;
-}
-
-
-
 inline void store_killer_history(Color us, const Board& b, const Move& m, int ply) {
   if (ply < 0 || ply >= MAX_PLY) return;
   if (is_quiet(b, us, m)) {
     if (!same_move(killer1[ply], m)) { killer2[ply] = killer1[ply]; killer1[ply] = m; }
     int& h = historyH[(int)us][m.from][m.to];
     h += (ply + 1) * (ply + 1);
-    if (h > (1 << 20)) { // cheap decay
+    if (h > (1 << 20)) { // cheap decay to avoid overflow
       for (int c = 0; c < 2; ++c)
         for (int f = 0; f < 64; ++f)
           for (int t = 0; t < 64; ++t)
@@ -132,19 +95,7 @@ inline int order_score(const Board& b, Color us, const Move& m, int ply, const M
   return historyH[(int)us][m.from][m.to];                        // quiets
 }
 
-} // anon
-
-static constexpr int INF  = 30000;
-static constexpr int MATE = 29000;
-
-// Piece values for ordering (None,P,N,B,R,Q,K)
-static constexpr int PVAL[7] = { 0, 100, 320, 330, 500, 900, 20000 };
-
-static inline int eval_side_to_move(const Board& b) {
-  const int e = evaluate(b);
-  return b.side_to_move() == Color::White ? e : -e;
-}
-
+// --- Minimal helpers for QS ordering (kept conservative) ---
 static inline bool is_en_passant(const Board& b, Color us, const Move& m) {
   Color fc; Piece fromP = b.piece_at(m.from, &fc);
   if (fromP != Piece::Pawn || fc != us) return false;
@@ -154,7 +105,6 @@ static inline bool is_en_passant(const Board& b, Color us, const Move& m) {
   return b.ep_square() == m.to;
 }
 
-// Basic MVV-LVA + promo bonus used by qsearch ordering
 static int move_score_basic(const Board& b, Color us, const Move& m) {
   Color fc; Piece fromP = b.piece_at(m.from, &fc);
   Color tc; Piece toP   = b.piece_at(m.to,   &tc);
@@ -175,22 +125,13 @@ static int move_score_basic(const Board& b, Color us, const Move& m) {
   return promo_bonus; // quiet
 }
 
-// Global-ish TT
-static TT GTT;
+} // unnamed namespace
 
 // ---------------------------
-// Quiescence Search (captures/promo/EP; evasions if in check)
+// Quiescence Search (conservative)
 // ---------------------------
 static int qsearch(Board& b, int alpha, int beta, std::uint64_t& nodes) {
   nodes++;
-
-  const U64 key = b.hash();
-  RepGuard guard(REP_PATH, key);  // push current position on the path
-
-  // Draw checks first
-  if (b.halfmove_clock() >= 100) return 0;       // 50-move rule
-  if (threefold_now()) return 0;                 // threefold on current line
-  if (insufficient_material(b)) return 0;        // cannot mate
 
   const Color us = b.side_to_move();
 
@@ -254,20 +195,27 @@ static int qsearch(Board& b, int alpha, int beta, std::uint64_t& nodes) {
       undo_move(b, m, st);
     }
   }
+
   return alpha;
 }
 
 // ---------------------------
-/* Alpha-Beta + TT + killers/history */
-static int negamax(Board& b, int depth, int alpha, int beta,
-                   std::uint64_t& nodes, std::vector<Move>& pv)
+// Alpha-Beta + TT + killers/history (+ safe check extension)
+// ---------------------------
+static int negamax(Board& b,
+                   int depth,
+                   int alpha,
+                   int beta,
+                   std::uint64_t& nodes,
+                   std::vector<Move>& pv,
+                   std::atomic<bool>* stopFlag)
 {
   nodes++;
-  RepGuard rg(REP_PATH, b.hash());
 
-  if (threefold_now() || insufficient_material(b) || b.halfmove_clock() >= 100) {
+  // Cooperative stop (from UCI "stop")
+  if (stopFlag && stopFlag->load(std::memory_order_relaxed)) {
     pv.clear();
-    return 0; // Draw
+    return alpha; // neutral return
   }
 
   const int alphaOrig = alpha;
@@ -280,17 +228,25 @@ static int negamax(Board& b, int depth, int alpha, int beta,
   Move ttMove{};
   if (GTT.probe(key, hit) && hit.depth >= depth) {
     ttMove = hit.best;
-    if (hit.bound == TTBound::Exact) { pv.clear(); return hit.score; }
-    if (hit.bound == TTBound::Lower && hit.score >= beta) { pv.clear(); return hit.score; }
-    if (hit.bound == TTBound::Upper && hit.score <= alpha) { pv.clear(); return hit.score; }
+    if (hit.bound == TTBound::Exact) {
+      pv.clear();
+      return hit.score;
+    } else if (hit.bound == TTBound::Lower && hit.score >= beta) {
+      pv.clear();
+      return hit.score;
+    } else if (hit.bound == TTBound::Upper && hit.score <= alpha) {
+      pv.clear();
+      return hit.score;
+    }
   } else if (GTT.probe(key, hit)) {
-    ttMove = hit.best; // ordering hint
+    ttMove = hit.best; // use for ordering even if depth is shallow
   }
 
   if (depth == 0) {
     pv.clear();
-    return qsearch(b, alpha, beta, nodes); // enable quiescence at leaves
-  }  
+    // return qsearch(b, alpha, beta, nodes); // enable if desired
+    return eval_side_to_move(b);
+  }
 
   MoveList ml;
   generate_pseudo_legal(b, ml);
@@ -311,13 +267,34 @@ static int negamax(Board& b, int depth, int alpha, int beta,
   std::vector<Move> bestChildPV;
   int bestScore = -INF;
 
+  int moveIndex = 0;
   for (const auto& m : moves) {
     State st{};
     do_move(b, m, st);
     if (!in_check(b, us)) {
       anyLegal = true;
       std::vector<Move> childPV;
-      int score = -negamax(b, depth - 1, -beta, -alpha, nodes, childPV);
+
+      // --- Safe check extension ---
+      const Color them = (us == Color::White ? Color::Black : Color::White);
+      int ext = (in_check(b, them) && depth >= 2) ? 1 : 0;
+
+      int newDepth = depth - 1 + ext;
+      if (newDepth >= depth) newDepth = depth - 1; // guarantee progress
+      newDepth = std::max(1, newDepth);
+
+      // --- Simple LMR for late quiets (conservative) ---
+      bool isCapture = square_has_opponent(b, them, m.to);
+      bool isPromo   = (m.promo != Piece::None);
+      bool isTT      = same_move(m, ttMove);
+
+      int R = 0;
+      if (depth >= 3 && !isCapture && !isPromo && !isTT && moveIndex >= 4) {
+        R = 1;
+      }
+      int searchDepth = std::max(1, newDepth - R);
+
+      int score = -negamax(b, searchDepth, -beta, -alpha, nodes, childPV, stopFlag);
 
       if (score > bestScore) {
         bestScore   = score;
@@ -339,6 +316,13 @@ static int negamax(Board& b, int depth, int alpha, int beta,
       }
 
       if (bestScore > alpha) alpha = bestScore;
+      ++moveIndex;
+
+      // Check stop between moves too
+      if (stopFlag && stopFlag->load(std::memory_order_relaxed)) {
+        pv.clear();
+        return alpha;
+      }
     } else {
       undo_move(b, m, st);
     }
@@ -365,8 +349,17 @@ static int negamax(Board& b, int depth, int alpha, int beta,
   return bestScore;
 }
 
-SearchResult search(const Board& root, int maxDepth) {
-  SearchResult res{};
+// Clamp helper
+static inline int clamp(int x, int lo, int hi) {
+  return x < lo ? lo : (x > hi ? hi : x);
+}
+
+// Internal driver that supports an optional stop flag
+static SearchResult search_with_limits(const Board& root,
+                                       int maxDepth,
+                                       std::atomic<bool>* stopFlag)
+{
+  SearchResult res;
   res.depth = 0;
   res.nodes = 0;
   res.score = 0;
@@ -374,15 +367,14 @@ SearchResult search(const Board& root, int maxDepth) {
   res.pv.clear();
 
   Board b = root;
-  REP_PATH.clear();
 
-  auto clamp = [](int x, int lo, int hi){ return x < lo ? lo : (x > hi ? hi : x); };
-
-  int lastScore = 0;  // previous iteration’s score, seed for aspiration
+  int lastScore = 0; // previous iteration’s score, seed for aspiration
   for (int d = 1; d <= maxDepth; ++d) {
+    if (stopFlag && stopFlag->load(std::memory_order_relaxed)) break;
+
     std::vector<Move> pv;
 
-    // Optional: clear killers per root iteration (deterministic results)
+    // Optional: clear killers per iteration for determinism
     // std::fill(std::begin(killer1), std::end(killer1), Move{});
     // std::fill(std::begin(killer2), std::end(killer2), Move{});
 
@@ -390,13 +382,16 @@ SearchResult search(const Board& root, int maxDepth) {
     int beta  = +INF;
 
     if (d > 1) {
-      int asp = 50 + 10 * d;   // ~0.5 pawn + 0.1 per ply
+      int asp = 50 + 10 * d; // aspiration half-window
       alpha = clamp(lastScore - asp, -MATE, +MATE);
       beta  = clamp(lastScore + asp, -MATE, +MATE);
 
       while (true) {
+        if (stopFlag && stopFlag->load(std::memory_order_relaxed)) break;
+
         g_rootDepth = d;
-        int score = negamax(b, d, alpha, beta, res.nodes, pv);
+        int score = negamax(b, d, alpha, beta, res.nodes, pv, stopFlag);
+
         if (score <= alpha) {
           int widen = (beta - alpha) * 2;
           alpha = clamp(score - widen, -INF, +INF);
@@ -416,7 +411,7 @@ SearchResult search(const Board& root, int maxDepth) {
       }
     } else {
       g_rootDepth = d;
-      int score = negamax(b, d, alpha, beta, res.nodes, pv);
+      int score = negamax(b, d, alpha, beta, res.nodes, pv, stopFlag);
       lastScore   = score;
       res.best    = pv.empty() ? Move{} : pv.front();
       res.pv      = std::move(pv);
@@ -424,82 +419,23 @@ SearchResult search(const Board& root, int maxDepth) {
       res.depth   = d;
     }
   }
+
   return res;
 }
-// ---- limits-based search overload ----
 
+// ------------------------------------------------------------------
+// Public entry points
+// ------------------------------------------------------------------
+
+SearchResult search(const Board& root, int maxDepth) {
+  return search_with_limits(root, std::max(1, maxDepth), /*stopFlag=*/nullptr);
+}
+
+// Depth/time wrapper used by UCI. Currently depth-driven; time controls can be
+// layered in later without changing the external signature.
 SearchResult search(const Board& root, const SearchLimits& lim) {
-  using clock = std::chrono::steady_clock;
-
-  const int maxDepth = (lim.depth > 0 ? lim.depth : 64);
-  const auto start = clock::now();
-  const auto deadline = [&]{
-    if (lim.movetime_ms > 0) return start + std::chrono::milliseconds(lim.movetime_ms);
-    int mtg = lim.movestogo > 0 ? lim.movestogo : 30;
-    int bank = (root.side_to_move() == Color::White)
-                 ? (lim.wtime_ms + lim.winc_ms)
-                 : (lim.btime_ms + lim.binc_ms);
-    if (bank <= 0) return clock::time_point::max();
-    int budget = std::max(1, bank / std::max(1, mtg) - 10);
-    return start + std::chrono::milliseconds(budget);
-  }();
-
-  auto time_up = [&]{
-    if (lim.stop && lim.stop->load(std::memory_order_relaxed)) return true;
-    if (deadline == clock::time_point::max()) return false;
-    return clock::now() >= deadline;
-  };
-
-  SearchResult res{};
-  Board b = root;
-  REP_PATH.clear();
-
-  auto clamp = [](int x, int lo, int hi){ return x < lo ? lo : (x > hi ? hi : x); };
-  int lastScore = 0;
-
-  for (int d = 1; d <= maxDepth; ++d) {
-    std::vector<Move> pv;
-    int alpha = -INF, beta = +INF;
-
-    if (d > 1) {
-      int asp = 50 + 10 * d;
-      alpha = clamp(lastScore - asp, -MATE, +MATE);
-      beta  = clamp(lastScore + asp, -MATE, +MATE);
-
-      while (true) {
-        if (time_up()) break;
-        g_rootDepth = d;
-        int score = negamax(b, d, alpha, beta, res.nodes, pv);
-        if (score <= alpha) {
-          int widen = (beta - alpha) * 2;
-          alpha = clamp(score - widen, -INF, +INF);
-        } else if (score >= beta) {
-          int widen = (beta - alpha) * 2;
-          beta = clamp(score + widen, -INF, +INF);
-        } else {
-          lastScore = score;
-          res.best  = pv.empty() ? Move{} : pv.front();
-          res.pv    = std::move(pv);
-          res.score = score;
-          res.depth = d;
-          break;
-        }
-      }
-    } else {
-      if (time_up()) break;
-      g_rootDepth = d;
-      int score = negamax(b, d, alpha, beta, res.nodes, pv);
-      lastScore = score;
-      res.best  = pv.empty() ? Move{} : pv.front();
-      res.pv    = std::move(pv);
-      res.score = score;
-      res.depth = d;
-    }
-
-    if (time_up()) break;
-  }
-
-  return res;
+  int d = lim.depth > 0 ? lim.depth : 6; // default thinking depth
+  return search_with_limits(root, d, lim.stop);
 }
 
 } // namespace euclid
