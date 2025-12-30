@@ -386,6 +386,19 @@ nullmove_state_smoke/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/nullmove_state_smoke.dir/build.make CMakeFiles/nullmove_state_smoke.dir/build
 .PHONY : nullmove_state_smoke/fast
 
+#=============================================================================
+# Target rules for targets named draw_rules_smoke
+
+# Build rule for target.
+draw_rules_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 draw_rules_smoke
+.PHONY : draw_rules_smoke
+
+# fast build rule for target.
+draw_rules_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/draw_rules_smoke.dir/build.make CMakeFiles/draw_rules_smoke.dir/build
+.PHONY : draw_rules_smoke/fast
+
 src/attack.o: src/attack.cpp.o
 .PHONY : src/attack.o
 
@@ -770,6 +783,30 @@ tests/do_undo_smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/do_undo_smoke.dir/build.make CMakeFiles/do_undo_smoke.dir/tests/do_undo_smoke.cpp.s
 .PHONY : tests/do_undo_smoke.cpp.s
 
+tests/draw_rules_smoke.o: tests/draw_rules_smoke.cpp.o
+.PHONY : tests/draw_rules_smoke.o
+
+# target to build an object file
+tests/draw_rules_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/draw_rules_smoke.dir/build.make CMakeFiles/draw_rules_smoke.dir/tests/draw_rules_smoke.cpp.o
+.PHONY : tests/draw_rules_smoke.cpp.o
+
+tests/draw_rules_smoke.i: tests/draw_rules_smoke.cpp.i
+.PHONY : tests/draw_rules_smoke.i
+
+# target to preprocess a source file
+tests/draw_rules_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/draw_rules_smoke.dir/build.make CMakeFiles/draw_rules_smoke.dir/tests/draw_rules_smoke.cpp.i
+.PHONY : tests/draw_rules_smoke.cpp.i
+
+tests/draw_rules_smoke.s: tests/draw_rules_smoke.cpp.s
+.PHONY : tests/draw_rules_smoke.s
+
+# target to generate assembly for a file
+tests/draw_rules_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/draw_rules_smoke.dir/build.make CMakeFiles/draw_rules_smoke.dir/tests/draw_rules_smoke.cpp.s
+.PHONY : tests/draw_rules_smoke.cpp.s
+
 tests/eval_smoke.o: tests/eval_smoke.cpp.o
 .PHONY : tests/eval_smoke.o
 
@@ -1142,6 +1179,7 @@ help:
 	@echo "... bishop_smoke"
 	@echo "... castle_smoke"
 	@echo "... do_undo_smoke"
+	@echo "... draw_rules_smoke"
 	@echo "... euclid_cli"
 	@echo "... euclid_engine"
 	@echo "... eval_smoke"
@@ -1207,6 +1245,9 @@ help:
 	@echo "... tests/do_undo_smoke.o"
 	@echo "... tests/do_undo_smoke.i"
 	@echo "... tests/do_undo_smoke.s"
+	@echo "... tests/draw_rules_smoke.o"
+	@echo "... tests/draw_rules_smoke.i"
+	@echo "... tests/draw_rules_smoke.s"
 	@echo "... tests/eval_smoke.o"
 	@echo "... tests/eval_smoke.i"
 	@echo "... tests/eval_smoke.s"

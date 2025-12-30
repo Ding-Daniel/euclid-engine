@@ -1,4 +1,5 @@
 #include "euclid/search.hpp"
+#include "euclid/draw.hpp"
 #include "euclid/movegen.hpp"
 #include "euclid/move_do.hpp"
 #include "euclid/attack.hpp"
@@ -26,9 +27,10 @@ static Move killer2[MAX_PLY];
 static int  historyH[2][64][64];
 static int  g_rootDepth = 0;
 
-// Time budget (single-threaded, so plain globals are fine)
+// Limits
 static bool g_has_deadline = false;
 static std::chrono::steady_clock::time_point g_deadline;
+static std::uint64_t g_node_limit = 0; // 0 => unlimited
 
 // -----------------------------------------------------------------------------
 // Small utilities
@@ -42,7 +44,8 @@ inline Color other_color(Color c) {
 }
 
 inline bool square_has_opponent(const Board& b, Color us, int sq) {
-  Color oc; Piece op = b.piece_at(sq, &oc);
+  Color oc;
+  Piece op = b.piece_at(sq, &oc);
   return op != Piece::None && oc != us;
 }
 
@@ -54,7 +57,10 @@ inline bool is_quiet(const Board& b, Color us, const Move& m) {
 inline void store_killer_history(Color us, const Board& b, const Move& m, int ply) {
   if (ply < 0 || ply >= MAX_PLY) return;
   if (is_quiet(b, us, m)) {
-    if (!same_move(killer1[ply], m)) { killer2[ply] = killer1[ply]; killer1[ply] = m; }
+    if (!same_move(killer1[ply], m)) {
+      killer2[ply] = killer1[ply];
+      killer1[ply] = m;
+    }
     int& h = historyH[(int)us][m.from][m.to];
     h += (ply + 1) * (ply + 1);
     if (h > (1 << 20)) { // cheap decay
@@ -67,32 +73,41 @@ inline void store_killer_history(Color us, const Board& b, const Move& m, int pl
 }
 
 inline int mvv_lva(const Board& b, const Move& m) {
-  Color oc; Piece victim = b.piece_at(m.to, &oc);
+  Color oc;
+  Piece victim = b.piece_at(m.to, &oc);
   if (victim == Piece::None) return 0;
-  Color uc; Piece attacker = b.piece_at(m.from, &uc);
-  static const int val[] = {0,100,320,330,500,900,20000}; // None,P,N,B,R,Q,K
-  return val[(int)victim]*16 - val[(int)attacker];
+
+  Color uc;
+  Piece attacker = b.piece_at(m.from, &uc);
+
+  static const int val[] = {0, 100, 320, 330, 500, 900, 20000}; // None,P,N,B,R,Q,K
+  return val[(int)victim] * 16 - val[(int)attacker];
 }
 
 // Killer/history aware sorting score (captures, promo, TT first; then killers; then history)
 inline int order_score(const Board& b, Color us, const Move& m, int ply, const Move& ttMove) {
   if (same_move(m, ttMove)) return 3'000'000;
-  if (m.promo != Piece::None) return 2'600'000;                 // non-capture promotions
+  if (m.promo != Piece::None) return 2'600'000;                 // promotions
   if (square_has_opponent(b, us, m.to)) return 2'000'000 + mvv_lva(b, m);
-  if (same_move(m, killer1[ply])) return 1'500'000;
-  if (same_move(m, killer2[ply])) return 1'400'000;
+  if (ply >= 0 && ply < MAX_PLY) {
+    if (same_move(m, killer1[ply])) return 1'500'000;
+    if (same_move(m, killer2[ply])) return 1'400'000;
+  }
   return historyH[(int)us][m.from][m.to];                        // quiets
 }
 
 // Capture-like test BEFORE making a move (needed for LMR gating)
 inline bool is_en_passant_pre(const Board& b, Color us, const Move& m) {
-  Color fc; Piece fromP = b.piece_at(m.from, &fc);
+  Color fc;
+  Piece fromP = b.piece_at(m.from, &fc);
   if (fromP != Piece::Pawn || fc != us) return false;
   if (file_of(m.from) == file_of(m.to)) return false;
   return b.ep_square() == m.to;
 }
+
 inline bool is_capture_like_pre(const Board& b, Color us, const Move& m) {
-  Color tc; Piece toP = b.piece_at(m.to, &tc);
+  Color tc;
+  Piece toP = b.piece_at(m.to, &tc);
   const bool isDirectCap = (toP != Piece::None && tc != us);
   return isDirectCap || is_en_passant_pre(b, us, m);
 }
@@ -121,17 +136,14 @@ inline void do_null_move(Board& b, NullState& ns) {
   ns.prev_halfmove = b.halfmove_clock();
   ns.prev_fullmove = b.fullmove_number();
 
-  // A null move clears EP and toggles side-to-move.
   b.set_ep_square(-1);
   b.set_side_to_move(other_color(ns.prev_stm));
 
-  // Clocks are not part of Zobrist hash in typical engines; preserve for correctness anyway.
   b.set_halfmove_clock(ns.prev_halfmove + 1);
   if (ns.prev_stm == Color::Black) b.set_fullmove_number(ns.prev_fullmove + 1);
 }
 
 inline void undo_null_move(Board& b, const NullState& ns) {
-  // Restore clocks first (hash-independent), then hashed fields.
   b.set_halfmove_clock(ns.prev_halfmove);
   b.set_fullmove_number(ns.prev_fullmove);
 
@@ -139,7 +151,29 @@ inline void undo_null_move(Board& b, const NullState& ns) {
   b.set_ep_square(ns.prev_ep);
 }
 
-} // anon
+// -----------------------------------------------------------------------------
+// Stop/limit checks (guarantee nodes <= node_limit when node_limit > 0)
+// -----------------------------------------------------------------------------
+inline bool should_abort(std::uint64_t& nodes, std::atomic<bool>* stopFlag) {
+  if (stopFlag && stopFlag->load(std::memory_order_relaxed)) return true;
+
+  if (g_node_limit > 0 && nodes >= g_node_limit) {
+    if (stopFlag) stopFlag->store(true, std::memory_order_relaxed);
+    return true;
+  }
+
+  ++nodes;
+
+  // Deadline polling (periodic to reduce overhead)
+  if (stopFlag && g_has_deadline && ((nodes & 0x3FFFu) == 0u)) {
+    if (std::chrono::steady_clock::now() >= g_deadline) {
+      stopFlag->store(true, std::memory_order_relaxed);
+      return true;
+    }
+  }
+
+  return false;
+}
 
 // -----------------------------------------------------------------------------
 // Eval helpers
@@ -173,9 +207,9 @@ static TT GTT;
 // Quiescence (captures/promo/EP; full evasions if in check)
 // -----------------------------------------------------------------------------
 static int move_score_basic(const Board& b, Color us, const Move& m) {
-  static const int PVAL[7] = { 0, 100, 320, 330, 500, 900, 20000 };
+  static const int PVAL[7] = {0, 100, 320, 330, 500, 900, 20000};
   Color fc; Piece fromP = b.piece_at(m.from, &fc);
-  Color tc; Piece toP   = b.piece_at(m.to,   &tc);
+  Color tc; Piece toP   = b.piece_at(m.to, &tc);
 
   int promo_bonus = 0;
   if (m.promo != Piece::None)
@@ -184,25 +218,22 @@ static int move_score_basic(const Board& b, Color us, const Move& m) {
   if (toP != Piece::None && tc != us) {
     int victim   = PVAL[static_cast<int>(toP)];
     int attacker = PVAL[static_cast<int>(fromP)];
-    return 100000 + 10*victim - attacker + promo_bonus;
+    return 100000 + 10 * victim - attacker + promo_bonus;
   }
   if (is_en_passant_pre(b, us, m)) {
     int attacker = PVAL[static_cast<int>(fromP)];
-    return 100000 + 10*PVAL[static_cast<int>(Piece::Pawn)] - attacker + promo_bonus;
+    return 100000 + 10 * PVAL[static_cast<int>(Piece::Pawn)] - attacker + promo_bonus;
   }
   return promo_bonus; // quiet
 }
 
 static int qsearch(Board& b, int alpha, int beta, std::uint64_t& nodes,
-                   std::atomic<bool>* stopFlag)
+                   std::atomic<bool>* stopFlag, std::vector<U64>& keyHist)
 {
-  nodes++;
-  if (stopFlag && (nodes & 0x3FFF) == 0) {
-    if ((g_has_deadline && std::chrono::steady_clock::now() >= g_deadline) ||
-        stopFlag->load(std::memory_order_relaxed)) {
-      return alpha;
-    }
-  }
+  if (should_abort(nodes, stopFlag)) return alpha;
+
+  // Rule draws (note: repetition is based on keyHist provided by the search line)
+  if (is_rule_draw(b, keyHist)) return 0;
 
   const Color us = b.side_to_move();
 
@@ -213,20 +244,30 @@ static int qsearch(Board& b, int alpha, int beta, std::uint64_t& nodes,
     std::vector<Move> moves;
     moves.reserve(ev.sz);
     for (const auto& m : ev) moves.push_back(m);
+
     std::stable_sort(moves.begin(), moves.end(),
-      [&](const Move& a, const Move& c){ return move_score_basic(b, us, a) > move_score_basic(b, us, c); });
+      [&](const Move& a, const Move& c) {
+        return move_score_basic(b, us, a) > move_score_basic(b, us, c);
+      });
 
     for (const auto& m : moves) {
       State st{};
       do_move(b, m, st);
+      keyHist.push_back(b.hash());
+
       if (!in_check(b, us)) {
-        int score = -qsearch(b, -beta, -alpha, nodes, stopFlag);
+        int score = -qsearch(b, -beta, -alpha, nodes, stopFlag, keyHist);
+        keyHist.pop_back();
         undo_move(b, m, st);
+
         if (score >= beta) return score;
         if (score > alpha) alpha = score;
       } else {
+        keyHist.pop_back();
         undo_move(b, m, st);
       }
+
+      if (stopFlag && stopFlag->load(std::memory_order_relaxed)) return alpha;
     }
     return alpha;
   }
@@ -243,7 +284,8 @@ static int qsearch(Board& b, int alpha, int beta, std::uint64_t& nodes,
   std::vector<Move> moves;
   moves.reserve(ml.sz);
   for (const auto& m : ml) {
-    Color tc; Piece toP = b.piece_at(m.to, &tc);
+    Color tc;
+    Piece toP = b.piece_at(m.to, &tc);
     bool isCap = (toP != Piece::None && tc != us);
     bool isEP  = is_en_passant_pre(b, us, m);
     bool isPr  = (m.promo != Piece::None);
@@ -251,50 +293,53 @@ static int qsearch(Board& b, int alpha, int beta, std::uint64_t& nodes,
   }
 
   std::stable_sort(moves.begin(), moves.end(),
-    [&](const Move& a, const Move& c){ return move_score_basic(b, us, a) > move_score_basic(b, us, c); });
+    [&](const Move& a, const Move& c) {
+      return move_score_basic(b, us, a) > move_score_basic(b, us, c);
+    });
 
   for (const auto& m : moves) {
     State st{};
     do_move(b, m, st);
+    keyHist.push_back(b.hash());
+
     if (!in_check(b, us)) {
-      int score = -qsearch(b, -beta, -alpha, nodes, stopFlag);
+      int score = -qsearch(b, -beta, -alpha, nodes, stopFlag, keyHist);
+      keyHist.pop_back();
       undo_move(b, m, st);
+
       if (score >= beta) return score;
       if (score > alpha) alpha = score;
     } else {
+      keyHist.pop_back();
       undo_move(b, m, st);
     }
+
+    if (stopFlag && stopFlag->load(std::memory_order_relaxed)) return alpha;
   }
 
   return alpha;
 }
 
 // -----------------------------------------------------------------------------
-// Negamax with TT + killers/history + LMR + check extension + null-move pruning
+// Negamax with TT + killers/history + PVS + LMR + check extension + null-move
 // -----------------------------------------------------------------------------
 static int negamax(Board& b, int depth, int alpha, int beta,
                    std::uint64_t& nodes, std::vector<Move>& pv,
-                   std::atomic<bool>* stopFlag)
+                   std::atomic<bool>* stopFlag, std::vector<U64>& keyHist)
 {
-  nodes++;
-  if (stopFlag && (nodes & 0x3FFF) == 0) {
-    if ((g_has_deadline && std::chrono::steady_clock::now() >= g_deadline) ||
-        stopFlag->load(std::memory_order_relaxed)) {
-      pv.clear();
-      return alpha;
-    }
-  }
+  if (should_abort(nodes, stopFlag)) { pv.clear(); return alpha; }
+
+  // Rule draws
+  if (is_rule_draw(b, keyHist)) { pv.clear(); return 0; }
 
   const int alphaOrig = alpha;
   const U64 key = b.hash();
   const Color us = b.side_to_move();
-  const int ply = std::max(0, g_rootDepth - depth);
+  const int ply = std::min<int>(MAX_PLY - 1, (int)keyHist.size() - 1);
 
   const bool usInCheck = in_check(b, us);
   int staticEval = 0;
-  if (!usInCheck) {
-    staticEval = eval_side_to_move(b);
-  }
+  if (!usInCheck) staticEval = eval_side_to_move(b);
 
   // TT probe (apply mate-distance on load)
   TTEntry hit{};
@@ -314,49 +359,39 @@ static int negamax(Board& b, int depth, int alpha, int beta,
   bool hasTTMove = (ttMove.from | ttMove.to | static_cast<int>(ttMove.promo)) != 0;
   if (!hasTTMove && depth >= 3) {
     std::vector<Move> seedPV;
-    (void)negamax(b, depth - 2, alpha, beta, nodes, seedPV, stopFlag);
+    (void)negamax(b, depth - 2, alpha, beta, nodes, seedPV, stopFlag, keyHist);
     TTEntry rehit{};
-    if (GTT.probe(key, rehit)) {
-      ttMove = rehit.best;
-    }
+    if (GTT.probe(key, rehit)) ttMove = rehit.best;
   }
 
   if (depth == 0) {
     pv.clear();
-    return qsearch(b, alpha, beta, nodes, stopFlag);
+    return qsearch(b, alpha, beta, nodes, stopFlag, keyHist);
   }
 
-  // ---------------------------------------------------------------------------
-  // Null-move pruning (conservative):
-  // - only in non-PV nodes (beta-alpha <= 1)
-  // - not in check
-  // - depth >= 3
-  // - require non-pawn material for both sides (reduce zugzwang risk)
-  // ---------------------------------------------------------------------------
+  // Null-move pruning (conservative; non-PV only)
   const bool isPV = (beta - alpha) > 1;
   if (!isPV && depth >= 3 && !usInCheck) {
     const Color them = other_color(us);
     if (has_non_pawn_material(b, us) && has_non_pawn_material(b, them)) {
       NullState ns{};
       do_null_move(b, ns);
+      keyHist.push_back(b.hash());
 
       std::vector<Move> nullPV;
       const int R = 2 + (depth / 4);
       const int nullDepth = std::max(0, depth - 1 - R);
 
-      int score = -negamax(b, nullDepth, -beta, -beta + 1, nodes, nullPV, stopFlag);
+      int score = -negamax(b, nullDepth, -beta, -beta + 1, nodes, nullPV, stopFlag, keyHist);
 
+      keyHist.pop_back();
       undo_null_move(b, ns);
 
-      if (stopFlag && stopFlag->load(std::memory_order_relaxed)) {
-        pv.clear();
-        return alpha;
-      }
+      if (stopFlag && stopFlag->load(std::memory_order_relaxed)) { pv.clear(); return alpha; }
 
       if (score >= beta) {
-        // Store a lower bound; we do not have a real best move from null pruning.
-        GTT.store(key, Move{}, static_cast<std::int16_t>(depth),
-                  static_cast<std::int16_t>(to_tt_score(score, ply)), TTBound::Lower);
+        GTT.store(key, Move{}, (std::int16_t)depth,
+                  (std::int16_t)to_tt_score(score, ply), TTBound::Lower);
         pv.clear();
         return score;
       }
@@ -372,9 +407,8 @@ static int negamax(Board& b, int depth, int alpha, int beta,
   for (const auto& m : ml) moves.push_back(m);
 
   std::stable_sort(moves.begin(), moves.end(),
-    [&](const Move& a, const Move& bmv){
-      return order_score(b, us, a, ply, ttMove) >
-             order_score(b, us, bmv, ply, ttMove);
+    [&](const Move& a, const Move& bmv) {
+      return order_score(b, us, a, ply, ttMove) > order_score(b, us, bmv, ply, ttMove);
     });
 
   bool anyLegal = false;
@@ -384,33 +418,34 @@ static int negamax(Board& b, int depth, int alpha, int beta,
 
   bool firstMove = true;
   int moveIndex = 0;
-  for (const auto& m : moves) {
 
+  for (const auto& m : moves) {
     const bool isCapLike = is_capture_like_pre(b, us, m);
     const bool isPromo   = (m.promo != Piece::None);
     const bool isTT      = same_move(m, ttMove);
 
     // Futility pruning at frontier: skip clearly hopeless quiets at depth==1
     if (depth == 1 && !usInCheck && !isCapLike && !isPromo) {
-      const int FUT_MARGIN = 200; // small, safe margin
+      const int FUT_MARGIN = 200;
       if (staticEval + FUT_MARGIN <= alpha) { ++moveIndex; continue; }
     }
 
     State st{};
     do_move(b, m, st);
+    keyHist.push_back(b.hash());
 
     if (!in_check(b, us)) {
       anyLegal = true;
       std::vector<Move> childPV;
 
-      // Check extension (after the move)
+      // Check extension (after move)
       const Color them = other_color(us);
-      const int ext    = (in_check(b, them) && depth >= 2) ? 1 : 0;
+      const int ext = (in_check(b, them) && depth >= 2) ? 1 : 0;
 
       int baseDepth = depth - 1 + ext;
       if (baseDepth >= depth) baseDepth = depth - 1;
 
-      // LMR on late quiets (never reduce the first PV move)
+      // LMR on late quiets (never reduce first PV move)
       int R = 0;
       if (!firstMove && depth >= 3 && !isCapLike && !isPromo && !isTT && moveIndex >= 4) {
         R = 1;
@@ -422,33 +457,29 @@ static int negamax(Board& b, int depth, int alpha, int beta,
 
       int score;
       if (firstMove) {
-        // Full window on the first legal move (PV move)
-        score = -negamax(b, baseDepth, -beta, -alpha, nodes, childPV, stopFlag);
+        score = -negamax(b, baseDepth, -beta, -alpha, nodes, childPV, stopFlag, keyHist);
       } else {
-        // PVS: try a zero-window search first
-        score = -negamax(b, reducedDepth, -(alpha + 1), -alpha, nodes, childPV, stopFlag);
-        // If it improves alpha, re-search with full window and full (unreduced) depth
+        score = -negamax(b, reducedDepth, -(alpha + 1), -alpha, nodes, childPV, stopFlag, keyHist);
         if (score > alpha) {
           childPV.clear();
-          score = -negamax(b, baseDepth, -beta, -alpha, nodes, childPV, stopFlag);
+          score = -negamax(b, baseDepth, -beta, -alpha, nodes, childPV, stopFlag, keyHist);
         }
       }
 
+      keyHist.pop_back();
+      undo_move(b, m, st);
+
       if (score > bestScore) {
-        bestScore   = score;
-        bestMove    = m;
+        bestScore = score;
+        bestMove = m;
         bestChildPV = std::move(childPV);
       }
 
-      undo_move(b, m, st);
-
       if (bestScore >= beta) {
-        // Quiet beta-cutoff contributes to killers/history
-        if (!isCapLike && !isPromo) {
-          store_killer_history(us, b, m, ply);
-        }
-        GTT.store(key, m, static_cast<std::int16_t>(depth),
-                  static_cast<std::int16_t>(to_tt_score(bestScore, ply)), TTBound::Lower);
+        if (!isCapLike && !isPromo) store_killer_history(us, b, m, ply);
+
+        GTT.store(key, m, (std::int16_t)depth,
+                  (std::int16_t)to_tt_score(bestScore, ply), TTBound::Lower);
         pv.clear();
         return bestScore;
       }
@@ -457,17 +488,15 @@ static int negamax(Board& b, int depth, int alpha, int beta,
       firstMove = false;
       ++moveIndex;
 
-      if (stopFlag && stopFlag->load(std::memory_order_relaxed)) {
-        pv.clear();
-        return alpha;
-      }
+      if (stopFlag && stopFlag->load(std::memory_order_relaxed)) { pv.clear(); return alpha; }
     } else {
+      keyHist.pop_back();
       undo_move(b, m, st);
     }
   }
 
   if (!anyLegal) {
-    if (in_check(b, us)) return -MATE + ply; // checkmated (prefer quicker mate)
+    if (in_check(b, us)) return -MATE + ply; // checkmated
     return 0;                                 // stalemate
   }
 
@@ -480,8 +509,8 @@ static int negamax(Board& b, int depth, int alpha, int beta,
   if (bestScore <= alphaOrig) bound = TTBound::Upper;
   else if (bestScore >= beta) bound = TTBound::Lower;
 
-  GTT.store(key, bestMove, static_cast<std::int16_t>(depth),
-            static_cast<std::int16_t>(to_tt_score(bestScore, ply)), bound);
+  GTT.store(key, bestMove, (std::int16_t)depth,
+            (std::int16_t)to_tt_score(bestScore, ply), bound);
 
   return bestScore;
 }
@@ -496,13 +525,12 @@ static int compute_time_budget_ms(const Board& b, const SearchLimits& lim) {
   const int myTime = (us == Color::White) ? lim.wtime_ms : lim.btime_ms;
   const int myInc  = (us == Color::White) ? lim.winc_ms  : lim.binc_ms;
 
-  if (myTime <= 0) return 0; // no budget provided
+  if (myTime <= 0) return 0;
 
   const int mtg = lim.movestogo > 0 ? lim.movestogo : 30;
   int slice = myTime / mtg;
   int budget = slice + (myInc * 3) / 4;
 
-  // Clamp with small safety margins
   budget = std::max(20, std::min(budget, std::max(0, myTime - 30)));
   return budget;
 }
@@ -514,15 +542,13 @@ static SearchResult search_with_limits(const Board& root, int maxDepth,
                                        std::atomic<bool>* stopFlag)
 {
   SearchResult res{};
-  res.depth = 0;
-  res.nodes = 0;
-  res.score = 0;
-  res.best  = Move{};
-  res.pv.clear();
-
   Board b = root;
 
-  auto clamp = [](int x, int lo, int hi){ return x < lo ? lo : (x > hi ? hi : x); };
+  std::vector<U64> keyHist;
+  keyHist.reserve(MAX_PLY + 4);
+  keyHist.push_back(b.hash());
+
+  auto clamp = [](int x, int lo, int hi) { return x < lo ? lo : (x > hi ? hi : x); };
 
   int lastScore = 0;
 
@@ -531,16 +557,15 @@ static SearchResult search_with_limits(const Board& root, int maxDepth,
     int alpha = -INF, beta = +INF;
 
     if (d > 1) {
-      int asp = 50 + 10 * d;   // aspiration window around last score
+      int asp = 50 + 10 * d;
       alpha = clamp(lastScore - asp, -MATE, +MATE);
       beta  = clamp(lastScore + asp, -MATE, +MATE);
 
       while (true) {
         g_rootDepth = d;
-        int score = negamax(b, d, alpha, beta, res.nodes, pv, stopFlag);
+        int score = negamax(b, d, alpha, beta, res.nodes, pv, stopFlag, keyHist);
 
         if (stopFlag && stopFlag->load(std::memory_order_relaxed)) {
-          // preserve the best we had from prior completed iteration
           return res.depth > 0 ? res : SearchResult{};
         }
 
@@ -553,25 +578,25 @@ static SearchResult search_with_limits(const Board& root, int maxDepth,
           beta = clamp(score + widen, -INF, +INF);
           continue;
         } else {
-          lastScore   = score;
-          res.best    = pv.empty() ? Move{} : pv.front();
-          res.pv      = std::move(pv);
-          res.score   = score;
-          res.depth   = d;
+          lastScore = score;
+          res.best  = pv.empty() ? Move{} : pv.front();
+          res.pv    = std::move(pv);
+          res.score = score;
+          res.depth = d;
           break;
         }
       }
     } else {
       g_rootDepth = d;
-      int score = negamax(b, d, alpha, beta, res.nodes, pv, stopFlag);
+      int score = negamax(b, d, alpha, beta, res.nodes, pv, stopFlag, keyHist);
       if (stopFlag && stopFlag->load(std::memory_order_relaxed)) {
         return res.depth > 0 ? res : SearchResult{};
       }
-      lastScore   = score;
-      res.best    = pv.empty() ? Move{} : pv.front();
-      res.pv      = std::move(pv);
-      res.score   = score;
-      res.depth   = d;
+      lastScore = score;
+      res.best  = pv.empty() ? Move{} : pv.front();
+      res.pv    = std::move(pv);
+      res.score = score;
+      res.depth = d;
     }
   }
 
@@ -579,23 +604,29 @@ static SearchResult search_with_limits(const Board& root, int maxDepth,
 }
 
 } // namespace (anon)
-namespace euclid {
 
 // ============================================================================
-// Public entry points
+// Public entry points (MUST be in namespace euclid)
 // ============================================================================
 SearchResult search(const Board& root, int maxDepth) {
-  g_has_deadline = false; // depth-limited: no time budget
+  g_has_deadline = false;
+  g_node_limit   = 0;
   return search_with_limits(root, std::max(1, maxDepth), /*stopFlag=*/nullptr);
 }
 
 SearchResult search(const Board& root, const SearchLimits& lim) {
-  // Compute time budget (0 => no budget => depth only)
-  const int d = lim.depth > 0 ? lim.depth : 6;
-  int budget_ms = compute_time_budget_ms(root, lim);
-
   std::atomic<bool> dummyStop{false};
   std::atomic<bool>* stopPtr = lim.stop ? lim.stop : &dummyStop;
+
+  // Pre-stopped: return immediately (required by your search_limits_smoke)
+  if (stopPtr->load(std::memory_order_relaxed)) {
+    return SearchResult{};
+  }
+
+  g_node_limit = lim.nodes;
+
+  const int depth = (lim.depth > 0) ? lim.depth : 6;
+  const int budget_ms = compute_time_budget_ms(root, lim);
 
   if (budget_ms > 0) {
     g_has_deadline = true;
@@ -604,7 +635,7 @@ SearchResult search(const Board& root, const SearchLimits& lim) {
     g_has_deadline = false;
   }
 
-  return search_with_limits(root, d, stopPtr);
+  return search_with_limits(root, depth, stopPtr);
 }
 
 } // namespace euclid
