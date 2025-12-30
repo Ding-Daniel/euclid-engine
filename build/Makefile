@@ -399,6 +399,19 @@ draw_rules_smoke/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/draw_rules_smoke.dir/build.make CMakeFiles/draw_rules_smoke.dir/build
 .PHONY : draw_rules_smoke/fast
 
+#=============================================================================
+# Target rules for targets named encode_smoke
+
+# Build rule for target.
+encode_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 encode_smoke
+.PHONY : encode_smoke
+
+# fast build rule for target.
+encode_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/encode_smoke.dir/build.make CMakeFiles/encode_smoke.dir/build
+.PHONY : encode_smoke/fast
+
 src/attack.o: src/attack.cpp.o
 .PHONY : src/attack.o
 
@@ -470,6 +483,30 @@ src/board.s: src/board.cpp.s
 src/board.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/board.cpp.s
 .PHONY : src/board.cpp.s
+
+src/encode.o: src/encode.cpp.o
+.PHONY : src/encode.o
+
+# target to build an object file
+src/encode.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/encode.cpp.o
+.PHONY : src/encode.cpp.o
+
+src/encode.i: src/encode.cpp.i
+.PHONY : src/encode.i
+
+# target to preprocess a source file
+src/encode.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/encode.cpp.i
+.PHONY : src/encode.cpp.i
+
+src/encode.s: src/encode.cpp.s
+.PHONY : src/encode.s
+
+# target to generate assembly for a file
+src/encode.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/encode.cpp.s
+.PHONY : src/encode.cpp.s
 
 src/eval.o: src/eval.cpp.o
 .PHONY : src/eval.o
@@ -806,6 +843,30 @@ tests/draw_rules_smoke.s: tests/draw_rules_smoke.cpp.s
 tests/draw_rules_smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/draw_rules_smoke.dir/build.make CMakeFiles/draw_rules_smoke.dir/tests/draw_rules_smoke.cpp.s
 .PHONY : tests/draw_rules_smoke.cpp.s
+
+tests/encode_smoke.o: tests/encode_smoke.cpp.o
+.PHONY : tests/encode_smoke.o
+
+# target to build an object file
+tests/encode_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/encode_smoke.dir/build.make CMakeFiles/encode_smoke.dir/tests/encode_smoke.cpp.o
+.PHONY : tests/encode_smoke.cpp.o
+
+tests/encode_smoke.i: tests/encode_smoke.cpp.i
+.PHONY : tests/encode_smoke.i
+
+# target to preprocess a source file
+tests/encode_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/encode_smoke.dir/build.make CMakeFiles/encode_smoke.dir/tests/encode_smoke.cpp.i
+.PHONY : tests/encode_smoke.cpp.i
+
+tests/encode_smoke.s: tests/encode_smoke.cpp.s
+.PHONY : tests/encode_smoke.s
+
+# target to generate assembly for a file
+tests/encode_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/encode_smoke.dir/build.make CMakeFiles/encode_smoke.dir/tests/encode_smoke.cpp.s
+.PHONY : tests/encode_smoke.cpp.s
 
 tests/eval_smoke.o: tests/eval_smoke.cpp.o
 .PHONY : tests/eval_smoke.o
@@ -1180,6 +1241,7 @@ help:
 	@echo "... castle_smoke"
 	@echo "... do_undo_smoke"
 	@echo "... draw_rules_smoke"
+	@echo "... encode_smoke"
 	@echo "... euclid_cli"
 	@echo "... euclid_engine"
 	@echo "... eval_smoke"
@@ -1206,6 +1268,9 @@ help:
 	@echo "... src/board.o"
 	@echo "... src/board.i"
 	@echo "... src/board.s"
+	@echo "... src/encode.o"
+	@echo "... src/encode.i"
+	@echo "... src/encode.s"
 	@echo "... src/eval.o"
 	@echo "... src/eval.i"
 	@echo "... src/eval.s"
@@ -1248,6 +1313,9 @@ help:
 	@echo "... tests/draw_rules_smoke.o"
 	@echo "... tests/draw_rules_smoke.i"
 	@echo "... tests/draw_rules_smoke.s"
+	@echo "... tests/encode_smoke.o"
+	@echo "... tests/encode_smoke.i"
+	@echo "... tests/encode_smoke.s"
 	@echo "... tests/eval_smoke.o"
 	@echo "... tests/eval_smoke.i"
 	@echo "... tests/eval_smoke.s"
