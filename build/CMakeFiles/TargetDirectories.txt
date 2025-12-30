@@ -17,6 +17,7 @@
 /Users/danielding/euclid-engine/build/CMakeFiles/uci_smoke.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/search_smoke.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/search_limits_smoke.dir
+/Users/danielding/euclid-engine/build/CMakeFiles/nullmove_state_smoke.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/test.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/edit_cache.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/rebuild_cache.dir

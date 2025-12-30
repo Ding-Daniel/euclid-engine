@@ -21,10 +21,6 @@ namespace {
 // -----------------------------------------------------------------------------
 constexpr int MAX_PLY = 128;
 
-// Polling cadence for deadline checks.
-// (Stop flag and node limit are checked every node; deadline is checked periodically.)
-constexpr std::uint64_t DEADLINE_POLL_MASK = 0x3FF; // every 1024 nodes
-
 static Move killer1[MAX_PLY];
 static Move killer2[MAX_PLY];
 static int  historyH[2][64][64];
@@ -34,14 +30,15 @@ static int  g_rootDepth = 0;
 static bool g_has_deadline = false;
 static std::chrono::steady_clock::time_point g_deadline;
 
-// Hard node budget (0 = unlimited)
-static std::uint64_t g_node_limit = 0;
-
 // -----------------------------------------------------------------------------
 // Small utilities
 // -----------------------------------------------------------------------------
 inline bool same_move(const Move& a, const Move& b) {
   return a.from == b.from && a.to == b.to && a.promo == b.promo;
+}
+
+inline Color other_color(Color c) {
+  return (c == Color::White) ? Color::Black : Color::White;
 }
 
 inline bool square_has_opponent(const Board& b, Color us, int sq) {
@@ -100,28 +97,49 @@ inline bool is_capture_like_pre(const Board& b, Color us, const Move& m) {
   return isDirectCap || is_en_passant_pre(b, us, m);
 }
 
-// Centralized stop/limit check.
-// Returns true if search should stop now.
-// - Node limit is a hard ceiling.
-// - stopFlag is honored immediately.
-// - deadline is polled periodically to reduce overhead.
-inline bool should_stop(std::uint64_t nodes, std::atomic<bool>* stopFlag) {
-  if (g_node_limit > 0 && nodes >= g_node_limit) {
-    if (stopFlag) stopFlag->store(true, std::memory_order_relaxed);
-    return true;
-  }
-  if (stopFlag && stopFlag->load(std::memory_order_relaxed)) return true;
-
-  if (g_has_deadline && ((nodes & DEADLINE_POLL_MASK) == 0)) {
-    if (std::chrono::steady_clock::now() >= g_deadline) {
-      if (stopFlag) stopFlag->store(true, std::memory_order_relaxed);
-      return true;
-    }
+// Conservative gating for null-move pruning: avoid pawn/king-only endings (zugzwang risk)
+inline bool has_non_pawn_material(const Board& b, Color c) {
+  for (int sq = 0; sq < 64; ++sq) {
+    Color pc;
+    Piece p = b.piece_at(sq, &pc);
+    if (p == Piece::None || pc != c) continue;
+    if (p != Piece::Pawn && p != Piece::King) return true;
   }
   return false;
 }
 
-} // namespace (anon)
+struct NullState {
+  Color  prev_stm{};
+  Square prev_ep{-1};
+  int    prev_halfmove{0};
+  int    prev_fullmove{1};
+};
+
+inline void do_null_move(Board& b, NullState& ns) {
+  ns.prev_stm      = b.side_to_move();
+  ns.prev_ep       = b.ep_square();
+  ns.prev_halfmove = b.halfmove_clock();
+  ns.prev_fullmove = b.fullmove_number();
+
+  // A null move clears EP and toggles side-to-move.
+  b.set_ep_square(-1);
+  b.set_side_to_move(other_color(ns.prev_stm));
+
+  // Clocks are not part of Zobrist hash in typical engines; preserve for correctness anyway.
+  b.set_halfmove_clock(ns.prev_halfmove + 1);
+  if (ns.prev_stm == Color::Black) b.set_fullmove_number(ns.prev_fullmove + 1);
+}
+
+inline void undo_null_move(Board& b, const NullState& ns) {
+  // Restore clocks first (hash-independent), then hashed fields.
+  b.set_halfmove_clock(ns.prev_halfmove);
+  b.set_fullmove_number(ns.prev_fullmove);
+
+  b.set_side_to_move(ns.prev_stm);
+  b.set_ep_square(ns.prev_ep);
+}
+
+} // anon
 
 // -----------------------------------------------------------------------------
 // Eval helpers
@@ -179,7 +197,12 @@ static int qsearch(Board& b, int alpha, int beta, std::uint64_t& nodes,
                    std::atomic<bool>* stopFlag)
 {
   nodes++;
-  if (should_stop(nodes, stopFlag)) return alpha;
+  if (stopFlag && (nodes & 0x3FFF) == 0) {
+    if ((g_has_deadline && std::chrono::steady_clock::now() >= g_deadline) ||
+        stopFlag->load(std::memory_order_relaxed)) {
+      return alpha;
+    }
+  }
 
   const Color us = b.side_to_move();
 
@@ -204,7 +227,6 @@ static int qsearch(Board& b, int alpha, int beta, std::uint64_t& nodes,
       } else {
         undo_move(b, m, st);
       }
-      if (should_stop(nodes, stopFlag)) return alpha;
     }
     return alpha;
   }
@@ -242,21 +264,26 @@ static int qsearch(Board& b, int alpha, int beta, std::uint64_t& nodes,
     } else {
       undo_move(b, m, st);
     }
-    if (should_stop(nodes, stopFlag)) return alpha;
   }
 
   return alpha;
 }
 
 // -----------------------------------------------------------------------------
-// Negamax with TT + killers/history + LMR + check extension
+// Negamax with TT + killers/history + LMR + check extension + null-move pruning
 // -----------------------------------------------------------------------------
 static int negamax(Board& b, int depth, int alpha, int beta,
                    std::uint64_t& nodes, std::vector<Move>& pv,
                    std::atomic<bool>* stopFlag)
 {
   nodes++;
-  if (should_stop(nodes, stopFlag)) { pv.clear(); return alpha; }
+  if (stopFlag && (nodes & 0x3FFF) == 0) {
+    if ((g_has_deadline && std::chrono::steady_clock::now() >= g_deadline) ||
+        stopFlag->load(std::memory_order_relaxed)) {
+      pv.clear();
+      return alpha;
+    }
+  }
 
   const int alphaOrig = alpha;
   const U64 key = b.hash();
@@ -265,7 +292,9 @@ static int negamax(Board& b, int depth, int alpha, int beta,
 
   const bool usInCheck = in_check(b, us);
   int staticEval = 0;
-  if (!usInCheck) staticEval = eval_side_to_move(b);
+  if (!usInCheck) {
+    staticEval = eval_side_to_move(b);
+  }
 
   // TT probe (apply mate-distance on load)
   TTEntry hit{};
@@ -287,13 +316,51 @@ static int negamax(Board& b, int depth, int alpha, int beta,
     std::vector<Move> seedPV;
     (void)negamax(b, depth - 2, alpha, beta, nodes, seedPV, stopFlag);
     TTEntry rehit{};
-    if (GTT.probe(key, rehit)) ttMove = rehit.best;
-    if (should_stop(nodes, stopFlag)) { pv.clear(); return alpha; }
+    if (GTT.probe(key, rehit)) {
+      ttMove = rehit.best;
+    }
   }
 
   if (depth == 0) {
     pv.clear();
     return qsearch(b, alpha, beta, nodes, stopFlag);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Null-move pruning (conservative):
+  // - only in non-PV nodes (beta-alpha <= 1)
+  // - not in check
+  // - depth >= 3
+  // - require non-pawn material for both sides (reduce zugzwang risk)
+  // ---------------------------------------------------------------------------
+  const bool isPV = (beta - alpha) > 1;
+  if (!isPV && depth >= 3 && !usInCheck) {
+    const Color them = other_color(us);
+    if (has_non_pawn_material(b, us) && has_non_pawn_material(b, them)) {
+      NullState ns{};
+      do_null_move(b, ns);
+
+      std::vector<Move> nullPV;
+      const int R = 2 + (depth / 4);
+      const int nullDepth = std::max(0, depth - 1 - R);
+
+      int score = -negamax(b, nullDepth, -beta, -beta + 1, nodes, nullPV, stopFlag);
+
+      undo_null_move(b, ns);
+
+      if (stopFlag && stopFlag->load(std::memory_order_relaxed)) {
+        pv.clear();
+        return alpha;
+      }
+
+      if (score >= beta) {
+        // Store a lower bound; we do not have a real best move from null pruning.
+        GTT.store(key, Move{}, static_cast<std::int16_t>(depth),
+                  static_cast<std::int16_t>(to_tt_score(score, ply)), TTBound::Lower);
+        pv.clear();
+        return score;
+      }
+    }
   }
 
   // Generate and order
@@ -317,15 +384,15 @@ static int negamax(Board& b, int depth, int alpha, int beta,
 
   bool firstMove = true;
   int moveIndex = 0;
-
   for (const auto& m : moves) {
+
     const bool isCapLike = is_capture_like_pre(b, us, m);
     const bool isPromo   = (m.promo != Piece::None);
     const bool isTT      = same_move(m, ttMove);
 
     // Futility pruning at frontier: skip clearly hopeless quiets at depth==1
     if (depth == 1 && !usInCheck && !isCapLike && !isPromo) {
-      const int FUT_MARGIN = 200;
+      const int FUT_MARGIN = 200; // small, safe margin
       if (staticEval + FUT_MARGIN <= alpha) { ++moveIndex; continue; }
     }
 
@@ -337,7 +404,7 @@ static int negamax(Board& b, int depth, int alpha, int beta,
       std::vector<Move> childPV;
 
       // Check extension (after the move)
-      const Color them = (us == Color::White ? Color::Black : Color::White);
+      const Color them = other_color(us);
       const int ext    = (in_check(b, them) && depth >= 2) ? 1 : 0;
 
       int baseDepth = depth - 1 + ext;
@@ -355,9 +422,12 @@ static int negamax(Board& b, int depth, int alpha, int beta,
 
       int score;
       if (firstMove) {
+        // Full window on the first legal move (PV move)
         score = -negamax(b, baseDepth, -beta, -alpha, nodes, childPV, stopFlag);
       } else {
+        // PVS: try a zero-window search first
         score = -negamax(b, reducedDepth, -(alpha + 1), -alpha, nodes, childPV, stopFlag);
+        // If it improves alpha, re-search with full window and full (unreduced) depth
         if (score > alpha) {
           childPV.clear();
           score = -negamax(b, baseDepth, -beta, -alpha, nodes, childPV, stopFlag);
@@ -372,10 +442,11 @@ static int negamax(Board& b, int depth, int alpha, int beta,
 
       undo_move(b, m, st);
 
-      if (should_stop(nodes, stopFlag)) { pv.clear(); return alpha; }
-
       if (bestScore >= beta) {
-        if (!isCapLike && !isPromo) store_killer_history(us, b, m, ply);
+        // Quiet beta-cutoff contributes to killers/history
+        if (!isCapLike && !isPromo) {
+          store_killer_history(us, b, m, ply);
+        }
         GTT.store(key, m, static_cast<std::int16_t>(depth),
                   static_cast<std::int16_t>(to_tt_score(bestScore, ply)), TTBound::Lower);
         pv.clear();
@@ -425,12 +496,13 @@ static int compute_time_budget_ms(const Board& b, const SearchLimits& lim) {
   const int myTime = (us == Color::White) ? lim.wtime_ms : lim.btime_ms;
   const int myInc  = (us == Color::White) ? lim.winc_ms  : lim.binc_ms;
 
-  if (myTime <= 0) return 0;
+  if (myTime <= 0) return 0; // no budget provided
 
   const int mtg = lim.movestogo > 0 ? lim.movestogo : 30;
   int slice = myTime / mtg;
   int budget = slice + (myInc * 3) / 4;
 
+  // Clamp with small safety margins
   budget = std::max(20, std::min(budget, std::max(0, myTime - 30)));
   return budget;
 }
@@ -448,13 +520,10 @@ static SearchResult search_with_limits(const Board& root, int maxDepth,
   res.best  = Move{};
   res.pv.clear();
 
-  if (stopFlag && stopFlag->load(std::memory_order_relaxed)) {
-    return res; // pre-stopped
-  }
-
   Board b = root;
 
   auto clamp = [](int x, int lo, int hi){ return x < lo ? lo : (x > hi ? hi : x); };
+
   int lastScore = 0;
 
   for (int d = 1; d <= maxDepth; ++d) {
@@ -462,7 +531,7 @@ static SearchResult search_with_limits(const Board& root, int maxDepth,
     int alpha = -INF, beta = +INF;
 
     if (d > 1) {
-      int asp = 50 + 10 * d;
+      int asp = 50 + 10 * d;   // aspiration window around last score
       alpha = clamp(lastScore - asp, -MATE, +MATE);
       beta  = clamp(lastScore + asp, -MATE, +MATE);
 
@@ -471,8 +540,8 @@ static SearchResult search_with_limits(const Board& root, int maxDepth,
         int score = negamax(b, d, alpha, beta, res.nodes, pv, stopFlag);
 
         if (stopFlag && stopFlag->load(std::memory_order_relaxed)) {
-          // Preserve the best from prior completed iteration; always keep nodes.
-          return res;
+          // preserve the best we had from prior completed iteration
+          return res.depth > 0 ? res : SearchResult{};
         }
 
         if (score <= alpha) {
@@ -495,11 +564,9 @@ static SearchResult search_with_limits(const Board& root, int maxDepth,
     } else {
       g_rootDepth = d;
       int score = negamax(b, d, alpha, beta, res.nodes, pv, stopFlag);
-
       if (stopFlag && stopFlag->load(std::memory_order_relaxed)) {
-        return res; // keep nodes even if iteration 1 didn’t complete
+        return res.depth > 0 ? res : SearchResult{};
       }
-
       lastScore   = score;
       res.best    = pv.empty() ? Move{} : pv.front();
       res.pv      = std::move(pv);
@@ -511,24 +578,21 @@ static SearchResult search_with_limits(const Board& root, int maxDepth,
   return res;
 }
 
-} // namespace euclid
-
+} // namespace (anon)
 namespace euclid {
 
 // ============================================================================
 // Public entry points
 // ============================================================================
 SearchResult search(const Board& root, int maxDepth) {
-  g_has_deadline = false;
-  g_node_limit = 0;
-  return search_with_limits(root, std::max(1, maxDepth), nullptr);
+  g_has_deadline = false; // depth-limited: no time budget
+  return search_with_limits(root, std::max(1, maxDepth), /*stopFlag=*/nullptr);
 }
 
 SearchResult search(const Board& root, const SearchLimits& lim) {
-  const int d = (lim.depth > 0) ? lim.depth : 6;
-  const int budget_ms = compute_time_budget_ms(root, lim);
-
-  g_node_limit = lim.nodes;
+  // Compute time budget (0 => no budget => depth only)
+  const int d = lim.depth > 0 ? lim.depth : 6;
+  int budget_ms = compute_time_budget_ms(root, lim);
 
   std::atomic<bool> dummyStop{false};
   std::atomic<bool>* stopPtr = lim.stop ? lim.stop : &dummyStop;

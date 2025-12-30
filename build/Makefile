@@ -373,6 +373,19 @@ search_limits_smoke/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/search_limits_smoke.dir/build.make CMakeFiles/search_limits_smoke.dir/build
 .PHONY : search_limits_smoke/fast
 
+#=============================================================================
+# Target rules for targets named nullmove_state_smoke
+
+# Build rule for target.
+nullmove_state_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 nullmove_state_smoke
+.PHONY : nullmove_state_smoke
+
+# fast build rule for target.
+nullmove_state_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nullmove_state_smoke.dir/build.make CMakeFiles/nullmove_state_smoke.dir/build
+.PHONY : nullmove_state_smoke/fast
+
 src/attack.o: src/attack.cpp.o
 .PHONY : src/attack.o
 
@@ -853,6 +866,30 @@ tests/king_smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/king_smoke.dir/build.make CMakeFiles/king_smoke.dir/tests/king_smoke.cpp.s
 .PHONY : tests/king_smoke.cpp.s
 
+tests/nullmove_state_smoke.o: tests/nullmove_state_smoke.cpp.o
+.PHONY : tests/nullmove_state_smoke.o
+
+# target to build an object file
+tests/nullmove_state_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nullmove_state_smoke.dir/build.make CMakeFiles/nullmove_state_smoke.dir/tests/nullmove_state_smoke.cpp.o
+.PHONY : tests/nullmove_state_smoke.cpp.o
+
+tests/nullmove_state_smoke.i: tests/nullmove_state_smoke.cpp.i
+.PHONY : tests/nullmove_state_smoke.i
+
+# target to preprocess a source file
+tests/nullmove_state_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nullmove_state_smoke.dir/build.make CMakeFiles/nullmove_state_smoke.dir/tests/nullmove_state_smoke.cpp.i
+.PHONY : tests/nullmove_state_smoke.cpp.i
+
+tests/nullmove_state_smoke.s: tests/nullmove_state_smoke.cpp.s
+.PHONY : tests/nullmove_state_smoke.s
+
+# target to generate assembly for a file
+tests/nullmove_state_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nullmove_state_smoke.dir/build.make CMakeFiles/nullmove_state_smoke.dir/tests/nullmove_state_smoke.cpp.s
+.PHONY : tests/nullmove_state_smoke.cpp.s
+
 tests/pawn_smoke.o: tests/pawn_smoke.cpp.o
 .PHONY : tests/pawn_smoke.o
 
@@ -1111,6 +1148,7 @@ help:
 	@echo "... fen_test"
 	@echo "... incheck_smoke"
 	@echo "... king_smoke"
+	@echo "... nullmove_state_smoke"
 	@echo "... pawn_smoke"
 	@echo "... perft_refs"
 	@echo "... perft_smoke"
@@ -1181,6 +1219,9 @@ help:
 	@echo "... tests/king_smoke.o"
 	@echo "... tests/king_smoke.i"
 	@echo "... tests/king_smoke.s"
+	@echo "... tests/nullmove_state_smoke.o"
+	@echo "... tests/nullmove_state_smoke.i"
+	@echo "... tests/nullmove_state_smoke.s"
 	@echo "... tests/pawn_smoke.o"
 	@echo "... tests/pawn_smoke.i"
 	@echo "... tests/pawn_smoke.s"

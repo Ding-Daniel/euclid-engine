@@ -107,3 +107,7 @@ add_test(NAME search_smoke COMMAND $<TARGET_FILE:search_smoke>)
 add_executable(search_limits_smoke tests/search_limits_smoke.cpp)
 target_link_libraries(search_limits_smoke PRIVATE euclid_engine)
 add_test(NAME search_limits_smoke COMMAND $<TARGET_FILE:search_limits_smoke>)
+
+add_executable(nullmove_state_smoke tests/nullmove_state_smoke.cpp)
+target_link_libraries(nullmove_state_smoke PRIVATE euclid_engine)
+add_test(NAME nullmove_state_smoke COMMAND $<TARGET_FILE:nullmove_state_smoke>)

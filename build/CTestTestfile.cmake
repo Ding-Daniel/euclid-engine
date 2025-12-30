@@ -38,3 +38,5 @@ add_test([=[search_smoke]=] "/Users/danielding/euclid-engine/build/search_smoke"
 set_tests_properties([=[search_smoke]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/danielding/euclid-engine/CMakeLists.txt;105;add_test;/Users/danielding/euclid-engine/CMakeLists.txt;0;")
 add_test([=[search_limits_smoke]=] "/Users/danielding/euclid-engine/build/search_limits_smoke")
 set_tests_properties([=[search_limits_smoke]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/danielding/euclid-engine/CMakeLists.txt;109;add_test;/Users/danielding/euclid-engine/CMakeLists.txt;0;")
+add_test([=[nullmove_state_smoke]=] "/Users/danielding/euclid-engine/build/nullmove_state_smoke")
+set_tests_properties([=[nullmove_state_smoke]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/danielding/euclid-engine/CMakeLists.txt;113;add_test;/Users/danielding/euclid-engine/CMakeLists.txt;0;")
