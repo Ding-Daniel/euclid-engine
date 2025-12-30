@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <numeric>
+#include <cstdint>
 
 #include "euclid/types.hpp"
 #include "euclid/board.hpp"
@@ -21,7 +22,9 @@ static void usage() {
     "  euclid_cli perft <depth> [fen...]\n"
     "  euclid_cli divide <depth> [fen...]\n"
     "  euclid_cli eval [fen...]\n"
-    "  euclid_cli search depth <N> [fen...]\n"
+    "  euclid_cli search [depth <N>] [nodes <N>] [movetime <ms>]\n"
+    "                  [wtime <ms> btime <ms> winc <ms> binc <ms> movestogo <N>]\n"
+    "                  [fen <FEN...>]\n"
     "If FEN omitted, uses startpos.\n";
 }
 
@@ -48,6 +51,10 @@ static Board board_from_args(const std::vector<std::string>& a, size_t fenStart)
 
 static int to_int(const std::string& s) {
   return std::stoi(s);
+}
+
+static std::uint64_t to_u64(const std::string& s) {
+  return static_cast<std::uint64_t>(std::stoull(s));
 }
 
 int main(int argc, char** argv) {
@@ -91,16 +98,34 @@ int main(int argc, char** argv) {
     return 0;
   }
 
-  // search depth <N> [fen...]
+  // search [depth <N>] [nodes <N>] [movetime <ms>] ... [fen <FEN...>]
   if (cmd == "search") {
-    int depth = 2;
+    SearchLimits lim{};
+    lim.depth = 2; // preserve previous CLI default
+
     size_t fenStart = args.size();
-    for (size_t i = 1; i + 1 < args.size(); ++i) {
-      if (args[i] == "depth") depth = to_int(args[i + 1]);
-      if (args[i] == "fen") { fenStart = i + 1; break; } // everything after 'fen' is the FEN
+
+    for (size_t i = 1; i < args.size(); ++i) {
+      const std::string& tok = args[i];
+
+      if (tok == "fen") { fenStart = i + 1; break; }
+      if (i + 1 >= args.size()) break;
+
+      const std::string& val = args[i + 1];
+
+      if (tok == "depth")      { lim.depth = to_int(val); ++i; continue; }
+      if (tok == "nodes")      { lim.nodes = to_u64(val); ++i; continue; }
+      if (tok == "movetime")   { lim.movetime_ms = to_int(val); ++i; continue; }
+      if (tok == "wtime")      { lim.wtime_ms = to_int(val); ++i; continue; }
+      if (tok == "btime")      { lim.btime_ms = to_int(val); ++i; continue; }
+      if (tok == "winc")       { lim.winc_ms = to_int(val); ++i; continue; }
+      if (tok == "binc")       { lim.binc_ms = to_int(val); ++i; continue; }
+      if (tok == "movestogo")  { lim.movestogo = to_int(val); ++i; continue; }
     }
+
     Board b = board_from_args(args, fenStart);
-    auto r = search(b, depth);
+    auto r = search(b, lim);
+
     std::cout << "best " << move_to_uci(r.best)
               << " score " << r.score
               << " nodes " << r.nodes

@@ -103,3 +103,7 @@ add_test(NAME uci_smoke COMMAND $<TARGET_FILE:uci_smoke>)
 add_executable(search_smoke tests/search_smoke.cpp)
 target_link_libraries(search_smoke PRIVATE euclid_engine)
 add_test(NAME search_smoke COMMAND $<TARGET_FILE:search_smoke>)
+
+add_executable(search_limits_smoke tests/search_limits_smoke.cpp)
+target_link_libraries(search_limits_smoke PRIVATE euclid_engine)
+add_test(NAME search_limits_smoke COMMAND $<TARGET_FILE:search_limits_smoke>)
