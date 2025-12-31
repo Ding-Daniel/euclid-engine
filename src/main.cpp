@@ -4,6 +4,7 @@
 #include <vector>
 #include <numeric>
 #include <cstdint>
+#include <fstream>
 
 #include "euclid/types.hpp"
 #include "euclid/board.hpp"
@@ -12,6 +13,9 @@
 #include "euclid/eval.hpp"
 #include "euclid/uci.hpp"
 #include "euclid/search.hpp"
+#include "euclid/nn_eval.hpp"
+#include "euclid/nn.hpp"
+#include "euclid/encode.hpp"
 
 using namespace euclid;
 
@@ -19,12 +23,15 @@ static void usage() {
   std::cout <<
     "Euclid CLI\n"
     "Usage:\n"
+    "  euclid_cli uci\n"
     "  euclid_cli perft <depth> [fen...]\n"
     "  euclid_cli divide <depth> [fen...]\n"
     "  euclid_cli eval [fen...]\n"
-    "  euclid_cli search [depth <N>] [nodes <N>] [movetime <ms>]\n"
+    "  euclid_cli eval nn <model_path> [fen...]\n"
+    "  euclid_cli search [nn <model_path>] [depth <N>] [nodes <N>] [movetime <ms>]\n"
     "                  [wtime <ms> btime <ms> winc <ms> binc <ms> movestogo <N>]\n"
     "                  [fen <FEN...>]\n"
+    "  euclid_cli nn_make_const <out_path> <cp>\n"
     "If FEN omitted, uses startpos.\n";
 }
 
@@ -63,6 +70,44 @@ int main(int argc, char** argv) {
 
   const std::string cmd = args[0];
 
+  // uci
+  if (cmd == "uci") {
+    uci_loop();
+    return 0;
+  }
+
+  // nn_make_const <out_path> <cp>
+  // Writes a compatible (781->1) model that outputs ~constant cp (bias-only).
+  if (cmd == "nn_make_const") {
+    if (args.size() < 3) { usage(); return 1; }
+    const std::string outPath = args[1];
+    const int cp = to_int(args[2]);
+
+    MLPConfig cfg;
+    cfg.sizes  = {EncodedInputSpec::kTotal, 1};
+    cfg.hidden = Activation::ReLU;
+    cfg.output = Activation::None;
+
+    MLP mlp(cfg);
+    // Bias-only constant model (weights default to zero in this project’s NN implementation).
+    auto& L = mlp.layers_mut().at(0);
+    if (!L.b.empty()) L.b[0] = static_cast<float>(cp);
+
+    std::ofstream out(outPath);
+    if (!out) {
+      std::cerr << "error: could not open for write: " << outPath << "\n";
+      return 2;
+    }
+    mlp.save(out);
+    if (!out.good()) {
+      std::cerr << "error: failed while writing model: " << outPath << "\n";
+      return 2;
+    }
+
+    std::cout << "wrote " << outPath << " const_cp " << cp << "\n";
+    return 0;
+  }
+
   // perft <depth> [fen...]
   if (cmd == "perft") {
     if (args.size() < 2) { usage(); return 1; }
@@ -90,18 +135,30 @@ int main(int argc, char** argv) {
   }
 
   // eval [fen...]
+  // eval nn <model_path> [fen...]
   if (cmd == "eval") {
-    Board b = board_from_args(args, 1);
+    size_t fenStart = 1;
+
+    if (args.size() >= 3 && args[1] == "nn") {
+      const std::string modelPath = args[2];
+      if (!neural_eval_load_file(modelPath) || !neural_eval_enabled()) {
+        std::cerr << "error: failed to load EvalModel or model dims mismatch: " << modelPath << "\n";
+        return 2;
+      }
+      fenStart = 3;
+    }
+
+    Board b = board_from_args(args, fenStart);
     const int score = evaluate(b);
     std::cout << "eval " << score
               << " (" << (b.side_to_move() == Color::White ? "white" : "black") << " to move)\n";
     return 0;
   }
 
-  // search [depth <N>] [nodes <N>] [movetime <ms>] ... [fen <FEN...>]
+  // search [nn <model_path>] [depth <N>] [nodes <N>] [movetime <ms>] ... [fen <FEN...>]
   if (cmd == "search") {
     SearchLimits lim{};
-    lim.depth = 2; // preserve previous CLI default
+    lim.depth = 2; // preserve CLI default
 
     size_t fenStart = args.size();
 
@@ -109,8 +166,22 @@ int main(int argc, char** argv) {
       const std::string& tok = args[i];
 
       if (tok == "fen") { fenStart = i + 1; break; }
-      if (i + 1 >= args.size()) break;
 
+      if (tok == "nn") {
+        if (i + 1 >= args.size()) {
+          std::cerr << "error: search nn requires a model path\n";
+          return 2;
+        }
+        const std::string modelPath = args[i + 1];
+        if (!neural_eval_load_file(modelPath) || !neural_eval_enabled()) {
+          std::cerr << "error: failed to load EvalModel or model dims mismatch: " << modelPath << "\n";
+          return 2;
+        }
+        ++i;
+        continue;
+      }
+
+      if (i + 1 >= args.size()) break;
       const std::string& val = args[i + 1];
 
       if (tok == "depth")      { lim.depth = to_int(val); ++i; continue; }

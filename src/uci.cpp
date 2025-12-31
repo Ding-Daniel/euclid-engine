@@ -5,6 +5,8 @@
 #include "euclid/move_do.hpp"
 #include "euclid/attack.hpp"
 #include "euclid/search.hpp"
+#include "euclid/fen.hpp"
+#include "euclid/nn_eval.hpp"
 
 #include <stdexcept>
 #include <cctype>
@@ -50,7 +52,7 @@ std::string move_to_uci(const Move& m) {
   s.push_back(rank_char(m.from));
   s.push_back(file_char(m.to));
   s.push_back(rank_char(m.to));
-  char pc = promo_to_char(m.promo); // C++14/17 friendly
+  char pc = promo_to_char(m.promo);
   if (pc) s.push_back(pc);
   return s;
 }
@@ -81,7 +83,7 @@ Move uci_to_move(const Board& b, const std::string& uci) {
   MoveList ml;
   generate_pseudo_legal(b, ml);
 
-  for (const auto& m : ml) { // MoveList supports range-for
+  for (const auto& m : ml) {
     if (m.from == from && m.to == to) {
       if ((wantPromo == Piece::None && m.promo == Piece::None) ||
           (wantPromo != Piece::None && m.promo == wantPromo)) {
@@ -99,6 +101,15 @@ static std::vector<std::string> split_ws(const std::string& line) {
   std::string tok;
   while (iss >> tok) out.push_back(tok);
   return out;
+}
+
+static std::string join_from(const std::vector<std::string>& toks, size_t start) {
+  std::string s;
+  for (size_t i = start; i < toks.size(); ++i) {
+    if (!s.empty()) s.push_back(' ');
+    s += toks[i];
+  }
+  return s;
 }
 
 // apply a sequence of UCI moves to a board (checks legality via in_check)
@@ -119,9 +130,54 @@ static void apply_moves(Board& b, const std::vector<std::string>& toks, size_t s
   }
 }
 
+// Parse: setoption name <Name...> [value <Value...>]
+static void handle_setoption(const std::vector<std::string>& tokens) {
+  size_t nameIdx = tokens.size();
+  size_t valueIdx = tokens.size();
+
+  for (size_t i = 1; i < tokens.size(); ++i) {
+    if (tokens[i] == "name")  { nameIdx = i + 1; }
+    if (tokens[i] == "value") { valueIdx = i + 1; break; }
+  }
+  if (nameIdx >= tokens.size()) return;
+
+  const std::string name = (valueIdx <= tokens.size())
+    ? join_from(tokens, nameIdx).substr(0, join_from(tokens, nameIdx).find(" value "))
+    : join_from(tokens, nameIdx);
+
+  // More robust: compute name as tokens[nameIdx..valueToken-1]
+  std::string nm;
+  {
+    size_t end = tokens.size();
+    for (size_t i = nameIdx; i < tokens.size(); ++i) {
+      if (tokens[i] == "value") { end = i; break; }
+    }
+    for (size_t i = nameIdx; i < end; ++i) {
+      if (!nm.empty()) nm.push_back(' ');
+      nm += tokens[i];
+    }
+  }
+
+  std::string val;
+  if (valueIdx < tokens.size()) {
+    val = join_from(tokens, valueIdx);
+  } else {
+    val.clear();
+  }
+
+  if (nm == "EvalModel") {
+    if (val.empty()) {
+      neural_eval_clear();
+    } else {
+      (void)neural_eval_load_file(val);
+      // If load fails, NN simply remains disabled (dims check fails). This is OK per UCI.
+    }
+  }
+}
+
 // ------------ minimal UCI loop ------------
 void uci_loop(std::istream& in, std::ostream& out) {
-  Board b; // startpos
+  Board b; // assumed startpos by Board default constructor
   G_STOP.store(false, std::memory_order_relaxed);
 
   std::string line;
@@ -133,6 +189,7 @@ void uci_loop(std::istream& in, std::ostream& out) {
     if (cmd == "uci") {
       out << "id name Euclid\n";
       out << "id author You\n";
+      out << "option name EvalModel type string default\n";
       out << "uciok\n";
       out.flush();
     }
@@ -140,10 +197,12 @@ void uci_loop(std::istream& in, std::ostream& out) {
       out << "readyok\n";
       out.flush();
     }
+    else if (cmd == "setoption") {
+      handle_setoption(tokens);
+    }
     else if (cmd == "ucinewgame") {
       G_STOP.store(false, std::memory_order_relaxed);
       // optional: clear transposition table here
-      // e.g. TT::global().clear();
     }
     else if (cmd == "position") {
       // position startpos [moves ...]
@@ -151,7 +210,7 @@ void uci_loop(std::istream& in, std::ostream& out) {
       if (tokens.size() >= 2) {
         size_t i = 1;
         if (tokens[i] == "startpos") {
-          b = Board{}; // reset to start
+          set_from_fen(b, STARTPOS_FEN);
           ++i;
         } else if (tokens[i] == "fen") {
           std::string fen;
@@ -160,8 +219,9 @@ void uci_loop(std::istream& in, std::ostream& out) {
             if (!fen.empty()) fen.push_back(' ');
             fen += tokens[i++];
           }
-          // If you have a FEN loader, call it here.
-          // set_from_fen(b, fen);
+          if (!fen.empty()) {
+            set_from_fen(b, fen);
+          }
         }
         if (i < tokens.size() && tokens[i] == "moves") {
           apply_moves(b, tokens, i + 1);
@@ -174,7 +234,6 @@ void uci_loop(std::istream& in, std::ostream& out) {
     else if (cmd == "go") {
       SearchLimits lim;
       lim.stop = &G_STOP;
-      // parse typical UCI time/depth options
       for (size_t i = 1; i < tokens.size(); ++i) {
         const std::string& t = tokens[i];
         auto rd = [&](int& dst){ if (i + 1 < tokens.size()) dst = std::stoi(tokens[++i]); };
@@ -195,7 +254,6 @@ void uci_loop(std::istream& in, std::ostream& out) {
     else if (cmd == "quit") {
       break;
     }
-    // else: ignore unknown per UCI spec
   }
 }
 

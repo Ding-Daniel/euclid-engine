@@ -1,4 +1,5 @@
 #include "euclid/eval.hpp"
+#include "euclid/nn_eval.hpp"
 #include "euclid/types.hpp"
 
 namespace euclid {
@@ -25,11 +26,18 @@ static inline int piece_value(Piece p) {
 }
 
 int evaluate(const Board& b) {
+  // Phase 16 integration: if NN eval is enabled, prefer it.
+  if (neural_eval_enabled()) {
+    const int nn = neural_evaluate_white_pov(b);
+    return nn;
+  }
+
+  // Fallback: pure material (white-positive).
   int score = 0;
   for (int s = 0; s < 64; ++s) {
     Color c; Piece p = b.piece_at(s, &c);
     if (p == Piece::None) continue;
-    int v = piece_value(p);
+    const int v = piece_value(p);
     score += (c == Color::White ? v : -v);
   }
   return score;

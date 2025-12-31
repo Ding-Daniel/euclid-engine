@@ -412,6 +412,71 @@ encode_smoke/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/encode_smoke.dir/build.make CMakeFiles/encode_smoke.dir/build
 .PHONY : encode_smoke/fast
 
+#=============================================================================
+# Target rules for targets named nn_smoke
+
+# Build rule for target.
+nn_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 nn_smoke
+.PHONY : nn_smoke
+
+# fast build rule for target.
+nn_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nn_smoke.dir/build.make CMakeFiles/nn_smoke.dir/build
+.PHONY : nn_smoke/fast
+
+#=============================================================================
+# Target rules for targets named nn_eval_integration_smoke
+
+# Build rule for target.
+nn_eval_integration_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 nn_eval_integration_smoke
+.PHONY : nn_eval_integration_smoke
+
+# fast build rule for target.
+nn_eval_integration_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nn_eval_integration_smoke.dir/build.make CMakeFiles/nn_eval_integration_smoke.dir/build
+.PHONY : nn_eval_integration_smoke/fast
+
+#=============================================================================
+# Target rules for targets named search_nn_pov_smoke
+
+# Build rule for target.
+search_nn_pov_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 search_nn_pov_smoke
+.PHONY : search_nn_pov_smoke
+
+# fast build rule for target.
+search_nn_pov_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/search_nn_pov_smoke.dir/build.make CMakeFiles/search_nn_pov_smoke.dir/build
+.PHONY : search_nn_pov_smoke/fast
+
+#=============================================================================
+# Target rules for targets named uci_evalmodel_smoke
+
+# Build rule for target.
+uci_evalmodel_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 uci_evalmodel_smoke
+.PHONY : uci_evalmodel_smoke
+
+# fast build rule for target.
+uci_evalmodel_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uci_evalmodel_smoke.dir/build.make CMakeFiles/uci_evalmodel_smoke.dir/build
+.PHONY : uci_evalmodel_smoke/fast
+
+#=============================================================================
+# Target rules for targets named nn_make_const_smoke
+
+# Build rule for target.
+nn_make_const_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 nn_make_const_smoke
+.PHONY : nn_make_const_smoke
+
+# fast build rule for target.
+nn_make_const_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nn_make_const_smoke.dir/build.make CMakeFiles/nn_make_const_smoke.dir/build
+.PHONY : nn_make_const_smoke/fast
+
 src/attack.o: src/attack.cpp.o
 .PHONY : src/attack.o
 
@@ -627,6 +692,54 @@ src/movegen.s: src/movegen.cpp.s
 src/movegen.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/movegen.cpp.s
 .PHONY : src/movegen.cpp.s
+
+src/nn.o: src/nn.cpp.o
+.PHONY : src/nn.o
+
+# target to build an object file
+src/nn.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/nn.cpp.o
+.PHONY : src/nn.cpp.o
+
+src/nn.i: src/nn.cpp.i
+.PHONY : src/nn.i
+
+# target to preprocess a source file
+src/nn.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/nn.cpp.i
+.PHONY : src/nn.cpp.i
+
+src/nn.s: src/nn.cpp.s
+.PHONY : src/nn.s
+
+# target to generate assembly for a file
+src/nn.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/nn.cpp.s
+.PHONY : src/nn.cpp.s
+
+src/nn_eval.o: src/nn_eval.cpp.o
+.PHONY : src/nn_eval.o
+
+# target to build an object file
+src/nn_eval.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.o
+.PHONY : src/nn_eval.cpp.o
+
+src/nn_eval.i: src/nn_eval.cpp.i
+.PHONY : src/nn_eval.i
+
+# target to preprocess a source file
+src/nn_eval.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.i
+.PHONY : src/nn_eval.cpp.i
+
+src/nn_eval.s: src/nn_eval.cpp.s
+.PHONY : src/nn_eval.s
+
+# target to generate assembly for a file
+src/nn_eval.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.s
+.PHONY : src/nn_eval.cpp.s
 
 src/perft.o: src/perft.cpp.o
 .PHONY : src/perft.o
@@ -964,6 +1077,78 @@ tests/king_smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/king_smoke.dir/build.make CMakeFiles/king_smoke.dir/tests/king_smoke.cpp.s
 .PHONY : tests/king_smoke.cpp.s
 
+tests/nn_eval_integration_smoke.o: tests/nn_eval_integration_smoke.cpp.o
+.PHONY : tests/nn_eval_integration_smoke.o
+
+# target to build an object file
+tests/nn_eval_integration_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nn_eval_integration_smoke.dir/build.make CMakeFiles/nn_eval_integration_smoke.dir/tests/nn_eval_integration_smoke.cpp.o
+.PHONY : tests/nn_eval_integration_smoke.cpp.o
+
+tests/nn_eval_integration_smoke.i: tests/nn_eval_integration_smoke.cpp.i
+.PHONY : tests/nn_eval_integration_smoke.i
+
+# target to preprocess a source file
+tests/nn_eval_integration_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nn_eval_integration_smoke.dir/build.make CMakeFiles/nn_eval_integration_smoke.dir/tests/nn_eval_integration_smoke.cpp.i
+.PHONY : tests/nn_eval_integration_smoke.cpp.i
+
+tests/nn_eval_integration_smoke.s: tests/nn_eval_integration_smoke.cpp.s
+.PHONY : tests/nn_eval_integration_smoke.s
+
+# target to generate assembly for a file
+tests/nn_eval_integration_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nn_eval_integration_smoke.dir/build.make CMakeFiles/nn_eval_integration_smoke.dir/tests/nn_eval_integration_smoke.cpp.s
+.PHONY : tests/nn_eval_integration_smoke.cpp.s
+
+tests/nn_make_const_smoke.o: tests/nn_make_const_smoke.cpp.o
+.PHONY : tests/nn_make_const_smoke.o
+
+# target to build an object file
+tests/nn_make_const_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nn_make_const_smoke.dir/build.make CMakeFiles/nn_make_const_smoke.dir/tests/nn_make_const_smoke.cpp.o
+.PHONY : tests/nn_make_const_smoke.cpp.o
+
+tests/nn_make_const_smoke.i: tests/nn_make_const_smoke.cpp.i
+.PHONY : tests/nn_make_const_smoke.i
+
+# target to preprocess a source file
+tests/nn_make_const_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nn_make_const_smoke.dir/build.make CMakeFiles/nn_make_const_smoke.dir/tests/nn_make_const_smoke.cpp.i
+.PHONY : tests/nn_make_const_smoke.cpp.i
+
+tests/nn_make_const_smoke.s: tests/nn_make_const_smoke.cpp.s
+.PHONY : tests/nn_make_const_smoke.s
+
+# target to generate assembly for a file
+tests/nn_make_const_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nn_make_const_smoke.dir/build.make CMakeFiles/nn_make_const_smoke.dir/tests/nn_make_const_smoke.cpp.s
+.PHONY : tests/nn_make_const_smoke.cpp.s
+
+tests/nn_smoke.o: tests/nn_smoke.cpp.o
+.PHONY : tests/nn_smoke.o
+
+# target to build an object file
+tests/nn_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nn_smoke.dir/build.make CMakeFiles/nn_smoke.dir/tests/nn_smoke.cpp.o
+.PHONY : tests/nn_smoke.cpp.o
+
+tests/nn_smoke.i: tests/nn_smoke.cpp.i
+.PHONY : tests/nn_smoke.i
+
+# target to preprocess a source file
+tests/nn_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nn_smoke.dir/build.make CMakeFiles/nn_smoke.dir/tests/nn_smoke.cpp.i
+.PHONY : tests/nn_smoke.cpp.i
+
+tests/nn_smoke.s: tests/nn_smoke.cpp.s
+.PHONY : tests/nn_smoke.s
+
+# target to generate assembly for a file
+tests/nn_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nn_smoke.dir/build.make CMakeFiles/nn_smoke.dir/tests/nn_smoke.cpp.s
+.PHONY : tests/nn_smoke.cpp.s
+
 tests/nullmove_state_smoke.o: tests/nullmove_state_smoke.cpp.o
 .PHONY : tests/nullmove_state_smoke.o
 
@@ -1156,6 +1341,30 @@ tests/search_limits_smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/search_limits_smoke.dir/build.make CMakeFiles/search_limits_smoke.dir/tests/search_limits_smoke.cpp.s
 .PHONY : tests/search_limits_smoke.cpp.s
 
+tests/search_nn_pov_smoke.o: tests/search_nn_pov_smoke.cpp.o
+.PHONY : tests/search_nn_pov_smoke.o
+
+# target to build an object file
+tests/search_nn_pov_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/search_nn_pov_smoke.dir/build.make CMakeFiles/search_nn_pov_smoke.dir/tests/search_nn_pov_smoke.cpp.o
+.PHONY : tests/search_nn_pov_smoke.cpp.o
+
+tests/search_nn_pov_smoke.i: tests/search_nn_pov_smoke.cpp.i
+.PHONY : tests/search_nn_pov_smoke.i
+
+# target to preprocess a source file
+tests/search_nn_pov_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/search_nn_pov_smoke.dir/build.make CMakeFiles/search_nn_pov_smoke.dir/tests/search_nn_pov_smoke.cpp.i
+.PHONY : tests/search_nn_pov_smoke.cpp.i
+
+tests/search_nn_pov_smoke.s: tests/search_nn_pov_smoke.cpp.s
+.PHONY : tests/search_nn_pov_smoke.s
+
+# target to generate assembly for a file
+tests/search_nn_pov_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/search_nn_pov_smoke.dir/build.make CMakeFiles/search_nn_pov_smoke.dir/tests/search_nn_pov_smoke.cpp.s
+.PHONY : tests/search_nn_pov_smoke.cpp.s
+
 tests/search_smoke.o: tests/search_smoke.cpp.o
 .PHONY : tests/search_smoke.o
 
@@ -1204,6 +1413,30 @@ tests/smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/smoketest.dir/build.make CMakeFiles/smoketest.dir/tests/smoke.cpp.s
 .PHONY : tests/smoke.cpp.s
 
+tests/uci_evalmodel_smoke.o: tests/uci_evalmodel_smoke.cpp.o
+.PHONY : tests/uci_evalmodel_smoke.o
+
+# target to build an object file
+tests/uci_evalmodel_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uci_evalmodel_smoke.dir/build.make CMakeFiles/uci_evalmodel_smoke.dir/tests/uci_evalmodel_smoke.cpp.o
+.PHONY : tests/uci_evalmodel_smoke.cpp.o
+
+tests/uci_evalmodel_smoke.i: tests/uci_evalmodel_smoke.cpp.i
+.PHONY : tests/uci_evalmodel_smoke.i
+
+# target to preprocess a source file
+tests/uci_evalmodel_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uci_evalmodel_smoke.dir/build.make CMakeFiles/uci_evalmodel_smoke.dir/tests/uci_evalmodel_smoke.cpp.i
+.PHONY : tests/uci_evalmodel_smoke.cpp.i
+
+tests/uci_evalmodel_smoke.s: tests/uci_evalmodel_smoke.cpp.s
+.PHONY : tests/uci_evalmodel_smoke.s
+
+# target to generate assembly for a file
+tests/uci_evalmodel_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uci_evalmodel_smoke.dir/build.make CMakeFiles/uci_evalmodel_smoke.dir/tests/uci_evalmodel_smoke.cpp.s
+.PHONY : tests/uci_evalmodel_smoke.cpp.s
+
 tests/uci_smoke.o: tests/uci_smoke.cpp.o
 .PHONY : tests/uci_smoke.o
 
@@ -1248,6 +1481,9 @@ help:
 	@echo "... fen_test"
 	@echo "... incheck_smoke"
 	@echo "... king_smoke"
+	@echo "... nn_eval_integration_smoke"
+	@echo "... nn_make_const_smoke"
+	@echo "... nn_smoke"
 	@echo "... nullmove_state_smoke"
 	@echo "... pawn_smoke"
 	@echo "... perft_refs"
@@ -1256,8 +1492,10 @@ help:
 	@echo "... queen_smoke"
 	@echo "... rook_smoke"
 	@echo "... search_limits_smoke"
+	@echo "... search_nn_pov_smoke"
 	@echo "... search_smoke"
 	@echo "... smoketest"
+	@echo "... uci_evalmodel_smoke"
 	@echo "... uci_smoke"
 	@echo "... src/attack.o"
 	@echo "... src/attack.i"
@@ -1286,6 +1524,12 @@ help:
 	@echo "... src/movegen.o"
 	@echo "... src/movegen.i"
 	@echo "... src/movegen.s"
+	@echo "... src/nn.o"
+	@echo "... src/nn.i"
+	@echo "... src/nn.s"
+	@echo "... src/nn_eval.o"
+	@echo "... src/nn_eval.i"
+	@echo "... src/nn_eval.s"
 	@echo "... src/perft.o"
 	@echo "... src/perft.i"
 	@echo "... src/perft.s"
@@ -1328,6 +1572,15 @@ help:
 	@echo "... tests/king_smoke.o"
 	@echo "... tests/king_smoke.i"
 	@echo "... tests/king_smoke.s"
+	@echo "... tests/nn_eval_integration_smoke.o"
+	@echo "... tests/nn_eval_integration_smoke.i"
+	@echo "... tests/nn_eval_integration_smoke.s"
+	@echo "... tests/nn_make_const_smoke.o"
+	@echo "... tests/nn_make_const_smoke.i"
+	@echo "... tests/nn_make_const_smoke.s"
+	@echo "... tests/nn_smoke.o"
+	@echo "... tests/nn_smoke.i"
+	@echo "... tests/nn_smoke.s"
 	@echo "... tests/nullmove_state_smoke.o"
 	@echo "... tests/nullmove_state_smoke.i"
 	@echo "... tests/nullmove_state_smoke.s"
@@ -1352,12 +1605,18 @@ help:
 	@echo "... tests/search_limits_smoke.o"
 	@echo "... tests/search_limits_smoke.i"
 	@echo "... tests/search_limits_smoke.s"
+	@echo "... tests/search_nn_pov_smoke.o"
+	@echo "... tests/search_nn_pov_smoke.i"
+	@echo "... tests/search_nn_pov_smoke.s"
 	@echo "... tests/search_smoke.o"
 	@echo "... tests/search_smoke.i"
 	@echo "... tests/search_smoke.s"
 	@echo "... tests/smoke.o"
 	@echo "... tests/smoke.i"
 	@echo "... tests/smoke.s"
+	@echo "... tests/uci_evalmodel_smoke.o"
+	@echo "... tests/uci_evalmodel_smoke.i"
+	@echo "... tests/uci_evalmodel_smoke.s"
 	@echo "... tests/uci_smoke.o"
 	@echo "... tests/uci_smoke.i"
 	@echo "... tests/uci_smoke.s"

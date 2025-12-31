@@ -25,6 +25,8 @@ add_library(euclid_engine STATIC
   src/search.cpp
   src/tt.cpp
   src/encode.cpp
+  src/nn.cpp
+  src/nn_eval.cpp
 )
 target_include_directories(euclid_engine PUBLIC include)
 
@@ -120,3 +122,24 @@ add_test(NAME draw_rules_smoke COMMAND $<TARGET_FILE:draw_rules_smoke>)
 add_executable(encode_smoke tests/encode_smoke.cpp)
 target_link_libraries(encode_smoke PRIVATE euclid_engine)
 add_test(NAME encode_smoke COMMAND $<TARGET_FILE:encode_smoke>)
+
+add_executable(nn_smoke tests/nn_smoke.cpp)
+target_link_libraries(nn_smoke PRIVATE euclid_engine)
+add_test(NAME nn_smoke COMMAND $<TARGET_FILE:nn_smoke>)
+
+add_executable(nn_eval_integration_smoke tests/nn_eval_integration_smoke.cpp)
+target_link_libraries(nn_eval_integration_smoke PRIVATE euclid_engine)
+add_test(NAME nn_eval_integration_smoke COMMAND $<TARGET_FILE:nn_eval_integration_smoke>)
+
+add_executable(search_nn_pov_smoke tests/search_nn_pov_smoke.cpp)
+target_link_libraries(search_nn_pov_smoke PRIVATE euclid_engine)
+add_test(NAME search_nn_pov_smoke COMMAND $<TARGET_FILE:search_nn_pov_smoke>)
+
+add_executable(uci_evalmodel_smoke tests/uci_evalmodel_smoke.cpp)
+target_link_libraries(uci_evalmodel_smoke PRIVATE euclid_engine)
+add_test(NAME uci_evalmodel_smoke COMMAND $<TARGET_FILE:uci_evalmodel_smoke>)
+
+add_executable(nn_make_const_smoke tests/nn_make_const_smoke.cpp)
+target_link_libraries(nn_make_const_smoke PRIVATE euclid_engine)
+add_dependencies(nn_make_const_smoke euclid_cli)
+add_test(NAME nn_make_const_smoke COMMAND $<TARGET_FILE:nn_make_const_smoke>)

@@ -254,6 +254,34 @@ CMakeFiles/euclid_engine.dir/src/encode.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/euclid_engine.dir/src/encode.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/danielding/euclid-engine/src/encode.cpp -o CMakeFiles/euclid_engine.dir/src/encode.cpp.s
 
+CMakeFiles/euclid_engine.dir/src/nn.cpp.o: CMakeFiles/euclid_engine.dir/flags.make
+CMakeFiles/euclid_engine.dir/src/nn.cpp.o: /Users/danielding/euclid-engine/src/nn.cpp
+CMakeFiles/euclid_engine.dir/src/nn.cpp.o: CMakeFiles/euclid_engine.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/euclid_engine.dir/src/nn.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/euclid_engine.dir/src/nn.cpp.o -MF CMakeFiles/euclid_engine.dir/src/nn.cpp.o.d -o CMakeFiles/euclid_engine.dir/src/nn.cpp.o -c /Users/danielding/euclid-engine/src/nn.cpp
+
+CMakeFiles/euclid_engine.dir/src/nn.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/euclid_engine.dir/src/nn.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/danielding/euclid-engine/src/nn.cpp > CMakeFiles/euclid_engine.dir/src/nn.cpp.i
+
+CMakeFiles/euclid_engine.dir/src/nn.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/euclid_engine.dir/src/nn.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/danielding/euclid-engine/src/nn.cpp -o CMakeFiles/euclid_engine.dir/src/nn.cpp.s
+
+CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.o: CMakeFiles/euclid_engine.dir/flags.make
+CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.o: /Users/danielding/euclid-engine/src/nn_eval.cpp
+CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.o: CMakeFiles/euclid_engine.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.o -MF CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.o.d -o CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.o -c /Users/danielding/euclid-engine/src/nn_eval.cpp
+
+CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/danielding/euclid-engine/src/nn_eval.cpp > CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.i
+
+CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/danielding/euclid-engine/src/nn_eval.cpp -o CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.s
+
 # Object files for target euclid_engine
 euclid_engine_OBJECTS = \
 "CMakeFiles/euclid_engine.dir/src/board.cpp.o" \
@@ -268,7 +296,9 @@ euclid_engine_OBJECTS = \
 "CMakeFiles/euclid_engine.dir/src/uci.cpp.o" \
 "CMakeFiles/euclid_engine.dir/src/search.cpp.o" \
 "CMakeFiles/euclid_engine.dir/src/tt.cpp.o" \
-"CMakeFiles/euclid_engine.dir/src/encode.cpp.o"
+"CMakeFiles/euclid_engine.dir/src/encode.cpp.o" \
+"CMakeFiles/euclid_engine.dir/src/nn.cpp.o" \
+"CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.o"
 
 # External object files for target euclid_engine
 euclid_engine_EXTERNAL_OBJECTS =
@@ -286,9 +316,11 @@ libeuclid_engine.a: CMakeFiles/euclid_engine.dir/src/uci.cpp.o
 libeuclid_engine.a: CMakeFiles/euclid_engine.dir/src/search.cpp.o
 libeuclid_engine.a: CMakeFiles/euclid_engine.dir/src/tt.cpp.o
 libeuclid_engine.a: CMakeFiles/euclid_engine.dir/src/encode.cpp.o
+libeuclid_engine.a: CMakeFiles/euclid_engine.dir/src/nn.cpp.o
+libeuclid_engine.a: CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.o
 libeuclid_engine.a: CMakeFiles/euclid_engine.dir/build.make
 libeuclid_engine.a: CMakeFiles/euclid_engine.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Linking CXX static library libeuclid_engine.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Linking CXX static library libeuclid_engine.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/euclid_engine.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/euclid_engine.dir/link.txt --verbose=$(VERBOSE)
 
