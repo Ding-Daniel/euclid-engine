@@ -1,18 +1,17 @@
-// src/uci.cpp
-
 #include "euclid/uci.hpp"
 
-#include "euclid/types.hpp"
-#include "euclid/board.hpp"
-#include "euclid/movegen.hpp"
-#include "euclid/move_do.hpp"
 #include "euclid/attack.hpp"
-#include "euclid/search.hpp"
+#include "euclid/board.hpp"
 #include "euclid/fen.hpp"
+#include "euclid/move_do.hpp"
+#include "euclid/movegen.hpp"
 #include "euclid/nn_eval.hpp"
+#include "euclid/search.hpp"
+#include "euclid/types.hpp"
 
 #include <atomic>
 #include <cctype>
+#include <cstdint>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -66,8 +65,8 @@ static inline int sq_from_uci(const std::string& u, int idxFile, int idxRank) {
       idxRank >= static_cast<int>(u.size()))
     throw std::invalid_argument("bad uci length");
 
-  const char f = u[static_cast<std::size_t>(idxFile)];
-  const char r = u[static_cast<std::size_t>(idxRank)];
+  const char f = u[static_cast<size_t>(idxFile)];
+  const char r = u[static_cast<size_t>(idxRank)];
 
   if (f < 'a' || f > 'h' || r < '1' || r > '8')
     throw std::invalid_argument("bad square");
@@ -106,9 +105,9 @@ static std::vector<std::string> split_ws(const std::string& line) {
   return out;
 }
 
-static std::string join_from(const std::vector<std::string>& toks, std::size_t start) {
+static std::string join_from(const std::vector<std::string>& toks, size_t start) {
   std::string s;
-  for (std::size_t i = start; i < toks.size(); ++i) {
+  for (size_t i = start; i < toks.size(); ++i) {
     if (!s.empty()) s.push_back(' ');
     s += toks[i];
   }
@@ -116,8 +115,8 @@ static std::string join_from(const std::vector<std::string>& toks, std::size_t s
 }
 
 // apply a sequence of UCI moves to a board (checks legality via in_check)
-static void apply_moves(Board& b, const std::vector<std::string>& toks, std::size_t startIdx) {
-  for (std::size_t i = startIdx; i < toks.size(); ++i) {
+static void apply_moves(Board& b, const std::vector<std::string>& toks, size_t startIdx) {
+  for (size_t i = startIdx; i < toks.size(); ++i) {
     const std::string& u = toks[i];
     Move m = uci_to_move(b, u);
 
@@ -127,55 +126,56 @@ static void apply_moves(Board& b, const std::vector<std::string>& toks, std::siz
 
     if (in_check(b, us)) { // illegal if our king in check after move
       undo_move(b, m, st);
-      break; // ignore remaining moves
+      break; // stop applying moves; keep position at last legal
     }
   }
 }
 
 // Parse: setoption name <Name...> [value <Value...>]
 static void handle_setoption(const std::vector<std::string>& tokens) {
-  std::size_t nameIdx = tokens.size();
-  std::size_t valueTokIdx = tokens.size();
+  // Find "name" and "value" segments.
+  size_t nameIdx = tokens.size();
+  size_t valueTokIdx = tokens.size();
 
-  for (std::size_t i = 1; i < tokens.size(); ++i) {
-    if (tokens[i] == "name")  { nameIdx = i + 1; }
+  for (size_t i = 1; i < tokens.size(); ++i) {
+    if (tokens[i] == "name" && i + 1 < tokens.size()) nameIdx = i + 1;
     if (tokens[i] == "value") { valueTokIdx = i; break; }
   }
   if (nameIdx >= tokens.size()) return;
 
-  // name is tokens[nameIdx .. valueTokIdx-1] (or to end if no "value")
-  std::size_t nameEnd = (valueTokIdx < tokens.size() ? valueTokIdx : tokens.size());
+  // name = tokens[nameIdx .. valueTokIdx-1] (or to end if no "value")
+  const size_t nameEnd = (valueTokIdx < tokens.size()) ? valueTokIdx : tokens.size();
   std::string name;
-  for (std::size_t i = nameIdx; i < nameEnd; ++i) {
+  for (size_t i = nameIdx; i < nameEnd; ++i) {
     if (!name.empty()) name.push_back(' ');
     name += tokens[i];
   }
 
-  // value is tokens[valueTokIdx+1 .. end]
+  // value = tokens[valueTokIdx+1 .. end]
   std::string value;
-  if (valueTokIdx < tokens.size() && valueTokIdx + 1 < tokens.size()) {
+  if (valueTokIdx < tokens.size() && valueTokIdx + 1 < tokens.size())
     value = join_from(tokens, valueTokIdx + 1);
-  }
 
   if (name == "EvalModel") {
     if (value.empty()) {
       neural_eval_clear();
     } else {
+      // If load fails, NN remains disabled (dims check fails). Accept silently per UCI conventions.
       (void)neural_eval_load_file(value);
-      // Per UCI, if load fails we do not need to error; engine can remain functional.
     }
   }
 }
 
 // ------------ minimal UCI loop ------------
 void uci_loop(std::istream& in, std::ostream& out) {
-  Board b; // startpos by default constructor (or you can explicitly set_from_fen)
+  Board b;
+  set_from_fen(b, STARTPOS_FEN);
+
   G_STOP.store(false, std::memory_order_relaxed);
 
   std::string line;
   while (std::getline(in, line)) {
     if (line.empty()) continue;
-
     auto tokens = split_ws(line);
     if (tokens.empty()) continue;
 
@@ -197,29 +197,25 @@ void uci_loop(std::istream& in, std::ostream& out) {
     }
     else if (cmd == "ucinewgame") {
       G_STOP.store(false, std::memory_order_relaxed);
-      // Optional: clear TT, reset any search state.
+      // Optional: clear TT here if you later expose a TT clear API.
     }
     else if (cmd == "position") {
       // position startpos [moves ...]
       // position fen <FEN...> [moves ...]
       if (tokens.size() >= 2) {
-        std::size_t i = 1;
-
+        size_t i = 1;
         if (tokens[i] == "startpos") {
           set_from_fen(b, STARTPOS_FEN);
           ++i;
         } else if (tokens[i] == "fen") {
-          ++i;
           std::string fen;
+          ++i;
           while (i < tokens.size() && tokens[i] != "moves") {
             if (!fen.empty()) fen.push_back(' ');
             fen += tokens[i++];
           }
-          if (!fen.empty()) {
-            set_from_fen(b, fen);
-          }
+          if (!fen.empty()) set_from_fen(b, fen);
         }
-
         if (i < tokens.size() && tokens[i] == "moves") {
           apply_moves(b, tokens, i + 1);
         }
@@ -232,33 +228,44 @@ void uci_loop(std::istream& in, std::ostream& out) {
       SearchLimits lim{};
       lim.stop = &G_STOP;
 
-      for (std::size_t i = 1; i < tokens.size(); ++i) {
+      auto rd_i32 = [&](int& dst) {
+        // UCI sends these as integers.
+        // If missing, ignore.
+        if (dst == dst && true) { /* no-op */ }
+        // parse:
+      };
+      (void)rd_i32; // silence -Wextra in some builds
+
+      auto read_i32 = [&](int& dst, size_t& idx) {
+        if (idx + 1 < tokens.size()) dst = std::stoi(tokens[++idx]);
+      };
+      auto read_u64 = [&](std::uint64_t& dst, size_t& idx) {
+        if (idx + 1 < tokens.size()) dst = static_cast<std::uint64_t>(std::stoull(tokens[++idx]));
+      };
+
+      for (size_t i = 1; i < tokens.size(); ++i) {
         const std::string& t = tokens[i];
-
-        auto rd = [&](int& dst) {
-          if (i + 1 < tokens.size()) dst = std::stoi(tokens[++i]);
-        };
-
-        if      (t == "depth")      rd(lim.depth);
-        else if (t == "movetime")   rd(lim.movetime_ms);
-        else if (t == "wtime")      rd(lim.wtime_ms);
-        else if (t == "btime")      rd(lim.btime_ms);
-        else if (t == "winc")       rd(lim.winc_ms);
-        else if (t == "binc")       rd(lim.binc_ms);
-        else if (t == "movestogo")  rd(lim.movestogo);
+        if      (t == "depth")     read_i32(lim.depth, i);
+        else if (t == "nodes")     read_u64(lim.nodes, i);
+        else if (t == "movetime")  read_i32(lim.movetime_ms, i);
+        else if (t == "wtime")     read_i32(lim.wtime_ms, i);
+        else if (t == "btime")     read_i32(lim.btime_ms, i);
+        else if (t == "winc")      read_i32(lim.winc_ms, i);
+        else if (t == "binc")      read_i32(lim.binc_ms, i);
+        else if (t == "movestogo") read_i32(lim.movestogo, i);
         else if (t == "infinite") { lim.depth = 99; lim.movetime_ms = 0; }
       }
 
       G_STOP.store(false, std::memory_order_relaxed);
+      SearchResult res = search(b, lim);
 
-      auto res = search(b, lim);
       out << "bestmove " << move_to_uci(res.best) << "\n";
       out.flush();
     }
     else if (cmd == "quit") {
       break;
     }
-    // else: ignore unknown commands
+    // else: ignore unknown per UCI spec
   }
 }
 

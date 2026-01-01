@@ -28,6 +28,7 @@ add_library(euclid_engine STATIC
   src/nn.cpp
   src/nn_eval.cpp
   src/game.cpp
+  src/selfplay.cpp
 )
 target_include_directories(euclid_engine PUBLIC include)
 

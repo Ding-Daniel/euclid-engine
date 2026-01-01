@@ -826,6 +826,30 @@ src/search.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/search.cpp.s
 .PHONY : src/search.cpp.s
 
+src/selfplay.o: src/selfplay.cpp.o
+.PHONY : src/selfplay.o
+
+# target to build an object file
+src/selfplay.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/selfplay.cpp.o
+.PHONY : src/selfplay.cpp.o
+
+src/selfplay.i: src/selfplay.cpp.i
+.PHONY : src/selfplay.i
+
+# target to preprocess a source file
+src/selfplay.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/selfplay.cpp.i
+.PHONY : src/selfplay.cpp.i
+
+src/selfplay.s: src/selfplay.cpp.s
+.PHONY : src/selfplay.s
+
+# target to generate assembly for a file
+src/selfplay.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/selfplay.cpp.s
+.PHONY : src/selfplay.cpp.s
+
 src/tt.o: src/tt.cpp.o
 .PHONY : src/tt.o
 
@@ -1601,6 +1625,9 @@ help:
 	@echo "... src/search.o"
 	@echo "... src/search.i"
 	@echo "... src/search.s"
+	@echo "... src/selfplay.o"
+	@echo "... src/selfplay.i"
+	@echo "... src/selfplay.s"
 	@echo "... src/tt.o"
 	@echo "... src/tt.i"
 	@echo "... src/tt.s"
