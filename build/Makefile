@@ -477,6 +477,19 @@ nn_make_const_smoke/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/nn_make_const_smoke.dir/build.make CMakeFiles/nn_make_const_smoke.dir/build
 .PHONY : nn_make_const_smoke/fast
 
+#=============================================================================
+# Target rules for targets named selfplay_smoke
+
+# Build rule for target.
+selfplay_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 selfplay_smoke
+.PHONY : selfplay_smoke
+
+# fast build rule for target.
+selfplay_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/selfplay_smoke.dir/build.make CMakeFiles/selfplay_smoke.dir/build
+.PHONY : selfplay_smoke/fast
+
 src/attack.o: src/attack.cpp.o
 .PHONY : src/attack.o
 
@@ -620,6 +633,30 @@ src/fen.s: src/fen.cpp.s
 src/fen.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/fen.cpp.s
 .PHONY : src/fen.cpp.s
+
+src/game.o: src/game.cpp.o
+.PHONY : src/game.o
+
+# target to build an object file
+src/game.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/game.cpp.o
+.PHONY : src/game.cpp.o
+
+src/game.i: src/game.cpp.i
+.PHONY : src/game.i
+
+# target to preprocess a source file
+src/game.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/game.cpp.i
+.PHONY : src/game.cpp.i
+
+src/game.s: src/game.cpp.s
+.PHONY : src/game.s
+
+# target to generate assembly for a file
+src/game.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/game.cpp.s
+.PHONY : src/game.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
@@ -1389,6 +1426,30 @@ tests/search_smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/search_smoke.dir/build.make CMakeFiles/search_smoke.dir/tests/search_smoke.cpp.s
 .PHONY : tests/search_smoke.cpp.s
 
+tests/selfplay_smoke.o: tests/selfplay_smoke.cpp.o
+.PHONY : tests/selfplay_smoke.o
+
+# target to build an object file
+tests/selfplay_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/selfplay_smoke.dir/build.make CMakeFiles/selfplay_smoke.dir/tests/selfplay_smoke.cpp.o
+.PHONY : tests/selfplay_smoke.cpp.o
+
+tests/selfplay_smoke.i: tests/selfplay_smoke.cpp.i
+.PHONY : tests/selfplay_smoke.i
+
+# target to preprocess a source file
+tests/selfplay_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/selfplay_smoke.dir/build.make CMakeFiles/selfplay_smoke.dir/tests/selfplay_smoke.cpp.i
+.PHONY : tests/selfplay_smoke.cpp.i
+
+tests/selfplay_smoke.s: tests/selfplay_smoke.cpp.s
+.PHONY : tests/selfplay_smoke.s
+
+# target to generate assembly for a file
+tests/selfplay_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/selfplay_smoke.dir/build.make CMakeFiles/selfplay_smoke.dir/tests/selfplay_smoke.cpp.s
+.PHONY : tests/selfplay_smoke.cpp.s
+
 tests/smoke.o: tests/smoke.cpp.o
 .PHONY : tests/smoke.o
 
@@ -1494,6 +1555,7 @@ help:
 	@echo "... search_limits_smoke"
 	@echo "... search_nn_pov_smoke"
 	@echo "... search_smoke"
+	@echo "... selfplay_smoke"
 	@echo "... smoketest"
 	@echo "... uci_evalmodel_smoke"
 	@echo "... uci_smoke"
@@ -1515,6 +1577,9 @@ help:
 	@echo "... src/fen.o"
 	@echo "... src/fen.i"
 	@echo "... src/fen.s"
+	@echo "... src/game.o"
+	@echo "... src/game.i"
+	@echo "... src/game.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
@@ -1611,6 +1676,9 @@ help:
 	@echo "... tests/search_smoke.o"
 	@echo "... tests/search_smoke.i"
 	@echo "... tests/search_smoke.s"
+	@echo "... tests/selfplay_smoke.o"
+	@echo "... tests/selfplay_smoke.i"
+	@echo "... tests/selfplay_smoke.s"
 	@echo "... tests/smoke.o"
 	@echo "... tests/smoke.i"
 	@echo "... tests/smoke.s"

@@ -14,6 +14,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/danielding/euclid-engine/src/encode.cpp" "CMakeFiles/euclid_engine.dir/src/encode.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/encode.cpp.o.d"
   "/Users/danielding/euclid-engine/src/eval.cpp" "CMakeFiles/euclid_engine.dir/src/eval.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/eval.cpp.o.d"
   "/Users/danielding/euclid-engine/src/fen.cpp" "CMakeFiles/euclid_engine.dir/src/fen.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/fen.cpp.o.d"
+  "/Users/danielding/euclid-engine/src/game.cpp" "CMakeFiles/euclid_engine.dir/src/game.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/game.cpp.o.d"
   "/Users/danielding/euclid-engine/src/move_do.cpp" "CMakeFiles/euclid_engine.dir/src/move_do.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/move_do.cpp.o.d"
   "/Users/danielding/euclid-engine/src/movegen.cpp" "CMakeFiles/euclid_engine.dir/src/movegen.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/movegen.cpp.o.d"
   "/Users/danielding/euclid-engine/src/nn.cpp" "CMakeFiles/euclid_engine.dir/src/nn.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/nn.cpp.o.d"

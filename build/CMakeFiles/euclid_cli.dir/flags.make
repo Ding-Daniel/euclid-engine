@@ -6,7 +6,7 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/Users/danielding/euclid-engine/include
 
-CXX_FLAGSarm64 = -O3 -DNDEBUG -std=c++20 -arch arm64
+CXX_FLAGSarm64 = -g -std=c++20 -arch arm64
 
-CXX_FLAGS = -O3 -DNDEBUG -std=c++20 -arch arm64
+CXX_FLAGS = -g -std=c++20 -arch arm64
 

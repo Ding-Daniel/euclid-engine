@@ -11,6 +11,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/euclid_engine.dir/src/eval.cpp.o.d"
   "CMakeFiles/euclid_engine.dir/src/fen.cpp.o"
   "CMakeFiles/euclid_engine.dir/src/fen.cpp.o.d"
+  "CMakeFiles/euclid_engine.dir/src/game.cpp.o"
+  "CMakeFiles/euclid_engine.dir/src/game.cpp.o.d"
   "CMakeFiles/euclid_engine.dir/src/move_do.cpp.o"
   "CMakeFiles/euclid_engine.dir/src/move_do.cpp.o.d"
   "CMakeFiles/euclid_engine.dir/src/movegen.cpp.o"

@@ -27,6 +27,7 @@ add_library(euclid_engine STATIC
   src/encode.cpp
   src/nn.cpp
   src/nn_eval.cpp
+  src/game.cpp
 )
 target_include_directories(euclid_engine PUBLIC include)
 
@@ -143,3 +144,7 @@ add_executable(nn_make_const_smoke tests/nn_make_const_smoke.cpp)
 target_link_libraries(nn_make_const_smoke PRIVATE euclid_engine)
 add_dependencies(nn_make_const_smoke euclid_cli)
 add_test(NAME nn_make_const_smoke COMMAND $<TARGET_FILE:nn_make_const_smoke>)
+
+add_executable(selfplay_smoke tests/selfplay_smoke.cpp)
+target_link_libraries(selfplay_smoke PRIVATE euclid_engine)
+add_test(NAME selfplay_smoke COMMAND $<TARGET_FILE:selfplay_smoke>)

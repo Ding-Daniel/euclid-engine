@@ -16,6 +16,7 @@
 #include "euclid/nn_eval.hpp"
 #include "euclid/nn.hpp"
 #include "euclid/encode.hpp"
+#include "euclid/game.hpp"
 
 using namespace euclid;
 
@@ -31,6 +32,7 @@ static void usage() {
     "  euclid_cli search [nn <model_path>] [depth <N>] [nodes <N>] [movetime <ms>]\n"
     "                  [wtime <ms> btime <ms> winc <ms> binc <ms> movestogo <N>]\n"
     "                  [fen <FEN...>]\n"
+    "  euclid_cli selfplay [nn <model_path>] [depth <N>] [nodes <N>] [plies <N>] [fen <FEN...>]\n"
     "  euclid_cli nn_make_const <out_path> <cp>\n"
     "If FEN omitted, uses startpos.\n";
 }
@@ -202,6 +204,63 @@ int main(int argc, char** argv) {
               << " nodes " << r.nodes
               << " pv ";
     for (auto& m : r.pv) std::cout << move_to_uci(m) << ' ';
+    std::cout << "\n";
+    return 0;
+  }
+
+  // selfplay [nn <model_path>] [depth <N>] [nodes <N>] [plies <N>] [fen <FEN...>]
+  if (cmd == "selfplay") {
+    SearchLimits lim{};
+    lim.depth = 2; // default
+
+    int maxPlies = 200;
+    size_t fenStart = args.size();
+
+    for (size_t i = 1; i < args.size(); ++i) {
+      const std::string& tok = args[i];
+
+      if (tok == "fen") { fenStart = i + 1; break; }
+
+      if (tok == "nn") {
+        if (i + 1 >= args.size()) {
+          std::cerr << "error: selfplay nn requires a model path\n";
+          return 2;
+        }
+        const std::string modelPath = args[i + 1];
+        if (!neural_eval_load_file(modelPath) || !neural_eval_enabled()) {
+          std::cerr << "error: failed to load EvalModel or model dims mismatch: " << modelPath << "\n";
+          return 2;
+        }
+        ++i;
+        continue;
+      }
+
+      if (i + 1 >= args.size()) break;
+      const std::string& val = args[i + 1];
+
+      if (tok == "depth") { lim.depth = to_int(val); ++i; continue; }
+      if (tok == "nodes") { lim.nodes = to_u64(val); ++i; continue; }
+      if (tok == "plies") { maxPlies = to_int(val); ++i; continue; }
+    }
+
+    Board b = board_from_args(args, fenStart);
+    GameResult g = selfplay(b, maxPlies, lim);
+
+    auto outcome_str = [](GameOutcome o) -> const char* {
+      switch (o) {
+        case GameOutcome::WhiteWin: return "whitewin";
+        case GameOutcome::BlackWin: return "blackwin";
+        case GameOutcome::Draw:     return "draw";
+        default:                    return "aborted";
+      }
+    };
+
+    std::cout << "outcome " << outcome_str(g.outcome)
+              << " plies " << g.plies
+              << " reason " << g.reason
+              << " moves ";
+
+    for (const auto& m : g.moves) std::cout << move_to_uci(m) << ' ';
     std::cout << "\n";
     return 0;
   }

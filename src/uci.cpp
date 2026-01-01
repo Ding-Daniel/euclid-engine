@@ -1,4 +1,7 @@
+// src/uci.cpp
+
 #include "euclid/uci.hpp"
+
 #include "euclid/types.hpp"
 #include "euclid/board.hpp"
 #include "euclid/movegen.hpp"
@@ -8,11 +11,11 @@
 #include "euclid/fen.hpp"
 #include "euclid/nn_eval.hpp"
 
-#include <stdexcept>
-#include <cctype>
 #include <atomic>
+#include <cctype>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -52,7 +55,7 @@ std::string move_to_uci(const Move& m) {
   s.push_back(rank_char(m.from));
   s.push_back(file_char(m.to));
   s.push_back(rank_char(m.to));
-  char pc = promo_to_char(m.promo);
+  const char pc = promo_to_char(m.promo);
   if (pc) s.push_back(pc);
   return s;
 }
@@ -63,8 +66,8 @@ static inline int sq_from_uci(const std::string& u, int idxFile, int idxRank) {
       idxRank >= static_cast<int>(u.size()))
     throw std::invalid_argument("bad uci length");
 
-  const char f = u[static_cast<size_t>(idxFile)];
-  const char r = u[static_cast<size_t>(idxRank)];
+  const char f = u[static_cast<std::size_t>(idxFile)];
+  const char r = u[static_cast<std::size_t>(idxRank)];
 
   if (f < 'a' || f > 'h' || r < '1' || r > '8')
     throw std::invalid_argument("bad square");
@@ -103,9 +106,9 @@ static std::vector<std::string> split_ws(const std::string& line) {
   return out;
 }
 
-static std::string join_from(const std::vector<std::string>& toks, size_t start) {
+static std::string join_from(const std::vector<std::string>& toks, std::size_t start) {
   std::string s;
-  for (size_t i = start; i < toks.size(); ++i) {
+  for (std::size_t i = start; i < toks.size(); ++i) {
     if (!s.empty()) s.push_back(' ');
     s += toks[i];
   }
@@ -113,77 +116,69 @@ static std::string join_from(const std::vector<std::string>& toks, size_t start)
 }
 
 // apply a sequence of UCI moves to a board (checks legality via in_check)
-static void apply_moves(Board& b, const std::vector<std::string>& toks, size_t startIdx) {
-  for (size_t i = startIdx; i < toks.size(); ++i) {
+static void apply_moves(Board& b, const std::vector<std::string>& toks, std::size_t startIdx) {
+  for (std::size_t i = startIdx; i < toks.size(); ++i) {
     const std::string& u = toks[i];
     Move m = uci_to_move(b, u);
 
     const Color us = b.side_to_move(); // capture mover color before do_move flips
-
     State st{};
     do_move(b, m, st);
 
     if (in_check(b, us)) { // illegal if our king in check after move
       undo_move(b, m, st);
-      break;
+      break; // ignore remaining moves
     }
   }
 }
 
 // Parse: setoption name <Name...> [value <Value...>]
 static void handle_setoption(const std::vector<std::string>& tokens) {
-  size_t nameIdx = tokens.size();
-  size_t valueIdx = tokens.size();
+  std::size_t nameIdx = tokens.size();
+  std::size_t valueTokIdx = tokens.size();
 
-  for (size_t i = 1; i < tokens.size(); ++i) {
+  for (std::size_t i = 1; i < tokens.size(); ++i) {
     if (tokens[i] == "name")  { nameIdx = i + 1; }
-    if (tokens[i] == "value") { valueIdx = i + 1; break; }
+    if (tokens[i] == "value") { valueTokIdx = i; break; }
   }
   if (nameIdx >= tokens.size()) return;
 
-  const std::string name = (valueIdx <= tokens.size())
-    ? join_from(tokens, nameIdx).substr(0, join_from(tokens, nameIdx).find(" value "))
-    : join_from(tokens, nameIdx);
-
-  // More robust: compute name as tokens[nameIdx..valueToken-1]
-  std::string nm;
-  {
-    size_t end = tokens.size();
-    for (size_t i = nameIdx; i < tokens.size(); ++i) {
-      if (tokens[i] == "value") { end = i; break; }
-    }
-    for (size_t i = nameIdx; i < end; ++i) {
-      if (!nm.empty()) nm.push_back(' ');
-      nm += tokens[i];
-    }
+  // name is tokens[nameIdx .. valueTokIdx-1] (or to end if no "value")
+  std::size_t nameEnd = (valueTokIdx < tokens.size() ? valueTokIdx : tokens.size());
+  std::string name;
+  for (std::size_t i = nameIdx; i < nameEnd; ++i) {
+    if (!name.empty()) name.push_back(' ');
+    name += tokens[i];
   }
 
-  std::string val;
-  if (valueIdx < tokens.size()) {
-    val = join_from(tokens, valueIdx);
-  } else {
-    val.clear();
+  // value is tokens[valueTokIdx+1 .. end]
+  std::string value;
+  if (valueTokIdx < tokens.size() && valueTokIdx + 1 < tokens.size()) {
+    value = join_from(tokens, valueTokIdx + 1);
   }
 
-  if (nm == "EvalModel") {
-    if (val.empty()) {
+  if (name == "EvalModel") {
+    if (value.empty()) {
       neural_eval_clear();
     } else {
-      (void)neural_eval_load_file(val);
-      // If load fails, NN simply remains disabled (dims check fails). This is OK per UCI.
+      (void)neural_eval_load_file(value);
+      // Per UCI, if load fails we do not need to error; engine can remain functional.
     }
   }
 }
 
 // ------------ minimal UCI loop ------------
 void uci_loop(std::istream& in, std::ostream& out) {
-  Board b; // assumed startpos by Board default constructor
+  Board b; // startpos by default constructor (or you can explicitly set_from_fen)
   G_STOP.store(false, std::memory_order_relaxed);
 
   std::string line;
   while (std::getline(in, line)) {
     if (line.empty()) continue;
+
     auto tokens = split_ws(line);
+    if (tokens.empty()) continue;
+
     const std::string& cmd = tokens[0];
 
     if (cmd == "uci") {
@@ -202,19 +197,20 @@ void uci_loop(std::istream& in, std::ostream& out) {
     }
     else if (cmd == "ucinewgame") {
       G_STOP.store(false, std::memory_order_relaxed);
-      // optional: clear transposition table here
+      // Optional: clear TT, reset any search state.
     }
     else if (cmd == "position") {
       // position startpos [moves ...]
       // position fen <FEN...> [moves ...]
       if (tokens.size() >= 2) {
-        size_t i = 1;
+        std::size_t i = 1;
+
         if (tokens[i] == "startpos") {
           set_from_fen(b, STARTPOS_FEN);
           ++i;
         } else if (tokens[i] == "fen") {
-          std::string fen;
           ++i;
+          std::string fen;
           while (i < tokens.size() && tokens[i] != "moves") {
             if (!fen.empty()) fen.push_back(' ');
             fen += tokens[i++];
@@ -223,6 +219,7 @@ void uci_loop(std::istream& in, std::ostream& out) {
             set_from_fen(b, fen);
           }
         }
+
         if (i < tokens.size() && tokens[i] == "moves") {
           apply_moves(b, tokens, i + 1);
         }
@@ -232,11 +229,16 @@ void uci_loop(std::istream& in, std::ostream& out) {
       G_STOP.store(true, std::memory_order_relaxed);
     }
     else if (cmd == "go") {
-      SearchLimits lim;
+      SearchLimits lim{};
       lim.stop = &G_STOP;
-      for (size_t i = 1; i < tokens.size(); ++i) {
+
+      for (std::size_t i = 1; i < tokens.size(); ++i) {
         const std::string& t = tokens[i];
-        auto rd = [&](int& dst){ if (i + 1 < tokens.size()) dst = std::stoi(tokens[++i]); };
+
+        auto rd = [&](int& dst) {
+          if (i + 1 < tokens.size()) dst = std::stoi(tokens[++i]);
+        };
+
         if      (t == "depth")      rd(lim.depth);
         else if (t == "movetime")   rd(lim.movetime_ms);
         else if (t == "wtime")      rd(lim.wtime_ms);
@@ -246,7 +248,9 @@ void uci_loop(std::istream& in, std::ostream& out) {
         else if (t == "movestogo")  rd(lim.movestogo);
         else if (t == "infinite") { lim.depth = 99; lim.movetime_ms = 0; }
       }
+
       G_STOP.store(false, std::memory_order_relaxed);
+
       auto res = search(b, lim);
       out << "bestmove " << move_to_uci(res.best) << "\n";
       out.flush();
@@ -254,6 +258,7 @@ void uci_loop(std::istream& in, std::ostream& out) {
     else if (cmd == "quit") {
       break;
     }
+    // else: ignore unknown commands
   }
 }
 
