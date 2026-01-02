@@ -56,3 +56,5 @@ add_test([=[nn_make_const_smoke]=] "/Users/danielding/euclid-engine/build/nn_mak
 set_tests_properties([=[nn_make_const_smoke]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/danielding/euclid-engine/CMakeLists.txt;147;add_test;/Users/danielding/euclid-engine/CMakeLists.txt;0;")
 add_test([=[selfplay_smoke]=] "/Users/danielding/euclid-engine/build/selfplay_smoke")
 set_tests_properties([=[selfplay_smoke]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/danielding/euclid-engine/CMakeLists.txt;151;add_test;/Users/danielding/euclid-engine/CMakeLists.txt;0;")
+add_test([=[eval_sanity_smoke]=] "/Users/danielding/euclid-engine/build/eval_sanity_smoke")
+set_tests_properties([=[eval_sanity_smoke]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/danielding/euclid-engine/CMakeLists.txt;155;add_test;/Users/danielding/euclid-engine/CMakeLists.txt;0;")

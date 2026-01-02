@@ -149,3 +149,7 @@ add_test(NAME nn_make_const_smoke COMMAND $<TARGET_FILE:nn_make_const_smoke>)
 add_executable(selfplay_smoke tests/selfplay_smoke.cpp)
 target_link_libraries(selfplay_smoke PRIVATE euclid_engine)
 add_test(NAME selfplay_smoke COMMAND $<TARGET_FILE:selfplay_smoke>)
+
+add_executable(eval_sanity_smoke tests/eval_sanity_smoke.cpp)
+target_link_libraries(eval_sanity_smoke PRIVATE euclid_engine)
+add_test(NAME eval_sanity_smoke COMMAND $<TARGET_FILE:eval_sanity_smoke>)

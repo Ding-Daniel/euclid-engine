@@ -490,6 +490,19 @@ selfplay_smoke/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/selfplay_smoke.dir/build.make CMakeFiles/selfplay_smoke.dir/build
 .PHONY : selfplay_smoke/fast
 
+#=============================================================================
+# Target rules for targets named eval_sanity_smoke
+
+# Build rule for target.
+eval_sanity_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 eval_sanity_smoke
+.PHONY : eval_sanity_smoke
+
+# fast build rule for target.
+eval_sanity_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_sanity_smoke.dir/build.make CMakeFiles/eval_sanity_smoke.dir/build
+.PHONY : eval_sanity_smoke/fast
+
 src/attack.o: src/attack.cpp.o
 .PHONY : src/attack.o
 
@@ -1042,6 +1055,30 @@ tests/encode_smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/encode_smoke.dir/build.make CMakeFiles/encode_smoke.dir/tests/encode_smoke.cpp.s
 .PHONY : tests/encode_smoke.cpp.s
 
+tests/eval_sanity_smoke.o: tests/eval_sanity_smoke.cpp.o
+.PHONY : tests/eval_sanity_smoke.o
+
+# target to build an object file
+tests/eval_sanity_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_sanity_smoke.dir/build.make CMakeFiles/eval_sanity_smoke.dir/tests/eval_sanity_smoke.cpp.o
+.PHONY : tests/eval_sanity_smoke.cpp.o
+
+tests/eval_sanity_smoke.i: tests/eval_sanity_smoke.cpp.i
+.PHONY : tests/eval_sanity_smoke.i
+
+# target to preprocess a source file
+tests/eval_sanity_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_sanity_smoke.dir/build.make CMakeFiles/eval_sanity_smoke.dir/tests/eval_sanity_smoke.cpp.i
+.PHONY : tests/eval_sanity_smoke.cpp.i
+
+tests/eval_sanity_smoke.s: tests/eval_sanity_smoke.cpp.s
+.PHONY : tests/eval_sanity_smoke.s
+
+# target to generate assembly for a file
+tests/eval_sanity_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_sanity_smoke.dir/build.make CMakeFiles/eval_sanity_smoke.dir/tests/eval_sanity_smoke.cpp.s
+.PHONY : tests/eval_sanity_smoke.cpp.s
+
 tests/eval_smoke.o: tests/eval_smoke.cpp.o
 .PHONY : tests/eval_smoke.o
 
@@ -1562,6 +1599,7 @@ help:
 	@echo "... encode_smoke"
 	@echo "... euclid_cli"
 	@echo "... euclid_engine"
+	@echo "... eval_sanity_smoke"
 	@echo "... eval_smoke"
 	@echo "... fen_test"
 	@echo "... incheck_smoke"
@@ -1652,6 +1690,9 @@ help:
 	@echo "... tests/encode_smoke.o"
 	@echo "... tests/encode_smoke.i"
 	@echo "... tests/encode_smoke.s"
+	@echo "... tests/eval_sanity_smoke.o"
+	@echo "... tests/eval_sanity_smoke.i"
+	@echo "... tests/eval_sanity_smoke.s"
 	@echo "... tests/eval_smoke.o"
 	@echo "... tests/eval_smoke.i"
 	@echo "... tests/eval_smoke.s"

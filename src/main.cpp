@@ -5,6 +5,8 @@
 #include <numeric>
 #include <cstdint>
 #include <fstream>
+#include <iomanip>
+#include <algorithm>
 
 #include "euclid/types.hpp"
 #include "euclid/board.hpp"
@@ -16,7 +18,6 @@
 #include "euclid/nn_eval.hpp"
 #include "euclid/nn.hpp"
 #include "euclid/encode.hpp"
-#include "euclid/game.hpp"
 
 using namespace euclid;
 
@@ -32,8 +33,11 @@ static void usage() {
     "  euclid_cli search [nn <model_path>] [depth <N>] [nodes <N>] [movetime <ms>]\n"
     "                  [wtime <ms> btime <ms> winc <ms> binc <ms> movestogo <N>]\n"
     "                  [fen <FEN...>]\n"
-    "  euclid_cli selfplay [nn <model_path>] [depth <N>] [nodes <N>] [plies <N>] [fen <FEN...>]\n"
     "  euclid_cli nn_make_const <out_path> <cp>\n"
+    "\n"
+    "Notes:\n"
+    "  - Scores are printed in centipawns and pawn units.\n"
+    "  - A simple eval bar is shown (clamped to +/-10.00 pawns).\n"
     "If FEN omitted, uses startpos.\n";
 }
 
@@ -64,6 +68,45 @@ static int to_int(const std::string& s) {
 
 static std::uint64_t to_u64(const std::string& s) {
   return static_cast<std::uint64_t>(std::stoull(s));
+}
+
+// ---- Phase 19: Eval formatting helpers ----
+static std::string fmt_pawns(int cp) {
+  std::ostringstream oss;
+  oss.setf(std::ios::fixed);
+  oss << std::showpos << std::setprecision(2) << (static_cast<double>(cp) / 100.0);
+  return oss.str();
+}
+
+// Simple ASCII eval bar: clamp to +/- 10.00 pawns (1000 cp).
+// Example: [-====|=====      ]
+static std::string eval_bar(int cp, int halfWidth = 12, int clipCp = 1000) {
+  if (halfWidth < 4) halfWidth = 4;
+  if (clipCp <= 0) clipCp = 1000;
+
+  const int clamped = std::max(-clipCp, std::min(clipCp, cp));
+  const double t = static_cast<double>(clamped) / static_cast<double>(clipCp);
+  const int fill = static_cast<int>(std::lround(std::abs(t) * halfWidth));
+
+  std::string left(halfWidth, ' ');
+  std::string right(halfWidth, ' ');
+
+  if (clamped > 0) {
+    for (int i = 0; i < fill && i < halfWidth; ++i) right[i] = '=';
+  } else if (clamped < 0) {
+    for (int i = 0; i < fill && i < halfWidth; ++i) left[halfWidth - 1 - i] = '=';
+  }
+
+  return "[" + left + "|" + right + "]";
+}
+
+static void print_eval_line(const Board& b, int scoreCp, const char* prefix) {
+  std::cout
+    << prefix << " "
+    << scoreCp << "cp"
+    << " (" << fmt_pawns(scoreCp) << ") "
+    << eval_bar(scoreCp)
+    << " (" << (b.side_to_move() == Color::White ? "white" : "black") << " to move)\n";
 }
 
 int main(int argc, char** argv) {
@@ -152,8 +195,7 @@ int main(int argc, char** argv) {
 
     Board b = board_from_args(args, fenStart);
     const int score = evaluate(b);
-    std::cout << "eval " << score
-              << " (" << (b.side_to_move() == Color::White ? "white" : "black") << " to move)\n";
+    print_eval_line(b, score, "eval");
     return 0;
   }
 
@@ -200,67 +242,12 @@ int main(int argc, char** argv) {
     auto r = search(b, lim);
 
     std::cout << "best " << move_to_uci(r.best)
-              << " score " << r.score
+              << " score " << r.score << "cp"
+              << " (" << fmt_pawns(r.score) << ") "
+              << eval_bar(r.score)
               << " nodes " << r.nodes
               << " pv ";
     for (auto& m : r.pv) std::cout << move_to_uci(m) << ' ';
-    std::cout << "\n";
-    return 0;
-  }
-
-  // selfplay [nn <model_path>] [depth <N>] [nodes <N>] [plies <N>] [fen <FEN...>]
-  if (cmd == "selfplay") {
-    SearchLimits lim{};
-    lim.depth = 2; // default
-
-    int maxPlies = 200;
-    size_t fenStart = args.size();
-
-    for (size_t i = 1; i < args.size(); ++i) {
-      const std::string& tok = args[i];
-
-      if (tok == "fen") { fenStart = i + 1; break; }
-
-      if (tok == "nn") {
-        if (i + 1 >= args.size()) {
-          std::cerr << "error: selfplay nn requires a model path\n";
-          return 2;
-        }
-        const std::string modelPath = args[i + 1];
-        if (!neural_eval_load_file(modelPath) || !neural_eval_enabled()) {
-          std::cerr << "error: failed to load EvalModel or model dims mismatch: " << modelPath << "\n";
-          return 2;
-        }
-        ++i;
-        continue;
-      }
-
-      if (i + 1 >= args.size()) break;
-      const std::string& val = args[i + 1];
-
-      if (tok == "depth") { lim.depth = to_int(val); ++i; continue; }
-      if (tok == "nodes") { lim.nodes = to_u64(val); ++i; continue; }
-      if (tok == "plies") { maxPlies = to_int(val); ++i; continue; }
-    }
-
-    Board b = board_from_args(args, fenStart);
-    GameResult g = selfplay(b, maxPlies, lim);
-
-    auto outcome_str = [](GameOutcome o) -> const char* {
-      switch (o) {
-        case GameOutcome::WhiteWin: return "whitewin";
-        case GameOutcome::BlackWin: return "blackwin";
-        case GameOutcome::Draw:     return "draw";
-        default:                    return "aborted";
-      }
-    };
-
-    std::cout << "outcome " << outcome_str(g.outcome)
-              << " plies " << g.plies
-              << " reason " << g.reason
-              << " moves ";
-
-    for (const auto& m : g.moves) std::cout << move_to_uci(m) << ' ';
     std::cout << "\n";
     return 0;
   }
