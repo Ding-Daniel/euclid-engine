@@ -995,8 +995,8 @@ CMakeFiles/uci_evalmodel_smoke.dir/clean:
 # Target rules for target CMakeFiles/nn_make_const_smoke.dir
 
 # All Build rule for target.
-CMakeFiles/nn_make_const_smoke.dir/all: CMakeFiles/euclid_cli.dir/all
 CMakeFiles/nn_make_const_smoke.dir/all: CMakeFiles/euclid_engine.dir/all
+CMakeFiles/nn_make_const_smoke.dir/all: CMakeFiles/euclid_cli.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/nn_make_const_smoke.dir/build.make CMakeFiles/nn_make_const_smoke.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/nn_make_const_smoke.dir/build.make CMakeFiles/nn_make_const_smoke.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/danielding/euclid-engine/build/CMakeFiles --progress-num=41,42 "Built target nn_make_const_smoke"
