@@ -60,7 +60,7 @@ EQUALS = =
 CMAKE_SOURCE_DIR = /Users/danielding/euclid-engine
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/danielding/euclid-engine/build
+CMAKE_BINARY_DIR = /Users/danielding/euclid-engine/build_asan
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -97,9 +97,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build/CMakeFiles /Users/danielding/euclid-engine/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build_asan/CMakeFiles /Users/danielding/euclid-engine/build_asan//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build_asan/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -333,19 +333,6 @@ eval_smoke: cmake_check_build_system
 eval_smoke/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_smoke.dir/build.make CMakeFiles/eval_smoke.dir/build
 .PHONY : eval_smoke/fast
-
-#=============================================================================
-# Target rules for targets named eval_cache_smoke
-
-# Build rule for target.
-eval_cache_smoke: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 eval_cache_smoke
-.PHONY : eval_cache_smoke
-
-# fast build rule for target.
-eval_cache_smoke/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_cache_smoke.dir/build.make CMakeFiles/eval_cache_smoke.dir/build
-.PHONY : eval_cache_smoke/fast
 
 #=============================================================================
 # Target rules for targets named uci_smoke
@@ -1068,30 +1055,6 @@ tests/encode_smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/encode_smoke.dir/build.make CMakeFiles/encode_smoke.dir/tests/encode_smoke.cpp.s
 .PHONY : tests/encode_smoke.cpp.s
 
-tests/eval_cache_smoke.o: tests/eval_cache_smoke.cpp.o
-.PHONY : tests/eval_cache_smoke.o
-
-# target to build an object file
-tests/eval_cache_smoke.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_cache_smoke.dir/build.make CMakeFiles/eval_cache_smoke.dir/tests/eval_cache_smoke.cpp.o
-.PHONY : tests/eval_cache_smoke.cpp.o
-
-tests/eval_cache_smoke.i: tests/eval_cache_smoke.cpp.i
-.PHONY : tests/eval_cache_smoke.i
-
-# target to preprocess a source file
-tests/eval_cache_smoke.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_cache_smoke.dir/build.make CMakeFiles/eval_cache_smoke.dir/tests/eval_cache_smoke.cpp.i
-.PHONY : tests/eval_cache_smoke.cpp.i
-
-tests/eval_cache_smoke.s: tests/eval_cache_smoke.cpp.s
-.PHONY : tests/eval_cache_smoke.s
-
-# target to generate assembly for a file
-tests/eval_cache_smoke.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_cache_smoke.dir/build.make CMakeFiles/eval_cache_smoke.dir/tests/eval_cache_smoke.cpp.s
-.PHONY : tests/eval_cache_smoke.cpp.s
-
 tests/eval_sanity_smoke.o: tests/eval_sanity_smoke.cpp.o
 .PHONY : tests/eval_sanity_smoke.o
 
@@ -1636,7 +1599,6 @@ help:
 	@echo "... encode_smoke"
 	@echo "... euclid_cli"
 	@echo "... euclid_engine"
-	@echo "... eval_cache_smoke"
 	@echo "... eval_sanity_smoke"
 	@echo "... eval_smoke"
 	@echo "... fen_test"
@@ -1728,9 +1690,6 @@ help:
 	@echo "... tests/encode_smoke.o"
 	@echo "... tests/encode_smoke.i"
 	@echo "... tests/encode_smoke.s"
-	@echo "... tests/eval_cache_smoke.o"
-	@echo "... tests/eval_cache_smoke.i"
-	@echo "... tests/eval_cache_smoke.s"
 	@echo "... tests/eval_sanity_smoke.o"
 	@echo "... tests/eval_sanity_smoke.i"
 	@echo "... tests/eval_sanity_smoke.s"

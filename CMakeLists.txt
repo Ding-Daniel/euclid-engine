@@ -101,6 +101,11 @@ add_executable(eval_smoke tests/eval_smoke.cpp)
 target_link_libraries(eval_smoke PRIVATE euclid_engine)
 add_test(NAME eval_smoke COMMAND $<TARGET_FILE:eval_smoke>)
 
+# NEW: Eval cache regression test
+add_executable(eval_cache_smoke tests/eval_cache_smoke.cpp)
+target_link_libraries(eval_cache_smoke PRIVATE euclid_engine)
+add_test(NAME eval_cache_smoke COMMAND $<TARGET_FILE:eval_cache_smoke>)
+
 add_executable(uci_smoke tests/uci_smoke.cpp)
 target_link_libraries(uci_smoke PRIVATE euclid_engine)
 add_test(NAME uci_smoke COMMAND $<TARGET_FILE:uci_smoke>)

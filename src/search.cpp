@@ -348,9 +348,19 @@ static int negamax(Board& b, int depth, int alpha, int beta,
   if (haveTT && hit.depth >= depth) {
     ttMove = hit.best;
     int tts = from_tt_score(hit.score, ply);
-    if (hit.bound == TTBound::Exact) { pv.clear(); return tts; }
-    if (hit.bound == TTBound::Lower && tts >= beta) { pv.clear(); return tts; }
-    if (hit.bound == TTBound::Upper && tts <= alpha) { pv.clear(); return tts; }
+
+    // If we return early from a TT cutoff, we must still provide a usable PV.
+    // This prevents the caller from observing an empty PV (and printing a null move like "a1a1")
+    // on repeated searches where the root hits an EXACT/BOUND TT entry.
+    const bool hasTTMove = (ttMove.from | ttMove.to | static_cast<int>(ttMove.promo)) != 0;
+    auto set_pv_from_tt = [&]() {
+      pv.clear();
+      if (hasTTMove) pv.push_back(ttMove);
+    };
+
+    if (hit.bound == TTBound::Exact) { set_pv_from_tt(); return tts; }
+    if (hit.bound == TTBound::Lower && tts >= beta) { set_pv_from_tt(); return tts; }
+    if (hit.bound == TTBound::Upper && tts <= alpha) { set_pv_from_tt(); return tts; }
   } else if (haveTT) {
     ttMove = hit.best; // ordering hint
   }

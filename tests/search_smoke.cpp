@@ -28,9 +28,16 @@ int main() {
   // STARTPOS depth-2: must return a legal move and a non-empty PV
   {
     Board b; set_from_fen(b, STARTPOS_FEN);
-    auto r = search(b, 2);
-    assert(move_is_legal(b, r.best));
-    assert(!r.pv.empty());
+
+    // Run twice in the same process to simulate "bench search ... iters N".
+    // This catches regressions where a root TT cutoff returns with an empty PV (and thus a null best move).
+    auto r1 = search(b, 2);
+    assert(move_is_legal(b, r1.best));
+    assert(!r1.pv.empty());
+
+    auto r2 = search(b, 2);
+    assert(move_is_legal(b, r2.best));
+    assert(!r2.pv.empty());
   }
   // Simple mate-in-1-ish checker: ensure we return a checking move at d=1
   // (No strict assertion on exact move—just legal & non-empty PV.)
