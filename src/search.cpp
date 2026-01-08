@@ -204,6 +204,16 @@ static inline int eval_side_to_move(const Board& b) {
 static TT GTT;
 
 // -----------------------------------------------------------------------------
+// Search state reset helper (TT + ordering heuristics)
+// -----------------------------------------------------------------------------
+static void reset_search_state() {
+  GTT.clear();
+  std::fill(std::begin(killer1), std::end(killer1), Move{});
+  std::fill(std::begin(killer2), std::end(killer2), Move{});
+  std::fill(&historyH[0][0][0], &historyH[0][0][0] + (2 * 64 * 64), 0);
+}
+
+// -----------------------------------------------------------------------------
 // Quiescence (captures/promo/EP; full evasions if in check)
 // -----------------------------------------------------------------------------
 static int move_score_basic(const Board& b, Color us, const Move& m) {
@@ -646,6 +656,10 @@ SearchResult search(const Board& root, const SearchLimits& lim) {
   }
 
   return search_with_limits(root, depth, stopPtr);
+}
+
+void search_reset() {
+  reset_search_state();
 }
 
 } // namespace euclid

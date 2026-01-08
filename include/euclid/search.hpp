@@ -19,7 +19,7 @@ struct SearchResult {
 
 // Search limits for CLI/UCI-style time management.
 struct SearchLimits {
-  int depth = 0;                   // 0 => engine default
+  int depth = 0;                    // 0 => engine default
   std::uint64_t nodes = 0;          // 0 => unlimited
   int movetime_ms = 0;              // 0 => derive from wtime/btime if provided
   int wtime_ms = 0, btime_ms = 0;
@@ -30,5 +30,9 @@ struct SearchLimits {
 
 SearchResult search(const Board& root, int maxDepth);
 SearchResult search(const Board& root, const SearchLimits& lim);
+
+// Clears search caches/state used for speed/ordering (TT + killer/history).
+// Intended for benchmarking (e.g., "bench search cold") and deterministic experiments.
+void search_reset();
 
 } // namespace euclid
