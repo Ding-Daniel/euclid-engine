@@ -335,19 +335,6 @@ eval_smoke/fast:
 .PHONY : eval_smoke/fast
 
 #=============================================================================
-# Target rules for targets named eval_cache_smoke
-
-# Build rule for target.
-eval_cache_smoke: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 eval_cache_smoke
-.PHONY : eval_cache_smoke
-
-# fast build rule for target.
-eval_cache_smoke/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_cache_smoke.dir/build.make CMakeFiles/eval_cache_smoke.dir/build
-.PHONY : eval_cache_smoke/fast
-
-#=============================================================================
 # Target rules for targets named uci_smoke
 
 # Build rule for target.
@@ -515,6 +502,19 @@ eval_sanity_smoke: cmake_check_build_system
 eval_sanity_smoke/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_sanity_smoke.dir/build.make CMakeFiles/eval_sanity_smoke.dir/build
 .PHONY : eval_sanity_smoke/fast
+
+#=============================================================================
+# Target rules for targets named ort_eval_smoke
+
+# Build rule for target.
+ort_eval_smoke: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ort_eval_smoke
+.PHONY : ort_eval_smoke
+
+# fast build rule for target.
+ort_eval_smoke/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ort_eval_smoke.dir/build.make CMakeFiles/ort_eval_smoke.dir/build
+.PHONY : ort_eval_smoke/fast
 
 src/attack.o: src/attack.cpp.o
 .PHONY : src/attack.o
@@ -804,6 +804,30 @@ src/nn_eval.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.s
 .PHONY : src/nn_eval.cpp.s
 
+src/ort_eval.o: src/ort_eval.cpp.o
+.PHONY : src/ort_eval.o
+
+# target to build an object file
+src/ort_eval.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/ort_eval.cpp.o
+.PHONY : src/ort_eval.cpp.o
+
+src/ort_eval.i: src/ort_eval.cpp.i
+.PHONY : src/ort_eval.i
+
+# target to preprocess a source file
+src/ort_eval.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/ort_eval.cpp.i
+.PHONY : src/ort_eval.cpp.i
+
+src/ort_eval.s: src/ort_eval.cpp.s
+.PHONY : src/ort_eval.s
+
+# target to generate assembly for a file
+src/ort_eval.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/euclid_engine.dir/build.make CMakeFiles/euclid_engine.dir/src/ort_eval.cpp.s
+.PHONY : src/ort_eval.cpp.s
+
 src/perft.o: src/perft.cpp.o
 .PHONY : src/perft.o
 
@@ -1068,30 +1092,6 @@ tests/encode_smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/encode_smoke.dir/build.make CMakeFiles/encode_smoke.dir/tests/encode_smoke.cpp.s
 .PHONY : tests/encode_smoke.cpp.s
 
-tests/eval_cache_smoke.o: tests/eval_cache_smoke.cpp.o
-.PHONY : tests/eval_cache_smoke.o
-
-# target to build an object file
-tests/eval_cache_smoke.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_cache_smoke.dir/build.make CMakeFiles/eval_cache_smoke.dir/tests/eval_cache_smoke.cpp.o
-.PHONY : tests/eval_cache_smoke.cpp.o
-
-tests/eval_cache_smoke.i: tests/eval_cache_smoke.cpp.i
-.PHONY : tests/eval_cache_smoke.i
-
-# target to preprocess a source file
-tests/eval_cache_smoke.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_cache_smoke.dir/build.make CMakeFiles/eval_cache_smoke.dir/tests/eval_cache_smoke.cpp.i
-.PHONY : tests/eval_cache_smoke.cpp.i
-
-tests/eval_cache_smoke.s: tests/eval_cache_smoke.cpp.s
-.PHONY : tests/eval_cache_smoke.s
-
-# target to generate assembly for a file
-tests/eval_cache_smoke.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/eval_cache_smoke.dir/build.make CMakeFiles/eval_cache_smoke.dir/tests/eval_cache_smoke.cpp.s
-.PHONY : tests/eval_cache_smoke.cpp.s
-
 tests/eval_sanity_smoke.o: tests/eval_sanity_smoke.cpp.o
 .PHONY : tests/eval_sanity_smoke.o
 
@@ -1307,6 +1307,30 @@ tests/nullmove_state_smoke.s: tests/nullmove_state_smoke.cpp.s
 tests/nullmove_state_smoke.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/nullmove_state_smoke.dir/build.make CMakeFiles/nullmove_state_smoke.dir/tests/nullmove_state_smoke.cpp.s
 .PHONY : tests/nullmove_state_smoke.cpp.s
+
+tests/ort_eval_smoke.o: tests/ort_eval_smoke.cpp.o
+.PHONY : tests/ort_eval_smoke.o
+
+# target to build an object file
+tests/ort_eval_smoke.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ort_eval_smoke.dir/build.make CMakeFiles/ort_eval_smoke.dir/tests/ort_eval_smoke.cpp.o
+.PHONY : tests/ort_eval_smoke.cpp.o
+
+tests/ort_eval_smoke.i: tests/ort_eval_smoke.cpp.i
+.PHONY : tests/ort_eval_smoke.i
+
+# target to preprocess a source file
+tests/ort_eval_smoke.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ort_eval_smoke.dir/build.make CMakeFiles/ort_eval_smoke.dir/tests/ort_eval_smoke.cpp.i
+.PHONY : tests/ort_eval_smoke.cpp.i
+
+tests/ort_eval_smoke.s: tests/ort_eval_smoke.cpp.s
+.PHONY : tests/ort_eval_smoke.s
+
+# target to generate assembly for a file
+tests/ort_eval_smoke.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ort_eval_smoke.dir/build.make CMakeFiles/ort_eval_smoke.dir/tests/ort_eval_smoke.cpp.s
+.PHONY : tests/ort_eval_smoke.cpp.s
 
 tests/pawn_smoke.o: tests/pawn_smoke.cpp.o
 .PHONY : tests/pawn_smoke.o
@@ -1636,7 +1660,6 @@ help:
 	@echo "... encode_smoke"
 	@echo "... euclid_cli"
 	@echo "... euclid_engine"
-	@echo "... eval_cache_smoke"
 	@echo "... eval_sanity_smoke"
 	@echo "... eval_smoke"
 	@echo "... fen_test"
@@ -1646,6 +1669,7 @@ help:
 	@echo "... nn_make_const_smoke"
 	@echo "... nn_smoke"
 	@echo "... nullmove_state_smoke"
+	@echo "... ort_eval_smoke"
 	@echo "... pawn_smoke"
 	@echo "... perft_refs"
 	@echo "... perft_smoke"
@@ -1695,6 +1719,9 @@ help:
 	@echo "... src/nn_eval.o"
 	@echo "... src/nn_eval.i"
 	@echo "... src/nn_eval.s"
+	@echo "... src/ort_eval.o"
+	@echo "... src/ort_eval.i"
+	@echo "... src/ort_eval.s"
 	@echo "... src/perft.o"
 	@echo "... src/perft.i"
 	@echo "... src/perft.s"
@@ -1728,9 +1755,6 @@ help:
 	@echo "... tests/encode_smoke.o"
 	@echo "... tests/encode_smoke.i"
 	@echo "... tests/encode_smoke.s"
-	@echo "... tests/eval_cache_smoke.o"
-	@echo "... tests/eval_cache_smoke.i"
-	@echo "... tests/eval_cache_smoke.s"
 	@echo "... tests/eval_sanity_smoke.o"
 	@echo "... tests/eval_sanity_smoke.i"
 	@echo "... tests/eval_sanity_smoke.s"
@@ -1758,6 +1782,9 @@ help:
 	@echo "... tests/nullmove_state_smoke.o"
 	@echo "... tests/nullmove_state_smoke.i"
 	@echo "... tests/nullmove_state_smoke.s"
+	@echo "... tests/ort_eval_smoke.o"
+	@echo "... tests/ort_eval_smoke.i"
+	@echo "... tests/ort_eval_smoke.s"
 	@echo "... tests/pawn_smoke.o"
 	@echo "... tests/pawn_smoke.i"
 	@echo "... tests/pawn_smoke.s"

@@ -19,6 +19,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/danielding/euclid-engine/src/movegen.cpp" "CMakeFiles/euclid_engine.dir/src/movegen.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/movegen.cpp.o.d"
   "/Users/danielding/euclid-engine/src/nn.cpp" "CMakeFiles/euclid_engine.dir/src/nn.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/nn.cpp.o.d"
   "/Users/danielding/euclid-engine/src/nn_eval.cpp" "CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.o.d"
+  "/Users/danielding/euclid-engine/src/ort_eval.cpp" "CMakeFiles/euclid_engine.dir/src/ort_eval.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/ort_eval.cpp.o.d"
   "/Users/danielding/euclid-engine/src/perft.cpp" "CMakeFiles/euclid_engine.dir/src/perft.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/perft.cpp.o.d"
   "/Users/danielding/euclid-engine/src/search.cpp" "CMakeFiles/euclid_engine.dir/src/search.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/search.cpp.o.d"
   "/Users/danielding/euclid-engine/src/selfplay.cpp" "CMakeFiles/euclid_engine.dir/src/selfplay.cpp.o" "gcc" "CMakeFiles/euclid_engine.dir/src/selfplay.cpp.o.d"

@@ -8,8 +8,10 @@
 #include "euclid/types.hpp"
 
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <chrono>
+#include <cstddef>
 #include <cstdint>
 #include <limits>
 #include <vector>
@@ -31,6 +33,43 @@ static int  g_rootDepth = 0;
 static bool g_has_deadline = false;
 static std::chrono::steady_clock::time_point g_deadline;
 static std::uint64_t g_node_limit = 0; // 0 => unlimited
+
+// -----------------------------------------------------------------------------
+// Eval cache (Zobrist-keyed) for expensive static evaluation calls
+// Stores POV = side-to-move (negamax handles sign).
+// Direct-mapped + generation tagging for O(1) invalidation.
+// -----------------------------------------------------------------------------
+struct EvalCacheEntry {
+  U64 key{0};
+  int eval_stm{0};
+  std::uint32_t gen{0};
+};
+
+static constexpr std::size_t EVAL_CACHE_SIZE = 1u << 18; // 262,144 entries
+static constexpr std::size_t EVAL_CACHE_MASK = EVAL_CACHE_SIZE - 1u;
+static std::array<EvalCacheEntry, EVAL_CACHE_SIZE> g_eval_cache{};
+static std::uint32_t g_eval_gen = 1;
+
+// Telemetry (single-threaded; non-atomic is fine)
+static std::uint64_t g_eval_cache_probes = 0;
+static std::uint64_t g_eval_cache_hits   = 0;
+static std::uint64_t g_eval_cache_stores = 0;
+
+static inline void eval_cache_reset_stats() {
+  g_eval_cache_probes = 0;
+  g_eval_cache_hits   = 0;
+  g_eval_cache_stores = 0;
+}
+
+static inline void eval_cache_clear() {
+  ++g_eval_gen;
+  if (g_eval_gen == 0) {
+    // Extremely unlikely wrap: force all entries invalid.
+    for (auto& e : g_eval_cache) e.gen = 0;
+    g_eval_gen = 1;
+  }
+  eval_cache_reset_stats();
+}
 
 // -----------------------------------------------------------------------------
 // Small utilities
@@ -193,25 +232,35 @@ static inline int from_tt_score(int score, int ply) {
   return score;
 }
 
-static inline int eval_side_to_move(const Board& b) {
-  const int e = evaluate(b);
+static inline int eval_side_to_move_uncached(const Board& b) {
+  const int e = evaluate(b); // white POV
   return b.side_to_move() == Color::White ? e : -e;
+}
+
+static inline int eval_side_to_move_cached_key(const Board& b, U64 key) {
+  ++g_eval_cache_probes;
+  EvalCacheEntry& e = g_eval_cache[static_cast<std::size_t>(key) & EVAL_CACHE_MASK];
+  if (e.gen == g_eval_gen && e.key == key) {
+    ++g_eval_cache_hits;
+    return e.eval_stm;
+  }
+
+  const int v = eval_side_to_move_uncached(b);
+  e.key = key;
+  e.eval_stm = v;
+  e.gen = g_eval_gen;
+  ++g_eval_cache_stores;
+  return v;
+}
+
+static inline int eval_side_to_move(const Board& b) {
+  return eval_side_to_move_cached_key(b, b.hash());
 }
 
 // -----------------------------------------------------------------------------
 // Global TT
 // -----------------------------------------------------------------------------
 static TT GTT;
-
-// -----------------------------------------------------------------------------
-// Search state reset helper (TT + ordering heuristics)
-// -----------------------------------------------------------------------------
-static void reset_search_state() {
-  GTT.clear();
-  std::fill(std::begin(killer1), std::end(killer1), Move{});
-  std::fill(std::begin(killer2), std::end(killer2), Move{});
-  std::fill(&historyH[0][0][0], &historyH[0][0][0] + (2 * 64 * 64), 0);
-}
 
 // -----------------------------------------------------------------------------
 // Quiescence (captures/promo/EP; full evasions if in check)
@@ -349,7 +398,7 @@ static int negamax(Board& b, int depth, int alpha, int beta,
 
   const bool usInCheck = in_check(b, us);
   int staticEval = 0;
-  if (!usInCheck) staticEval = eval_side_to_move(b);
+  if (!usInCheck) staticEval = eval_side_to_move_cached_key(b, key);
 
   // TT probe (apply mate-distance on load)
   TTEntry hit{};
@@ -358,19 +407,9 @@ static int negamax(Board& b, int depth, int alpha, int beta,
   if (haveTT && hit.depth >= depth) {
     ttMove = hit.best;
     int tts = from_tt_score(hit.score, ply);
-
-    // If we return early from a TT cutoff, we must still provide a usable PV.
-    // This prevents the caller from observing an empty PV (and printing a null move like "a1a1")
-    // on repeated searches where the root hits an EXACT/BOUND TT entry.
-    const bool hasTTMove = (ttMove.from | ttMove.to | static_cast<int>(ttMove.promo)) != 0;
-    auto set_pv_from_tt = [&]() {
-      pv.clear();
-      if (hasTTMove) pv.push_back(ttMove);
-    };
-
-    if (hit.bound == TTBound::Exact) { set_pv_from_tt(); return tts; }
-    if (hit.bound == TTBound::Lower && tts >= beta) { set_pv_from_tt(); return tts; }
-    if (hit.bound == TTBound::Upper && tts <= alpha) { set_pv_from_tt(); return tts; }
+    if (hit.bound == TTBound::Exact) { pv.clear(); return tts; }
+    if (hit.bound == TTBound::Lower && tts >= beta) { pv.clear(); return tts; }
+    if (hit.bound == TTBound::Upper && tts <= alpha) { pv.clear(); return tts; }
   } else if (haveTT) {
     ttMove = hit.best; // ordering hint
   }
@@ -658,8 +697,18 @@ SearchResult search(const Board& root, const SearchLimits& lim) {
   return search_with_limits(root, depth, stopPtr);
 }
 
-void search_reset() {
-  reset_search_state();
+// ============================================================================
+// Test hooks (no header changes; tests may declare these as extern)
+// ============================================================================
+std::uint64_t search_eval_cache_probes() { return g_eval_cache_probes; }
+std::uint64_t search_eval_cache_hits()   { return g_eval_cache_hits; }
+std::uint64_t search_eval_cache_stores() { return g_eval_cache_stores; }
+
+void search_eval_cache_clear() { eval_cache_clear(); }
+
+// Deterministic: evaluates with cache enabled (POV = side-to-move).
+int search_debug_eval_stm(const Board& b) {
+  return eval_side_to_move_cached_key(b, b.hash());
 }
 
 } // namespace euclid

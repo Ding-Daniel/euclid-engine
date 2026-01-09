@@ -1,17 +1,18 @@
 #include "euclid/eval.hpp"
 #include "euclid/nn_eval.hpp"
+#include "euclid/ort_eval.hpp"
 #include "euclid/types.hpp"
 
 namespace euclid {
 
 // Conventional material values (centipawns)
-static constexpr int VAL_NONE  = 0;
-static constexpr int VAL_PAWN  = 100;
-static constexpr int VAL_KNIGHT= 320;
-static constexpr int VAL_BISHOP= 330;
-static constexpr int VAL_ROOK  = 500;
-static constexpr int VAL_QUEEN = 900;
-static constexpr int VAL_KING  = 0; // King value omitted in eval; checkmate handled in search
+static constexpr int VAL_NONE   = 0;
+static constexpr int VAL_PAWN   = 100;
+static constexpr int VAL_KNIGHT = 320;
+static constexpr int VAL_BISHOP = 330;
+static constexpr int VAL_ROOK   = 500;
+static constexpr int VAL_QUEEN  = 900;
+static constexpr int VAL_KING   = 0; // King value omitted in eval; checkmate handled in search
 
 static inline int piece_value(Piece p) {
   switch (p) {
@@ -26,16 +27,22 @@ static inline int piece_value(Piece p) {
 }
 
 int evaluate(const Board& b) {
-  // Phase 16 integration: if NN eval is enabled, prefer it.
+  // Prefer ORT if a compatible ONNX model is loaded.
+  // ort_evaluate_white_pov() returns 0 when not enabled; we explicitly gate on enabled.
+  if (ort_eval_enabled()) {
+    return ort_evaluate_white_pov(b);
+  }
+
+  // Phase 16 integration: if text-based NN eval is enabled, prefer it.
   if (neural_eval_enabled()) {
-    const int nn = neural_evaluate_white_pov(b);
-    return nn;
+    return neural_evaluate_white_pov(b);
   }
 
   // Fallback: pure material (white-positive).
   int score = 0;
   for (int s = 0; s < 64; ++s) {
-    Color c; Piece p = b.piece_at(s, &c);
+    Color c;
+    Piece p = b.piece_at(s, &c);
     if (p == Piece::None) continue;
     const int v = piece_value(p);
     score += (c == Color::White ? v : -v);

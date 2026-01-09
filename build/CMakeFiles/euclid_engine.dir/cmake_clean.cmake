@@ -21,6 +21,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/euclid_engine.dir/src/nn.cpp.o.d"
   "CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.o"
   "CMakeFiles/euclid_engine.dir/src/nn_eval.cpp.o.d"
+  "CMakeFiles/euclid_engine.dir/src/ort_eval.cpp.o"
+  "CMakeFiles/euclid_engine.dir/src/ort_eval.cpp.o.d"
   "CMakeFiles/euclid_engine.dir/src/perft.cpp.o"
   "CMakeFiles/euclid_engine.dir/src/perft.cpp.o.d"
   "CMakeFiles/euclid_engine.dir/src/search.cpp.o"

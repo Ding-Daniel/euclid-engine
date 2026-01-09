@@ -17,6 +17,7 @@
 #include "euclid/game.hpp"     // GameResult + selfplay()
 #include "euclid/nn.hpp"
 #include "euclid/nn_eval.hpp"
+#include "euclid/ort_eval.hpp"
 #include "euclid/perft.hpp"
 #include "euclid/search.hpp"
 #include "euclid/types.hpp"
@@ -35,19 +36,20 @@ static void usage() {
     "\n"
     "  euclid_cli eval [fen...]\n"
     "  euclid_cli eval nn <model_path> [fen...]\n"
+    "  euclid_cli eval ort <model.onnx> [fen...]\n"
     "\n"
-    "  euclid_cli search [nn <model_path>] [depth <N>] [nodes <N>] [movetime <ms>]\n"
+    "  euclid_cli search [nn <model_path> | ort <model.onnx>] [depth <N>] [nodes <N>] [movetime <ms>]\n"
     "                  [wtime <ms> btime <ms> winc <ms> binc <ms> movestogo <N>]\n"
     "                  [fen <FEN...>]\n"
     "\n"
     "  euclid_cli nn_make_const <out_path> <cp>\n"
     "\n"
-    "  euclid_cli selfplay [nn <model_path>] [maxplies <N>] [depth <N>] [nodes <N>] [movetime <ms>]\n"
+    "  euclid_cli selfplay [nn <model_path> | ort <model.onnx>] [maxplies <N>] [depth <N>] [nodes <N>] [movetime <ms>]\n"
     "                     [wtime <ms> btime <ms> winc <ms> binc <ms> movestogo <N>]\n"
     "                     [fen <FEN...>]\n"
     "\n"
     "  euclid_cli bench perft <depth> [iters <N>] [fen <FEN...>]\n"
-    "  euclid_cli bench search [nn <model_path>] [iters <N>] [depth <N>] [nodes <N>] [movetime <ms>]\n"
+    "  euclid_cli bench search [nn <model_path> | ort <model.onnx>] [iters <N>] [depth <N>] [nodes <N>] [movetime <ms>]\n"
     "                        [wtime <ms> btime <ms> winc <ms> binc <ms> movestogo <N>]\n"
     "                        [fen <FEN...>]\n"
     "\n"
@@ -130,8 +132,21 @@ static bool load_nn_or_die(const std::string& modelPath) {
   return true;
 }
 
+static bool load_ort_or_die(const std::string& modelPath) {
+  ort_eval_clear();
+  if (!ort_eval_load_file(modelPath) || !ort_eval_enabled()) {
+#if defined(EUCLID_USE_ORT)
+    std::cerr << "error: failed to load ONNX model (missing file or incompatible I/O): " << modelPath << "\n";
+#else
+    std::cerr << "error: ORT backend not available in this build. Rebuild with -DEUCLID_ENABLE_ORT=ON.\n";
+#endif
+    return false;
+  }
+  return true;
+}
+
 // Parses a “search-like” argument list that starts at args[startIdx] (exclusive of the command itself).
-// Recognizes: nn <path>, depth, nodes, movetime, wtime/btime/winc/binc/movestogo, fen <FEN...>, iters <N> (optional).
+// Recognizes: nn <path>, ort <path>, depth, nodes, movetime, wtime/btime/winc/binc/movestogo, fen <FEN...>, iters <N> (optional).
 static ParsedSearchArgs parse_search_like(const std::vector<std::string>& args, size_t startIdx) {
   ParsedSearchArgs out{};
   out.lim.depth = 2; // preserve prior default behavior
@@ -149,7 +164,18 @@ static ParsedSearchArgs parse_search_like(const std::vector<std::string>& args, 
         out.fenStart = args.size();
         return out;
       }
-      (void)load_nn_or_die(args[i + 1]); // if it fails, NN remains disabled (caller may treat as fatal)
+      (void)load_nn_or_die(args[i + 1]);
+      ++i;
+      continue;
+    }
+
+    if (tok == "ort") {
+      if (i + 1 >= args.size()) {
+        std::cerr << "error: ort requires a model path\n";
+        out.fenStart = args.size();
+        return out;
+      }
+      (void)load_ort_or_die(args[i + 1]);
       ++i;
       continue;
     }
@@ -258,12 +284,17 @@ int main(int argc, char** argv) {
 
   // eval [fen...]
   // eval nn <model_path> [fen...]
+  // eval ort <model.onnx> [fen...]
   if (cmd == "eval") {
     size_t fenStart = 1;
 
     if (args.size() >= 3 && args[1] == "nn") {
       const std::string modelPath = args[2];
       if (!load_nn_or_die(modelPath)) return 2;
+      fenStart = 3;
+    } else if (args.size() >= 3 && args[1] == "ort") {
+      const std::string modelPath = args[2];
+      if (!load_ort_or_die(modelPath)) return 2;
       fenStart = 3;
     }
 
@@ -274,16 +305,18 @@ int main(int argc, char** argv) {
     return 0;
   }
 
-  // search [nn <model_path>] [depth <N>] ... [fen <FEN...>]
+  // search [nn <model_path> | ort <model.onnx>] [depth <N>] ... [fen <FEN...>]
   if (cmd == "search") {
     ParsedSearchArgs p = parse_search_like(args, 1);
 
-    // If user specified nn and it failed, neural_eval_enabled() will be false; treat that as fatal for CLI.
-    // (Keeps behavior consistent with your existing "error: failed to load..." flow.)
-    // If you prefer non-fatal behavior, remove this block.
+    // Treat an explicit backend request as fatal if it didn't enable.
     for (size_t i = 1; i + 1 < args.size(); ++i) {
       if (args[i] == "nn") {
         if (!neural_eval_enabled()) return 2;
+        break;
+      }
+      if (args[i] == "ort") {
+        if (!ort_eval_enabled()) return 2;
         break;
       }
     }
@@ -300,7 +333,7 @@ int main(int argc, char** argv) {
     return 0;
   }
 
-  // selfplay [nn <model_path>] [maxplies <N>] [depth <N>] ... [fen <FEN...>]
+  // selfplay [nn <model_path> | ort <model.onnx>] [maxplies <N>] [depth <N>] ... [fen <FEN...>]
   if (cmd == "selfplay") {
     ParsedSearchArgs p = parse_search_like(args, 1);
 
@@ -318,6 +351,10 @@ int main(int argc, char** argv) {
         if (!neural_eval_enabled()) return 2;
         break;
       }
+      if (args[i] == "ort") {
+        if (!ort_eval_enabled()) return 2;
+        break;
+      }
     }
 
     Board b = board_from_args(args, p.fenStart);
@@ -333,7 +370,7 @@ int main(int argc, char** argv) {
   }
 
   // bench perft <depth> [iters <N>] [fen <FEN...>]
-  // bench search [nn <model_path>] [iters <N>] [depth <N>] ... [fen <FEN...>]
+  // bench search [nn <model_path> | ort <model.onnx>] [iters <N>] [depth <N>] ... [fen <FEN...>]
   if (cmd == "bench") {
     if (args.size() < 2) { usage(); return 1; }
     const std::string sub = args[1];
@@ -390,6 +427,10 @@ int main(int argc, char** argv) {
       for (size_t i = 2; i + 1 < args.size(); ++i) {
         if (args[i] == "nn") {
           if (!neural_eval_enabled()) return 2;
+          break;
+        }
+        if (args[i] == "ort") {
+          if (!ort_eval_enabled()) return 2;
           break;
         }
       }

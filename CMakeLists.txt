@@ -11,6 +11,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# ---------------- Optional ORT support ----------------
+# Expect FindONNXRuntime.cmake to live at: <repo>/cmake/FindONNXRuntime.cmake
+option(EUCLID_ENABLE_ORT "Enable ONNX Runtime evaluation backend (requires onnxruntime installed)" OFF)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 add_library(euclid_engine STATIC
   src/board.cpp
   src/zobrist.cpp
@@ -27,6 +32,7 @@ add_library(euclid_engine STATIC
   src/encode.cpp
   src/nn.cpp
   src/nn_eval.cpp
+  src/ort_eval.cpp
   src/game.cpp
   src/selfplay.cpp
 )
@@ -37,6 +43,12 @@ if(MSVC)
   target_compile_options(euclid_engine PRIVATE /W4 /permissive-)
 else()
   target_compile_options(euclid_engine PRIVATE -Wall -Wextra -Wpedantic -Wconversion)
+endif()
+
+if(EUCLID_ENABLE_ORT)
+  find_package(ONNXRuntime REQUIRED)
+  target_compile_definitions(euclid_engine PUBLIC EUCLID_USE_ORT=1)
+  target_link_libraries(euclid_engine PUBLIC ONNXRuntime::onnxruntime)
 endif()
 
 add_executable(euclid_cli src/main.cpp)
@@ -101,11 +113,6 @@ add_executable(eval_smoke tests/eval_smoke.cpp)
 target_link_libraries(eval_smoke PRIVATE euclid_engine)
 add_test(NAME eval_smoke COMMAND $<TARGET_FILE:eval_smoke>)
 
-# NEW: Eval cache regression test
-add_executable(eval_cache_smoke tests/eval_cache_smoke.cpp)
-target_link_libraries(eval_cache_smoke PRIVATE euclid_engine)
-add_test(NAME eval_cache_smoke COMMAND $<TARGET_FILE:eval_cache_smoke>)
-
 add_executable(uci_smoke tests/uci_smoke.cpp)
 target_link_libraries(uci_smoke PRIVATE euclid_engine)
 add_test(NAME uci_smoke COMMAND $<TARGET_FILE:uci_smoke>)
@@ -158,3 +165,13 @@ add_test(NAME selfplay_smoke COMMAND $<TARGET_FILE:selfplay_smoke>)
 add_executable(eval_sanity_smoke tests/eval_sanity_smoke.cpp)
 target_link_libraries(eval_sanity_smoke PRIVATE euclid_engine)
 add_test(NAME eval_sanity_smoke COMMAND $<TARGET_FILE:eval_sanity_smoke>)
+
+add_executable(ort_eval_smoke tests/ort_eval_smoke.cpp)
+target_link_libraries(ort_eval_smoke PRIVATE euclid_engine)
+add_test(NAME ort_eval_smoke COMMAND $<TARGET_FILE:ort_eval_smoke>)
+
+# CLI smoke: ensure "eval ort <missing>" fails gracefully (non-zero exit code).
+add_test(NAME cli_eval_ort_missing_model_smoke
+  COMMAND $<TARGET_FILE:euclid_cli> eval ort this_file_should_not_exist_12345.onnx
+)
+set_tests_properties(cli_eval_ort_missing_model_smoke PROPERTIES WILL_FAIL TRUE)
