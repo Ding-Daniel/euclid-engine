@@ -1,0 +1,438 @@
+Start testing: Jan 11 01:43 PST
+----------------------------------------------------------
+1/28 Testing: smoke
+1/28 Test: smoke
+Command: "/Users/danielding/euclid-engine/build_debug/smoketest"
+Directory: /Users/danielding/euclid-engine/build_debug
+"smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.29 sec
+----------------------------------------------------------
+Test Passed.
+"smoke" end time: Jan 11 01:43 PST
+"smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/28 Testing: fen
+2/28 Test: fen
+Command: "/Users/danielding/euclid-engine/build_debug/fen_test"
+Directory: /Users/danielding/euclid-engine/build_debug
+"fen" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Passed.
+"fen" end time: Jan 11 01:43 PST
+"fen" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/28 Testing: perft_smoke
+3/28 Test: perft_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/perft_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"perft_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+Assertion failed: (perft(b, 1) == 4ULL), function main, file perft_smoke.cpp, line 14.
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Failed.
+"perft_smoke" end time: Jan 11 01:43 PST
+"perft_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/28 Testing: king_smoke
+4/28 Test: king_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/king_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"king_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Passed.
+"king_smoke" end time: Jan 11 01:43 PST
+"king_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/28 Testing: bishop_smoke
+5/28 Test: bishop_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/bishop_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"bishop_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+Assertion failed: (perft(b, 1) == 13ULL), function main, file bishop_smoke.cpp, line 13.
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Failed.
+"bishop_smoke" end time: Jan 11 01:43 PST
+"bishop_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/28 Testing: rook_smoke
+6/28 Test: rook_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/rook_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"rook_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+Assertion failed: (perft(b, 1) == 14ULL), function main, file rook_smoke.cpp, line 14.
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Failed.
+"rook_smoke" end time: Jan 11 01:43 PST
+"rook_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/28 Testing: queen_smoke
+7/28 Test: queen_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/queen_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"queen_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+Assertion failed: (perft(b, 1) == 27ULL), function main, file queen_smoke.cpp, line 14.
+<end of output>
+Test time =   0.27 sec
+----------------------------------------------------------
+Test Failed.
+"queen_smoke" end time: Jan 11 01:43 PST
+"queen_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/28 Testing: pawn_smoke
+8/28 Test: pawn_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/pawn_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"pawn_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+Assertion failed: (perft(b, 1) == 2ULL), function main, file pawn_smoke.cpp, line 13.
+<end of output>
+Test time =   0.18 sec
+----------------------------------------------------------
+Test Failed.
+"pawn_smoke" end time: Jan 11 01:43 PST
+"pawn_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/28 Testing: pin_smoke
+9/28 Test: pin_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/pin_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"pin_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+Assertion failed: (perft(b, 1) == 4ULL), function main, file pin_smoke.cpp, line 13.
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Failed.
+"pin_smoke" end time: Jan 11 01:43 PST
+"pin_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/28 Testing: incheck_smoke
+10/28 Test: incheck_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/incheck_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"incheck_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.18 sec
+----------------------------------------------------------
+Test Passed.
+"incheck_smoke" end time: Jan 11 01:43 PST
+"incheck_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/28 Testing: do_undo_smoke
+11/28 Test: do_undo_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/do_undo_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"do_undo_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Passed.
+"do_undo_smoke" end time: Jan 11 01:43 PST
+"do_undo_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/28 Testing: castle_smoke
+12/28 Test: castle_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/castle_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"castle_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+Assertion failed: ((bb_[ci][pi] & mask) != 0ULL), function remove_piece, file board.cpp, line 90.
+<end of output>
+Test time =   0.18 sec
+----------------------------------------------------------
+Test Failed.
+"castle_smoke" end time: Jan 11 01:43 PST
+"castle_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/28 Testing: perft_refs
+13/28 Test: perft_refs
+Command: "/Users/danielding/euclid-engine/build_debug/perft_refs"
+Directory: /Users/danielding/euclid-engine/build_debug
+"perft_refs" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+Assertion failed: (got == expect), function check, file perft_refs.cpp, line 12.
+<end of output>
+Test time =   9.60 sec
+----------------------------------------------------------
+Test Failed.
+"perft_refs" end time: Jan 11 01:43 PST
+"perft_refs" time elapsed: 00:00:09
+----------------------------------------------------------
+
+14/28 Testing: eval_smoke
+14/28 Test: eval_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/eval_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"eval_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.37 sec
+----------------------------------------------------------
+Test Passed.
+"eval_smoke" end time: Jan 11 01:43 PST
+"eval_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+15/28 Testing: uci_smoke
+15/28 Test: uci_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/uci_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"uci_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.20 sec
+----------------------------------------------------------
+Test Passed.
+"uci_smoke" end time: Jan 11 01:43 PST
+"uci_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/28 Testing: search_smoke
+16/28 Test: search_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/search_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"search_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+best a2a3 score 0 depth 4 nodes 1400
+search_smoke ok
+<end of output>
+Test time =   0.33 sec
+----------------------------------------------------------
+Test Passed.
+"search_smoke" end time: Jan 11 01:43 PST
+"search_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+17/28 Testing: search_limits_smoke
+17/28 Test: search_limits_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/search_limits_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"search_limits_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.21 sec
+----------------------------------------------------------
+Test Passed.
+"search_limits_smoke" end time: Jan 11 01:43 PST
+"search_limits_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+18/28 Testing: nullmove_state_smoke
+18/28 Test: nullmove_state_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/nullmove_state_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"nullmove_state_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.25 sec
+----------------------------------------------------------
+Test Passed.
+"nullmove_state_smoke" end time: Jan 11 01:43 PST
+"nullmove_state_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+19/28 Testing: draw_rules_smoke
+19/28 Test: draw_rules_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/draw_rules_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"draw_rules_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+draw_rules_smoke ok
+<end of output>
+Test time =   0.21 sec
+----------------------------------------------------------
+Test Passed.
+"draw_rules_smoke" end time: Jan 11 01:43 PST
+"draw_rules_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+20/28 Testing: encode_smoke
+20/28 Test: encode_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/encode_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"encode_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Passed.
+"encode_smoke" end time: Jan 11 01:43 PST
+"encode_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+21/28 Testing: nn_smoke
+21/28 Test: nn_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/nn_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"nn_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Passed.
+"nn_smoke" end time: Jan 11 01:43 PST
+"nn_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+22/28 Testing: nn_eval_integration_smoke
+22/28 Test: nn_eval_integration_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/nn_eval_integration_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"nn_eval_integration_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Passed.
+"nn_eval_integration_smoke" end time: Jan 11 01:43 PST
+"nn_eval_integration_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+23/28 Testing: search_nn_pov_smoke
+23/28 Test: search_nn_pov_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/search_nn_pov_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"search_nn_pov_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.20 sec
+----------------------------------------------------------
+Test Passed.
+"search_nn_pov_smoke" end time: Jan 11 01:43 PST
+"search_nn_pov_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+24/28 Testing: uci_evalmodel_smoke
+24/28 Test: uci_evalmodel_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/uci_evalmodel_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"uci_evalmodel_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.20 sec
+----------------------------------------------------------
+Test Passed.
+"uci_evalmodel_smoke" end time: Jan 11 01:43 PST
+"uci_evalmodel_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+25/28 Testing: nn_make_const_smoke
+25/28 Test: nn_make_const_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/nn_make_const_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"nn_make_const_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+wrote euclid_const_123.txt const_cp 123
+<end of output>
+Test time =   0.39 sec
+----------------------------------------------------------
+Test Passed.
+"nn_make_const_smoke" end time: Jan 11 01:43 PST
+"nn_make_const_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+26/28 Testing: selfplay_smoke
+26/28 Test: selfplay_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/selfplay_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"selfplay_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+selfplay_smoke ok plies 30
+<end of output>
+Test time =   0.47 sec
+----------------------------------------------------------
+Test Passed.
+"selfplay_smoke" end time: Jan 11 01:43 PST
+"selfplay_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+27/28 Testing: eval_sanity_smoke
+27/28 Test: eval_sanity_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/eval_sanity_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"eval_sanity_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+eval_sanity_smoke ok
+<end of output>
+Test time =   0.21 sec
+----------------------------------------------------------
+Test Passed.
+"eval_sanity_smoke" end time: Jan 11 01:43 PST
+"eval_sanity_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+28/28 Testing: dataset_smoke
+28/28 Test: dataset_smoke
+Command: "/Users/danielding/euclid-engine/build_debug/dataset_smoke"
+Directory: /Users/danielding/euclid-engine/build_debug
+"dataset_smoke" start time: Jan 11 01:43 PST
+Output:
+----------------------------------------------------------
+Assertion failed: (st.records == 1), function main, file dataset_smoke.cpp, line 61.
+<end of output>
+Test time =   0.19 sec
+----------------------------------------------------------
+Test Failed.
+"dataset_smoke" end time: Jan 11 01:43 PST
+"dataset_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Jan 11 01:43 PST

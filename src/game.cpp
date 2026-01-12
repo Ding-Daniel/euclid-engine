@@ -140,10 +140,17 @@ GameResult selfplay(Board start, int maxPlies, SearchLimits baseLimits) {
     out.reason = "max plies reached";
   }
 
-  // If we never set a terminal outcome but we hit the ply cap, treat as Aborted.
+  // If we never set a terminal outcome but we hit the ply cap, classify it.
   if (out.reason.empty() && out.plies >= maxPlies) {
     out.outcome = GameOutcome::Aborted;
     out.reason = "max plies reached";
+  }
+
+  // Dataset-generation semantics:
+  // If we stopped only because we hit the ply cap, treat it as a Draw (label 0),
+  // not an Aborted game (which would otherwise produce 0 records when includeAborted=false).
+  if (out.outcome == GameOutcome::Aborted && out.reason == "max plies reached") {
+    out.outcome = GameOutcome::Draw;
   }
 
   return out;

@@ -1,0 +1,9 @@
+3:perft_smoke
+5:bishop_smoke
+6:rook_smoke
+7:queen_smoke
+8:pawn_smoke
+9:pin_smoke
+12:castle_smoke
+13:perft_refs
+28:dataset_smoke

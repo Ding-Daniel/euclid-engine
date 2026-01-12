@@ -11,6 +11,7 @@
 
 #include "euclid/attack.hpp"
 #include "euclid/board.hpp"
+#include "euclid/dataset.hpp"
 #include "euclid/encode.hpp"
 #include "euclid/eval.hpp"
 #include "euclid/fen.hpp"
@@ -45,6 +46,11 @@ static void usage() {
     "  euclid_cli nn_make_const <out_path> <cp>\n"
     "\n"
     "  euclid_cli selfplay [nn <model_path> | ort <model.onnx>] [maxplies <N>] [depth <N>] [nodes <N>] [movetime <ms>]\n"
+    "                     [wtime <ms> btime <ms> winc <ms> binc <ms> movestogo <N>]\n"
+    "                     [fen <FEN...>]\n"
+    "\n"
+    "  euclid_cli dataset selfplay <out_path> [games <N>] [maxplies <N>] [include_aborted <0|1>]\n"
+    "                     [nn <model_path> | ort <model.onnx>] [depth <N>] [nodes <N>] [movetime <ms>]\n"
     "                     [wtime <ms> btime <ms> winc <ms> binc <ms> movestogo <N>]\n"
     "                     [fen <FEN...>]\n"
     "\n"
@@ -366,6 +372,81 @@ int main(int argc, char** argv) {
               << " moves ";
     for (const auto& m : g.moves) std::cout << move_to_uci(m) << ' ';
     std::cout << "\n";
+    return 0;
+  }
+
+  // dataset selfplay <out_path> ...
+  if (cmd == "dataset") {
+    if (args.size() < 2) { usage(); return 1; }
+    const std::string sub = args[1];
+
+    if (sub != "selfplay") {
+      usage();
+      return 1;
+    }
+    if (args.size() < 3) {
+      usage();
+      return 1;
+    }
+
+    const std::string outPath = args[2];
+
+    DatasetGenConfig cfg;
+    cfg.games = 1;
+    cfg.maxPlies = 200;
+    cfg.includeAborted = false;
+
+    // Parse dataset-specific knobs from args[3..]
+    for (size_t i = 3; i + 1 < args.size(); ++i) {
+      if (args[i] == "games") {
+        cfg.games = std::max(1, to_int(args[i + 1]));
+        ++i;
+        continue;
+      }
+      if (args[i] == "maxplies") {
+        cfg.maxPlies = std::max(0, to_int(args[i + 1]));
+        ++i;
+        continue;
+      }
+      if (args[i] == "include_aborted") {
+        cfg.includeAborted = (to_int(args[i + 1]) != 0);
+        ++i;
+        continue;
+      }
+      if (args[i] == "fen") break;
+    }
+
+    ParsedSearchArgs p = parse_search_like(args, 3);
+
+    // Treat an explicit backend request as fatal if it didn't enable.
+    for (size_t i = 3; i + 1 < args.size(); ++i) {
+      if (args[i] == "nn") {
+        if (!neural_eval_enabled()) return 2;
+        break;
+      }
+      if (args[i] == "ort") {
+        if (!ort_eval_enabled()) return 2;
+        break;
+      }
+    }
+
+    Board b = board_from_args(args, p.fenStart);
+
+    DatasetGenStats st;
+    std::string err;
+    if (!write_selfplay_dataset(outPath, b, cfg, p.lim, &st, &err)) {
+      std::cerr << "error: dataset generation failed: " << err << "\n";
+      return 2;
+    }
+
+    std::cout
+      << "dataset selfplay wrote " << st.records << " records"
+      << " games " << st.games
+      << " W " << st.whiteWins
+      << " B " << st.blackWins
+      << " D " << st.draws
+      << " A " << st.aborted
+      << " -> " << outPath << "\n";
     return 0;
   }
 

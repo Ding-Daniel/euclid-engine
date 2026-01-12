@@ -1,0 +1,38 @@
+smoke 1 0.294867
+fen 1 0.169926
+perft_smoke 0 0
+king_smoke 1 0.165804
+bishop_smoke 0 0
+rook_smoke 0 0
+queen_smoke 0 0
+pawn_smoke 0 0
+pin_smoke 0 0
+incheck_smoke 1 0.176211
+do_undo_smoke 1 0.166296
+castle_smoke 0 0
+perft_refs 0 0
+eval_smoke 1 0.371569
+uci_smoke 1 0.196777
+search_smoke 1 0.329477
+search_limits_smoke 1 0.210769
+nullmove_state_smoke 1 0.252942
+draw_rules_smoke 1 0.210648
+encode_smoke 1 0.172436
+nn_smoke 1 0.174478
+nn_eval_integration_smoke 1 0.165295
+search_nn_pov_smoke 1 0.197968
+uci_evalmodel_smoke 1 0.196649
+nn_make_const_smoke 1 0.388638
+selfplay_smoke 1 0.47256
+eval_sanity_smoke 1 0.212648
+dataset_smoke 0 0
+---
+perft_smoke
+bishop_smoke
+rook_smoke
+queen_smoke
+pawn_smoke
+pin_smoke
+castle_smoke
+perft_refs
+dataset_smoke

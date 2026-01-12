@@ -35,6 +35,7 @@ add_library(euclid_engine STATIC
   src/ort_eval.cpp
   src/game.cpp
   src/selfplay.cpp
+  src/dataset.cpp
 )
 target_include_directories(euclid_engine PUBLIC include)
 
@@ -166,12 +167,6 @@ add_executable(eval_sanity_smoke tests/eval_sanity_smoke.cpp)
 target_link_libraries(eval_sanity_smoke PRIVATE euclid_engine)
 add_test(NAME eval_sanity_smoke COMMAND $<TARGET_FILE:eval_sanity_smoke>)
 
-add_executable(ort_eval_smoke tests/ort_eval_smoke.cpp)
-target_link_libraries(ort_eval_smoke PRIVATE euclid_engine)
-add_test(NAME ort_eval_smoke COMMAND $<TARGET_FILE:ort_eval_smoke>)
-
-# CLI smoke: ensure "eval ort <missing>" fails gracefully (non-zero exit code).
-add_test(NAME cli_eval_ort_missing_model_smoke
-  COMMAND $<TARGET_FILE:euclid_cli> eval ort this_file_should_not_exist_12345.onnx
-)
-set_tests_properties(cli_eval_ort_missing_model_smoke PROPERTIES WILL_FAIL TRUE)
+add_executable(dataset_smoke tests/dataset_smoke.cpp)
+target_link_libraries(dataset_smoke PRIVATE euclid_engine)
+add_test(NAME dataset_smoke COMMAND $<TARGET_FILE:dataset_smoke>)

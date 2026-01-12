@@ -27,7 +27,7 @@
 /Users/danielding/euclid-engine/build/CMakeFiles/nn_make_const_smoke.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/selfplay_smoke.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/eval_sanity_smoke.dir
-/Users/danielding/euclid-engine/build/CMakeFiles/ort_eval_smoke.dir
+/Users/danielding/euclid-engine/build/CMakeFiles/dataset_smoke.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/test.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/edit_cache.dir
 /Users/danielding/euclid-engine/build/CMakeFiles/rebuild_cache.dir

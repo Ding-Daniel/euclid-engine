@@ -60,7 +60,7 @@ EQUALS = =
 CMAKE_SOURCE_DIR = /Users/danielding/euclid-engine
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/danielding/euclid-engine/build
+CMAKE_BINARY_DIR = /Users/danielding/euclid-engine/build_debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -97,9 +97,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build/CMakeFiles /Users/danielding/euclid-engine/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build_debug/CMakeFiles /Users/danielding/euclid-engine/build_debug//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/danielding/euclid-engine/build_debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
