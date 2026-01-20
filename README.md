@@ -1,6 +1,6 @@
 # Euclid Engine
 
-A modern C++ chess engine with a single command-line binary (`euclid_cli`) that supports:
+A modern C++ chess engine with a single command-line binary (euclid_cli), targeting an estimated 1500–2400 Elo playing strength, that supports:
 
 * **UCI mode** (plug into chess GUIs)
 * **Move generation + perft/divide**
